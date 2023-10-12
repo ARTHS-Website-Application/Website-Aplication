@@ -18,8 +18,10 @@ const Header = ({ handleLogout }: props) => {
     roleText = "Nhân viên thanh toán";
   } else if (profile.role === "Owner") {
     roleText = "Chủ cửa hàng";
-  } else {
+  }else if (profile.role === "Admin") {
     roleText = "Admin";
+  }else {
+    roleText="";
   }
 
   return (

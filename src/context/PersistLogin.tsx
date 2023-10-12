@@ -2,14 +2,15 @@ import { Outlet } from "react-router-dom";
 import { useState, useEffect } from "react";
 import userRefreshToken from "../hooks/useRefreshToken";
 import useAuth from "@/hooks/useAuth";
+import Loading from "@/components/Loading";
 
 const PersistLogin = () => {
     const [isLoading, setIsLoading] = useState(true);
     const refresh = userRefreshToken();
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const { auth }: any = useAuth();
-    // const storedAuth = localStorage.getItem('auth');
-    // const initialAuth = storedAuth ? JSON.parse(storedAuth) : {};
+    const storedAuth = localStorage.getItem('auth');
+    const initialAuth = storedAuth ? JSON.parse(storedAuth) : {};
     useEffect(() => {
         const verifyRefreshToken = async () => {
             try {
@@ -21,20 +22,18 @@ const PersistLogin = () => {
                 setIsLoading(false);
             }
         }
-        // initialAuth?.accessToken ? 
-        verifyRefreshToken();
-        setIsLoading(false);
+         !initialAuth?.accessToken ? verifyRefreshToken():setIsLoading(false);
     }, [])
 
     useEffect(() => {
         console.log(`isLoading: ${isLoading}`);
-        console.log(`aT: ${JSON.stringify(auth?.accessToken)}`);
+        console.log(`aT: ${JSON.stringify(initialAuth?.accessToken)}`);
     }, [isLoading])
 
     return (
         <>
             {isLoading
-                ? <p>Loading...</p>
+                ? <Loading/>
                 : <Outlet />
             }
         </>

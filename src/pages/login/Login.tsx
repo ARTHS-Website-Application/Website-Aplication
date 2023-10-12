@@ -66,13 +66,13 @@ const Login = () => {
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
         } catch (err: any) {
             if (!err?.response) {
-                setErrMsg('No Server Response');
+                setErrMsg('Đăng nhập thất bại');
             } else if (err.response?.status === 404) {
                 setErrMsg('Sai tài khoản hoặc mật khẩu');
             } else if (err.response?.status === 401) {
-                setErrMsg('Unauthorized');
+                setErrMsg('Bạn không có quyền đăng nhập vào');
             } else {
-                setErrMsg('Login Failed');
+                setErrMsg('Lỗi sever, xin mời kiểm tra');
             }
             if (errRef && errRef.current) {
                 errRef.current.focus();

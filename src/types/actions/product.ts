@@ -1,7 +1,7 @@
 export interface selectorProduct<T,N> {
     productReducer: {
         productInfor: itemProduct<T,N>[];
-        showError: string | null;
+        showError: T | null;
     }
 }
 
@@ -18,10 +18,10 @@ export interface itemProduct<T,N> {
     id: T;
     name: T;
     priceCurrent: N;
-    quantity: 50;
-    warrantyDuration: 0;
+    quantity: N;
+    warrantyDuration: N;
     status: boolean;
-    discountAmount: 0;
+    discountAmount: N;
     repairService: {
         id: T;
         name: T;

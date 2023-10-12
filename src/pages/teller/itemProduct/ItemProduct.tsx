@@ -19,27 +19,12 @@ const ItemProduct = ({_name, _priceCurrent, _imageUrl, onClickAdd }: Props) => {
     const handleMouseLeave = () => {
         setIsHovered(false);
     };
-
-    // const handleAddToCart = () => {
-    //     // Create an object to represent the item
-    //     const itemToAdd = profileItem;
-
-    //     // Get the existing cart items from local storage (if any)
-    //     const existingCartItems = JSON.parse(localStorage.getItem('cartItems') as string) || [];
-    //     const updatedItems = [...existingCartItems, itemToAdd];
-    //     console.log(updatedItems)
-    //     // Add the new item to the cart
-    //     existingCartItems.push(itemToAdd);
-
-    //     // Save the updated cart items back to local storage
-    //     localStorage.setItem('cartItems', JSON.stringify(updatedItems));
-    // };
     return (
-        <div className=" bg-white shadow-inner p-2"
+        <div className=" bg-white drop-shadow-xl p-2 rounded-lg"
             onMouseEnter={handleMouseEnter}
             onMouseLeave={handleMouseLeave}
         >
-            <div className='w-full h-[200px] bg-center flex items-end' style={{ backgroundImage: `url(${_imageUrl})` }}>
+            <div className='w-full h-[200px] bg-cover flex items-end' style={{ backgroundImage: `url(${_imageUrl})` }}>
                 {isHovered &&
                     <button className='w-full h-[30px] bg-main text-white'
                         onClick={onClickAdd}

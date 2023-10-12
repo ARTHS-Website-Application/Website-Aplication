@@ -52,9 +52,9 @@ const RequireAuth = ({ allowedRoles }: Props) => {
           </div>
         </div>
       )
-      : <Navigate to="/login" state={{ from: location }} replace />
-      // : initialAuth?.accessToken
+      // : auth?.accessToken
       //   ? <Navigate to="/unauthorized" state={{ from: location }} replace />
+      : <Navigate to="/login" state={{ from: location }} replace />
   )
 }
 

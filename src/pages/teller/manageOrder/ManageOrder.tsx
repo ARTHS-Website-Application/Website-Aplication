@@ -1,6 +1,5 @@
-import React from 'react'
-import { NavLink, Outlet } from 'react-router-dom';
-
+import { NavLink, Outlet, useNavigate } from 'react-router-dom';
+import {useEffect} from 'react'
 const linkRole =[ 
   {
     to:'/manage-order/create-order',
@@ -20,6 +19,10 @@ const linkRole =[
 
 
 const ManageOrder = () => {
+  const navigate = useNavigate();
+  useEffect(()=>{
+    navigate("/manage-order/create-order");
+  },[])
   return (
     <div className="w-full min-h-full">
       <div className="flex space-x-4 font-bold">

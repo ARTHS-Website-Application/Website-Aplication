@@ -36,14 +36,6 @@ function App() {
           {/* private router */}
           
           <Route element={<PersistLogin/>}>
-            {/* {privateRoutes.map((route, index) => {
-              const Page = route.component;
-              return(
-                <Route key={index} element={<RequireAuth allowedRoles={[route.allowedRoles]}/>}>
-                  <Route  path={route.path} element={<Page />} />
-                </Route>
-              )
-            })} */}
             <Route element={<RequireAuth allowedRoles={ROLES.Admin} />}>
             <Route path="/" element={<Home />} />
           </Route>
@@ -51,8 +43,8 @@ function App() {
           <Route element={<RequireAuth allowedRoles={ROLES.Teller} />}>
             <Route path="teller" element={<HomeTeller />}/>
             <Route path="manage-order" element={<ManageOrder />}>
+              <Route path="create-order" index element={<CreateOrder />}/>
               <Route path="list-order" element={<ListOrder />}/>
-              <Route path="create-order" element={<CreateOrder />}/>
             </Route>
 
           </Route>

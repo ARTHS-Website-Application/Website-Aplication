@@ -22,3 +22,21 @@ export const productInfor ={
     GET_PRODUCT_INFO_FAIL:"get_product_info_fail",
 }
 
+export const productCategory ={
+    GET_PRODUCT_CATEGORY:"get_product_category",
+    GET_PRODUCT_CATEGORY_SUCCESS:"get_product_category_success",
+    GET_PRODUCT_CATEGORY_FAIL:"get_product_category_fail",
+}
+
+export const productFilter ={
+    GET_PRODUCT_FILTER:"get_product_filter",
+    GET_PRODUCT_FILTER_SUCCESS:"get_product_filter_success",
+    GET_PRODUCT_FILTER_FAIL:"get_product_filter_fail",
+}
+
+export const postOrder ={
+    POST_ORDER:"post_order",
+    POST_ORDER_SUCCESS:"post_order_success",
+    POST_ORDER_FAIL:"post_order_fail",
+}
+

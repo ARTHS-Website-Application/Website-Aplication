@@ -8,7 +8,7 @@ type Props = {
 
 const ListProduct = ({ data, onClickAdd }: Props) => {
     return (
-        <div className="grid grid-cols-4 gap-x-7 gap-y-3 overflow-y-scroll h-[60vh] py-3">
+        <div className={`grid grid-cols-4 gap-x-7 gap-y-3  ${data.length>4 ?"overflow-y-scroll h-[60vh]":"h-[60vh] pb-[20vh]" }  py-3`}>
             {data.map((item: itemProduct<string, number>, index: number) => (
                 <ItemProduct
                     onClickAdd={() => onClickAdd(item)} // Pass the item as an argument

@@ -1,5 +1,5 @@
 import { productSaga, storeProduct } from '@/types/actions/product';
-import { productInfor } from '../../constants/mainConstants';
+import { productInfor, productFilter } from '../../constants/mainConstants';
 
 
 const initialState: storeProduct<string, number> = {
@@ -22,6 +22,17 @@ const productReducer = (
             }
 
         case productInfor.GET_PRODUCT_INFO_FAIL:
+            return {
+                ...state,
+                productInfor: [],
+            }
+        case productFilter.GET_PRODUCT_FILTER_SUCCESS:
+            return {
+                ...state,
+                productInfor: payload.data,
+
+            }
+        case productFilter.GET_PRODUCT_FILTER_FAIL:
             return {
                 ...state,
                 productInfor: [],
