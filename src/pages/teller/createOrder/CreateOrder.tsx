@@ -57,6 +57,9 @@ const CreateOrder = () => {
         dispatch(FilterProduct(data))
         setIsLoading(true);
       }, 200)
+    }else{
+      dispatch(ShowProduct());
+      setIsLoading(true);
     }
   }, [dispatch, addCategory, addSearch])
 
@@ -119,7 +122,6 @@ const CreateOrder = () => {
                   if (searchTimeout) {
                     clearTimeout(searchTimeout);
                   }
-
                   // Set a new search timeout
                   const newTimeSearch = window.setTimeout(() => {
                     setAddSearch(e.target.value);
@@ -159,10 +161,7 @@ const CreateOrder = () => {
           <div className='w-full h-[60vh] flex justify-center items-center'>
             <p className='text-[20px]'>không tìm thấy sản phẩm</p>
           </div>
-        )
-        }
-
-
+        )}
       </div>
       <InforUser
         addProduct={addProduct}

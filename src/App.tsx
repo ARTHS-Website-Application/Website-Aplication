@@ -10,6 +10,8 @@ import ManageOrder from './pages/teller/manageOrder/ManageOrder';
 import ListOrder from './pages/teller/listOrder/ListOrder';
 import CreateOrder from './pages/teller/createOrder/CreateOrder';
 import Home from './pages/admin/home/Home';
+import DetailOrder from './pages/teller/detailOrder/DetailOrder';
+import HistoryOrder from './pages/teller/historyOrder/HistoryOrder';
 // import PersistLogin from './context/PersistLogin';
 
 const ROLES = {
@@ -45,6 +47,8 @@ function App() {
             <Route path="manage-order" element={<ManageOrder />}>
               <Route path="create-order" index element={<CreateOrder />}/>
               <Route path="list-order" element={<ListOrder />}/>
+              <Route path=":orderId" element={<DetailOrder />}/>
+              <Route path="history-order" element={<HistoryOrder />}/>
             </Route>
 
           </Route>

@@ -1,4 +1,4 @@
-import { itemProduct } from "@/types/actions/product";
+import { discountItem, itemProduct } from "@/types/actions/product";
 import { useState } from "react";
 
 type Props = {
@@ -6,10 +6,11 @@ type Props = {
     _priceCurrent: number,
     _imageUrl: string,
     profileItem: itemProduct<string, number>,
+    _discount:discountItem<string,number>
     onClickAdd:()=> void,
 }
 
-const ItemProduct = ({_name, _priceCurrent, _imageUrl, onClickAdd }: Props) => {
+const ItemProduct = ({_name, _priceCurrent, _imageUrl,_discount, onClickAdd }: Props) => {
     const [isHovered, setIsHovered] = useState<boolean>(false);
 
     const handleMouseEnter = () => {
@@ -32,8 +33,14 @@ const ItemProduct = ({_name, _priceCurrent, _imageUrl, onClickAdd }: Props) => {
             </div>
             <div className='w-full flex flex-col justify-center items-center space-y-1 pt-1'>
                 <p className='text-[14px] text-center'>{_name}</p>
-                <p className='line-through text-[#888888]'>{_priceCurrent} đ</p>
-                <p className='text-[#FE3A30]'>{_priceCurrent} đ</p>
+                {_discount ?(
+                <div>
+                    <p className='line-through text-[#888888]'>{_priceCurrent} đ</p>
+                <p className='text-[#FE3A30]'>{_priceCurrent * (1 - _discount.discountAmount/100)} đ</p>
+                </div>
+                ):(
+                    <p className='text-[#FE3A30]'>{_priceCurrent} đ</p>
+                )}
             </div>
         </div>
     )

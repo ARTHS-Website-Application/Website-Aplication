@@ -5,13 +5,15 @@ import { rootSaga } from './saga/rootSaga';
 import userReducer from './reducer/userReducer';
 import productReducer from './reducer/productReducer';
 import categoryProductReducer from './reducer/categoryProductReducer';
-import createOrderReducer from './reducer/createOrderReducer';
+import orderReducer from './reducer/orderReducer';
+import orderDetailReducer from './reducer/orderDetailReducer';
 const middleSaga = createMiddleWareSaga();
 const allReducer = combineReducers({
   userReducer,
   productReducer,
   categoryProductReducer,
-  createOrderReducer,
+  orderReducer,
+  orderDetailReducer,
   });
 
   const store = configureStore({

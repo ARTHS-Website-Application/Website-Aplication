@@ -3,16 +3,14 @@ import { ClipboardDocumentListIcon } from '@heroicons/react/24/solid';
 import { useNavigate } from 'react-router-dom';
 import { itemProduct } from '@/types/actions/product'
 import { itemOrder } from '@/types/actions/createOrder';
-import { useDispatch } from 'react-redux';
-import { createOrder } from '@/actions/order';
 import { showSuccessAlert } from '@/constants/chooseToastify';
+import userAxiosPrivate from '@/hooks/useAxiosPrivate';
 type Props = {
     addProduct?: itemProduct<string, number>[];
     removeProduct: (itemId: string) => void,
 }
 
 const InforUser = ({ addProduct = [], removeProduct }: Props) => {
-    const dispatch = useDispatch();
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const navigate = useNavigate();
     const [phoneCustomer, setPhoneCustomer] = useState<string>('');
@@ -22,6 +20,8 @@ const InforUser = ({ addProduct = [], removeProduct }: Props) => {
     const [showService, setShowService] = useState<boolean[]>(Array(addProduct.length).fill(false));
     const [checkedService, setCheckedService] = useState<boolean[]>(Array(addProduct.length).fill(false));
     const [orderData, setOrderData] = useState<itemOrder<string, number>[]>([]);
+    const axiosPrivate = userAxiosPrivate();
+
     useEffect(() => {
         // Tạo dữ liệu ban đầu và lưu vào localStorage khi addProduct thay đổi
         const dataCart: itemOrder<string, number>[] = addProduct.map((item) => ({
@@ -32,7 +32,6 @@ const InforUser = ({ addProduct = [], removeProduct }: Props) => {
         localStorage.setItem('orderData', JSON.stringify(dataCart));
         setOrderData(dataCart);
     }, [addProduct]);
-
 
     const handleCheckboxChange = (itemId: string, data: string, index: number) => {
         const savedData = JSON.parse(localStorage.getItem('orderData') || '[]') as itemOrder<string, number>[];
@@ -64,15 +63,11 @@ const InforUser = ({ addProduct = [], removeProduct }: Props) => {
         localStorage.setItem('orderData', JSON.stringify(updatedOrder));
     };
 
-
-
     const toggleService = (index: number) => {
         const updatedShowService = [...showService];
         updatedShowService[index] = !updatedShowService[index];
         setShowService(updatedShowService);
     };
-
-
 
     const handleQuantityChange = (itemId: string, value: number) => {
         const savedData = JSON.parse(localStorage.getItem('orderData') as string);
@@ -95,9 +90,7 @@ const InforUser = ({ addProduct = [], removeProduct }: Props) => {
         setOrderData(updatedData);
     };
 
-
-
-    const handleCreateOrder = () => {
+    const handleCreateOrder = async () => {
         const data = {
             staffId: staffId,
             customerName: nameCustomer,
@@ -105,19 +98,26 @@ const InforUser = ({ addProduct = [], removeProduct }: Props) => {
             licensePlate: licensePlate,
             orderDetailModel: orderData
         };
-        dispatch(createOrder(data))
-            navigate('/manage-order/list-order');
-            localStorage.removeItem('cartItems');
-            localStorage.removeItem('orderData');
-            showSuccessAlert('Tạo đơn hàng thành công');
-        
+        try {
+            const response = await axiosPrivate.post('/store-orders', data);
+
+            if (response.status === 201) {
+                const orderId = response.data.id;
+                navigate(`/manage-order/list-order/${orderId}`);
+                localStorage.removeItem('cartItems');
+                localStorage.removeItem('orderData');
+                showSuccessAlert('Tạo đơn hàng thành công');
+            } else {
+                console.log('Lỗi');
+            }
+
+        } catch (error) {
+            console.error('Lỗi:', error);
+        }
     }
 
     return (
         <div className="w-[33%] border-x-2 border-t-2 border-gray-400">
-            <div>
-
-            </div>
             <div className='bg-white w-full text-center py-[20px] border-b-2 border-gray-400'>
                 <h1 className="text-2xl font-semibold">Đơn hàng</h1>
             </div>
@@ -180,7 +180,7 @@ const InforUser = ({ addProduct = [], removeProduct }: Props) => {
                                 <div className='bg-white w-full rounded-lg flex justify-between pb-3'>
                                     <div className='flex'>
                                         <div className='pl-3 h-[13vh] py-2'>
-                                            <img src={item.imageUrl} className='w-auto h-full' alt="" />
+                                            <img src={item.images[0].imageUrl} className='w-auto h-full' alt="" />
 
                                         </div>
                                         <div className='h-full pl-3 flex flex-col justify-between'>
@@ -240,15 +240,10 @@ const InforUser = ({ addProduct = [], removeProduct }: Props) => {
                     }
 
                 </div>
-                {phoneCustomer && nameCustomer && staffId && licensePlate && orderData.length>0 
+                {phoneCustomer && nameCustomer && licensePlate && orderData.length>0 
                     ?( 
                 <div className='w-full bg-white h-[10vh] flex justify-around py-5'>
                     <button className='w-[150px] bg-slate-200 hover:bg-red-700 hover:text-white font-semibold text-[18px] rounded-lg'>Hủy đơn</button>
-                    {/* <div className=' text-center'>
-                        <h3 className='font-semibold'>Tổng tiền:</h3>
-                        <p className='text-[20px]'>147.000 đ</p>
-                    </div> */}
-                     
                         <button className='w-[200px] bg-slate-200 hover:bg-main hover:text-white font-semibold text-[18px] rounded-lg'
                         onClick={handleCreateOrder}
                     >Tiếp theo</button>
@@ -259,9 +254,6 @@ const InforUser = ({ addProduct = [], removeProduct }: Props) => {
                     )}
                     
             </div>
-
-
-
         </div>
     )
 }

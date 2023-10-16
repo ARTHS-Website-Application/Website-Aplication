@@ -1,13 +1,21 @@
-import React from 'react'
 import { ChevronDownIcon } from '@heroicons/react/24/solid'
-type Props = {}
+import { itemOrder } from '@/types/actions/listOrder'
+import { NavLink } from 'react-router-dom'
+type Props = {
+    data: itemOrder<string, number>[]
+}
 
-const TableOrder = (props: Props) => {
+const TableOrder = ({ data }: Props) => {
+    const formatPrice = (price: number) => {
+        const formattedPrice = (price / 1000).toLocaleString();
+
+        return `${formattedPrice}.000`;
+    }
     return (
         <div className="pt-3">
             <table className="min-w-full bg-white divide-y divide-gray-200 table-fixed text-center">
                 <thead>
-                    <tr className="text-left text-xs uppercase tracking-wider bg-yellow-400 text-center">
+                    <tr className="text-xs uppercase tracking-wider bg-yellow-400 text-center">
                         <th scope="col" className="px-6 py-5 flex justify-center items-center space-x-2">
                             <p>Mã đơn</p>
                             <button><ChevronDownIcon className="w-5 h-5" /></button>
@@ -21,11 +29,9 @@ const TableOrder = (props: Props) => {
                         <th scope="col" className="px-6 py-5 ">
                             Số điện thoại
                         </th>
+
                         <th scope="col" className="px-6 py-5 ">
-                            Người sửa chữa
-                        </th>
-                        <th scope="col" className="px-6 py-5 ">
-                            Biển số xe
+                            Loại đơn
                         </th>
                         <th scope="col" className="px-6 py-5 ">
                             Tổng tiền (VND)
@@ -38,64 +44,37 @@ const TableOrder = (props: Props) => {
                     </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-200">
-                    <tr>
-                        <td className="py-3 px-3">
-                            Mã đơn 1
-                        </td>
-                        <td className="">
-                            Tên khách hàng 1
-                        </td>
-                        <td className="">
-                            2023-09-27
-                        </td>
-                        <td className="">
-                            1234567890
-                        </td>
-                        <td className="">
-                            Người sửa chữa 1
-                        </td>
-                        <td className="">
-                            XYZ 123
-                        </td>
-                        <td className="">
-                            1,000,000 VND
-                        </td>
-                        <td className="">
-                            Đã hoàn thành
-                        </td>
-                        <td className="">
-                            Chi tiết
-                        </td>
-                    </tr>
-                    <tr>
-                        <td className="py-3 px-3">
-                            Mã đơn 2
-                        </td>
-                        <td className="">
-                            Tên khách hàng 2
-                        </td>
-                        <td className="">
-                            2023-09-28
-                        </td>
-                        <td className="">
-                            0987654321
-                        </td>
-                        <td className="">
-                            Người sửa chữa 2
-                        </td>
-                        <td className="">
-                            ABC 456
-                        </td>
-                        <td className="">
-                            1,500,000 VND
-                        </td>
-                        <td className="">
-                            Đang xử lý
-                        </td>
-                        <td className="">
-                            Chi tiết
-                        </td>
-                    </tr>
+                    {data && data.map((item: itemOrder<string, number>, index) => (
+                        <tr key={index}>
+                            <td className="py-3 px-3">
+                                {item.id}
+                            </td>
+                            <td className="">
+                                {item.customerName}
+                            </td>
+                            <td className="">
+                                {
+                                    new Intl.DateTimeFormat('en-GB', {
+                                        timeZone: 'UTC'
+                                    }).format(new Date(Date.parse(item.orderDate.toString()) + 7 * 60 * 60 * 1000))}
+                            </td>
+                            <td className="">
+                                {item.customerPhone}
+                            </td>
+                            <td className="">
+                                {item.orderType}
+                            </td>
+                            <td className="">
+                                {formatPrice(item.totalAmount)}
+                            </td>
+                            <td className="">
+                                {item.status}
+                            </td>
+                            <td className="text-blue-700 hover:underline pr-7">
+                                <NavLink to={`/manage-order/${item.id}`}>Chi tiết</NavLink>
+                            </td>
+                        </tr>
+                    ))}
 
                 </tbody>
             </table>

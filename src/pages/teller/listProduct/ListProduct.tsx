@@ -16,7 +16,8 @@ const ListProduct = ({ data, onClickAdd }: Props) => {
                     key={index}
                     _name={item.name}
                     _priceCurrent={item.priceCurrent}
-                    _imageUrl={item.imageUrl}
+                    _discount={item.discount}
+                    _imageUrl={item.images[0].imageUrl}
                 />
             ))}
         </div>
