@@ -1,6 +1,6 @@
 export interface selectorProduct<T, N> {
     productReducer: {
-        productInfor: itemProduct<T, N>[];
+        productInfor: itemProduct<T, N>;
         showError: T | null;
     }
 }
@@ -15,20 +15,8 @@ export interface productSaga<T, N> {
 }
 
 export interface itemProduct<T, N> {
-    id: T;
-    name: T;
-    priceCurrent: N;
-    quantity: N;
-    warrantyDuration: N;
-    status: boolean;
-    discount: discountItem<T,N>;
-    repairService: {
-        id: T;
-        name: T;
-        price: N;
-        image: T;
-    },
-    images: imageItem<T>[]
+    data: item<T, N>[];
+    pagination: pagination<N>
 }
 export interface imageItem<T> {
     id: T;
@@ -37,7 +25,7 @@ export interface imageItem<T> {
 
 }
 
-export interface discountItem<T,N> {
+export interface discountItem<T, N> {
     id: T;
     title: T;
     discountAmount: N;
@@ -46,6 +34,34 @@ export interface discountItem<T,N> {
     imageUrl: T;
     description: T;
     status: T;
+}
+
+export interface item<T, N> {
+    id: T;
+    name: T;
+    priceCurrent: N;
+    quantity: N;
+    warrantyDuration: N;
+    status: boolean;
+    discount: discountItem<T, N>;
+    repairService: {
+        id: T;
+        name: T;
+        price: N;
+        image: T;
+    },
+    images: imageItem<T>[]
+}
+
+export interface pagination<N> {
+    pageNumber: N;
+    pageSize: N;
+    totalRow: N;
+}
+
+export interface payloadSaga<N>{
+    type:'get_product_info';
+    number:N
 }
 
 

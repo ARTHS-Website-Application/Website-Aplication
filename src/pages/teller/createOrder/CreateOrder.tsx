@@ -3,7 +3,7 @@ import ListProduct from '../listProduct/ListProduct'
 import InforUser from '../inforUser/InforUser'
 import { useDispatch, useSelector } from 'react-redux'
 import { CategoryProduct, FilterProduct, ShowProduct } from '@/actions/product'
-import { itemProduct, selectorProduct } from '@/types/actions/product'
+import { item, itemProduct, selectorProduct } from '@/types/actions/product'
 import Pagination from '@/components/Pagination'
 import { showWarningAlert } from '@/constants/chooseToastify'
 import { itemCategoryProduct, selectorCategoryProduct } from '@/types/actions/categoryPr'
@@ -13,32 +13,26 @@ import Loading from '@/components/Loading'
 const CreateOrder = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const dispatch = useDispatch();
-  const productInfor: itemProduct<string, number>[] = useSelector((state: selectorProduct<string, number>) => state.productReducer.productInfor);
+  const productInfor: itemProduct<string, number> = useSelector((state: selectorProduct<string, number>) => state.productReducer.productInfor);
   const categoryProduct: itemCategoryProduct<string>[] = useSelector((state: selectorCategoryProduct<string>) => state.categoryProductReducer.categoryProduct);
-  const [productData, setProductData] = useState([] as itemProduct<string, number>[]);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [addProduct, setAddProduct] = useState<itemProduct<string, number>[]>();
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [postsPerPage, setPostsPerPage] = useState(12);
-
+  const [productData, setProductData] = useState([] as item<string, number>[]);
+  const [addProduct, setAddProduct] = useState<item<string, number>[]>();
   const [addCategory, setAddCategory] = useState<string>("");
   const [addSearch, setAddSearch] = useState<string>("")
   const [searchTimeout, setSearchTimeout] = useState<number | null>(null);
-
+  const [paginationNumber,setPaginationNumber] =useState<number>(0);
   //dispatch
   useEffect(() => {
-    dispatch(ShowProduct());
     dispatch(CategoryProduct());
-    setIsLoading(true);
   }, [dispatch])
 
   //data product
   useEffect(() => {
     setTimeout(() => {
-      setProductData(productInfor);
+      setProductData(productInfor.data);
       setIsLoading(false);
-    }, 100)
-  }, [productInfor]);
+    })
+  }, [productInfor.data]);
 
   //add product
   useEffect(() => {
@@ -50,6 +44,7 @@ const CreateOrder = () => {
   useEffect(() => {
     if (addCategory !== "" || addSearch !== "") {
       const data = {
+        paginationNumber: paginationNumber,
         name: addSearch,
         category: addCategory,
       }
@@ -58,18 +53,13 @@ const CreateOrder = () => {
         setIsLoading(true);
       }, 200)
     }else{
-      dispatch(ShowProduct());
+      dispatch(ShowProduct(paginationNumber));
       setIsLoading(true);
     }
-  }, [dispatch, addCategory, addSearch])
-
-  //pagination
-  const lastPostIndex = currentPage * postsPerPage;
-  const firstPostIndex = lastPostIndex - postsPerPage;
-  const currentPosts = productData.slice(firstPostIndex, lastPostIndex);
+  }, [dispatch, addCategory, addSearch,paginationNumber])
 
   //add product
-  const handleAddProduct = (data: itemProduct<string, number>) => {
+  const handleAddProduct = (data: item<string, number>) => {
     const itemToAdd = data;
     const existingCartItems = addProduct || [];
 
@@ -85,8 +75,8 @@ const CreateOrder = () => {
 
   //remove product
   const handleRemoveProduct = (itemId: string) => {
-    const existingCartItems: itemProduct<string, number>[] = JSON.parse(localStorage.getItem('cartItems') as string) || [];
-    const updatedItems = existingCartItems.filter((item: itemProduct<string, number>) => item.id !== itemId);
+    const existingCartItems: item<string, number>[] = JSON.parse(localStorage.getItem('cartItems') as string) || [];
+    const updatedItems = existingCartItems.filter((item: item<string, number>) => item.id !== itemId);
     localStorage.setItem('cartItems', JSON.stringify(updatedItems));
     setAddProduct(updatedItems);
   }
@@ -140,7 +130,7 @@ const CreateOrder = () => {
         {/* list Item */}
         {isLoading ? (
           <Loading />
-        ) : productInfor.length > 0 ? (
+        ) : productData? (
           <div className='flex flex-col space-y-3'>
             <div className='w-full py-3 '>
               <h1 className="text-[20px] w-full font-semibold">Tất cả sản phẩm</h1>
@@ -148,13 +138,13 @@ const CreateOrder = () => {
             <div className=' w-full flex flex-col space-y-3'>
               <ListProduct
                 onClickAdd={handleAddProduct}
-                data={currentPosts} />
+                data={productData} />
             </div>
             <Pagination
-              totalPosts={productData.length}
-              postsPerPage={postsPerPage}
-              setCurrentPage={setCurrentPage}
-              currentPage={currentPage}
+              totalPosts={productInfor.pagination?.totalRow}
+              postsPerPage={productInfor.pagination?.pageSize}
+              setCurrentPage={setPaginationNumber}
+              currentPage={paginationNumber}
             />
           </div>
         ) : (

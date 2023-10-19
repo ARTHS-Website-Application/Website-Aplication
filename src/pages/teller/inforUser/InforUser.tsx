@@ -1,12 +1,12 @@
 import { useState, useEffect } from 'react'
 import { ClipboardDocumentListIcon } from '@heroicons/react/24/solid';
 import { useNavigate } from 'react-router-dom';
-import { itemProduct } from '@/types/actions/product'
+import { item } from '@/types/actions/product'
 import { itemOrder } from '@/types/actions/createOrder';
 import { showSuccessAlert } from '@/constants/chooseToastify';
 import userAxiosPrivate from '@/hooks/useAxiosPrivate';
 type Props = {
-    addProduct?: itemProduct<string, number>[];
+    addProduct?: item<string, number>[];
     removeProduct: (itemId: string) => void,
 }
 
@@ -90,6 +90,21 @@ const InforUser = ({ addProduct = [], removeProduct }: Props) => {
         setOrderData(updatedData);
     };
 
+    const formatPhoneNumber = (inputValue: string) => {
+        const numericValue = inputValue.replace(/\D/g, '');
+
+        if (numericValue.length > 0) {
+            return `0${numericValue.substring(1, 10)}`;
+        }
+
+        return '';
+    };
+
+    const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const formattedPhoneNumber = formatPhoneNumber(e.target.value);
+        setPhoneCustomer(formattedPhoneNumber);
+    };
+
     const handleCreateOrder = async () => {
         const data = {
             staffId: staffId,
@@ -103,7 +118,7 @@ const InforUser = ({ addProduct = [], removeProduct }: Props) => {
 
             if (response.status === 201) {
                 const orderId = response.data.id;
-                navigate(`/manage-order/list-order/${orderId}`);
+                navigate(`/manage-order/${orderId}`);
                 localStorage.removeItem('cartItems');
                 localStorage.removeItem('orderData');
                 showSuccessAlert('Tạo đơn hàng thành công');
@@ -133,7 +148,9 @@ const InforUser = ({ addProduct = [], removeProduct }: Props) => {
                                 <p>Số điện thoại</p>
                                 <p>Tên khách hàng</p>
                                 <p>Biển số xe</p>
-                                <p>Nhân viên sửa chữa</p>
+                                {showService.some((isSelected) => isSelected) && (
+                                    <p>Nhân viên sửa chữa</p>
+                                )}
                             </div>
 
                             <div>
@@ -142,7 +159,7 @@ const InforUser = ({ addProduct = [], removeProduct }: Props) => {
                                         type="text"
                                         placeholder="Số điện thoại"
                                         value={phoneCustomer}
-                                        onChange={(e) => setPhoneCustomer(e.target.value)}
+                                        onChange={handlePhoneChange}
                                         className="focus:outline-none focus:border-b-2 focus:border-main  border-b-2 border-black text-right"
                                     />
                                     <input
@@ -157,25 +174,27 @@ const InforUser = ({ addProduct = [], removeProduct }: Props) => {
                                         className="focus:outline-none focus:border-b-2 focus:border-main  border-b-2 border-black text-right"
                                         onChange={(e) => setLicensePlate(e.target.value)}
                                     />
-                                    <select className='h-10 border-2 border-gray-300 text-[18px]'
-                                        value={staffId}
-                                        onChange={(e) => {
-                                            setStaffId(e.target.value);
-                                        }}
-                                    >
-                                        <option value="" >Nhân viên</option>
-                                        <option value="6b345ba2-4068-4bc1-8f5a-42427cfe4b98">Staff 01</option>
-                                    </select>
+                                    {showService.some((isSelected) => isSelected) && (
+                                        <select className='h-10 border-2 border-gray-300 text-[18px]'
+                                            value={staffId}
+                                            onChange={(e) => {
+                                                setStaffId(e.target.value);
+                                            }}
+                                        >
+                                            <option value="" >Nhân viên</option>
+                                            <option value="6b345ba2-4068-4bc1-8f5a-42427cfe4b98">Staff 01</option>
+                                        </select>
+                                    )}
+
                                 </div>
 
                             </div>
                         </div>
                     </div>
                 </div>
-                <div className=" w-full h-[35vh] px-3 py-2 overflow-y-scroll space-y-2">
-                    {addProduct && addProduct
-
-                        ? addProduct.map((item: itemProduct<string, number>, index: number) => (
+                <div className=" w-full h-[35vh] px-3 pb-2 overflow-y-scroll space-y-2">
+                    {addProduct && addProduct &&
+                        addProduct.map((item: item<string, number>, index: number) => (
                             <div key={index} className="w-full">
                                 <div className='bg-white w-full rounded-lg flex justify-between pb-3'>
                                     <div className='flex'>
@@ -186,8 +205,15 @@ const InforUser = ({ addProduct = [], removeProduct }: Props) => {
                                         <div className='h-full pl-3 flex flex-col justify-between'>
                                             <div className='font-semibold pt-2'>
                                                 <p className='text-[16px]'>{item.name}</p>
-                                                <p className='text-[#888888] text-[14px] line-through'>{item.priceCurrent}đ</p>
-                                                <p className='text-[#FE3A30]'>{item.priceCurrent}đ</p>
+                                                {item.discount ? (
+                                                    <div>
+                                                        <p className='text-[#888888] text-[14px] line-through'>{item.priceCurrent}đ</p>
+                                                        <p className='text-[#FE3A30]'>{item.priceCurrent * (1 - item.discount.discountAmount / 100)}đ</p>
+                                                    </div>
+                                                ) : (
+                                                    <p className='text-[#FE3A30]'>{item.priceCurrent}đ</p>
+                                                )}
+
                                             </div>
                                             <div className='flex items-center space-x-1 pb-1'>
                                                 <h3 className='font-semibold'>Số lượng:</h3>
@@ -201,9 +227,9 @@ const InforUser = ({ addProduct = [], removeProduct }: Props) => {
                                                 />
                                                 {item.repairService ? (
                                                     <button
-                                                        className='font-bold pl-3 text-blue-700 '
+                                                        className='font-bold pl-2 text-blue-700 '
                                                         onClick={() => toggleService(index)}
-                                                    >chọn dịch vụ</button>
+                                                    >Chọn dịch vụ</button>
                                                 ) : ""}
 
                                             </div>
@@ -213,8 +239,8 @@ const InforUser = ({ addProduct = [], removeProduct }: Props) => {
                                     <button className='text-red-700 h-[30px] font-semibold pr-4 pl-1 pt-2' onClick={() => removeProduct(item.id)}>Xóa</button>
 
                                 </div>
-                                {showService[index] && item?.repairService
-                                    ? (<label className='w-full h-[70px] bg-white mt-3 flex items-center'>
+                                {showService[index] && item?.repairService &&
+                                    (<label className='w-full h-[70px] bg-white mt-3 flex items-center'>
                                         <input type="checkbox"
                                             defaultChecked={checkedService[index]}
                                             onChange={() =>
@@ -232,27 +258,24 @@ const InforUser = ({ addProduct = [], removeProduct }: Props) => {
                                             <p className='text-red-600 text-[14px]'>{item?.repairService?.price}đ</p>
                                         </div>
                                     </label>)
-                                    : ""
                                 }
                             </div>
                         ))
-                        : ""
                     }
-
                 </div>
-                {phoneCustomer && nameCustomer && licensePlate && orderData.length>0 
-                    ?( 
-                <div className='w-full bg-white h-[10vh] flex justify-around py-5'>
-                    <button className='w-[150px] bg-slate-200 hover:bg-red-700 hover:text-white font-semibold text-[18px] rounded-lg'>Hủy đơn</button>
-                        <button className='w-[200px] bg-slate-200 hover:bg-main hover:text-white font-semibold text-[18px] rounded-lg'
-                        onClick={handleCreateOrder}
-                    >Tiếp theo</button>
-                </div>
-                    ):(
+                {phoneCustomer.length === 10 && nameCustomer && licensePlate && orderData.length > 0
+                    ? (
+                        <div className='w-full bg-white h-[10vh] flex justify-around py-5'>
+                            <button className='w-[150px] bg-slate-200 hover:bg-red-700 hover:text-white font-semibold text-[18px] rounded-lg'>Hủy đơn</button>
+                            <button className='w-[200px] bg-slate-200 hover:bg-main hover:text-white font-semibold text-[18px] rounded-lg'
+                                onClick={handleCreateOrder}
+                            >Tiếp theo</button>
+                        </div>
+                    ) : (
                         <div className='w-full h-[10vh] py-5'>
                         </div>
                     )}
-                    
+
             </div>
         </div>
     )

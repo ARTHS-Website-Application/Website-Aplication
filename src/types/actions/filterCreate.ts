@@ -1,9 +1,10 @@
-export interface getFilter<T>{
+export interface getFilter<T,N>{
     type:"get_product_filter";
-    data:itemFilter<T>
+    data:itemFilter<T,N>
 }
 
-export interface itemFilter<T>{
+export interface itemFilter<T,N>{
+    paginationNumber?:N
     name?:T;
     category?:T;
 }

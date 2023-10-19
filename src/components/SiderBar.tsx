@@ -6,7 +6,7 @@ type Props = {
 }
 
 const SiderBar = ({ role }: Props) => {
-  const chooseRole = role === "Admin" ? roleAdmin : role === "Teller" ? roleTeller : roleOwner;
+  const chooseRole = role === "Admin" ? roleAdmin : role === "Teller" ? roleTeller : role === "Owner" ? roleOwner:[];
   return (
     <div className="w-full h-full py-5 flex flex-col items-center">
       <h1 className="text-main text-[27px] font-semibold">Thanh Huy Store</h1>

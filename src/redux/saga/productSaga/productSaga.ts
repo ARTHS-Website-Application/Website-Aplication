@@ -4,10 +4,11 @@ import { privateService } from '@/services/productService';
 import { AxiosResponse } from 'axios';
 import { ShowProductSuccess,ShowProductFailed, CategoryProductSuccess, CategoryProductFailed, FilterProductSuccess, FilterProductFailed } from '@/actions/product';
 import { getFilter } from '@/types/actions/filterCreate';
+import { payloadSaga } from '@/types/actions/product';
 
-function* getProduct() {
+function* getProduct(payload:payloadSaga<number>) {
     try {
-        const resp: AxiosResponse = yield call(privateService.getProduct);
+        const resp: AxiosResponse = yield call(privateService.getListProduct,payload.number);
         const { status, data } = resp;
         if (data && status === 200) {
             yield put(ShowProductSuccess(data));
@@ -19,7 +20,6 @@ function* getProduct() {
         const msg: string = error.message;
         yield put(ShowProductFailed(msg));
     }
-
 }
 
 function* getCategoryProduct() {
@@ -39,7 +39,7 @@ function* getCategoryProduct() {
 
 }
 
-function* getFilterProduct(payload:getFilter<string>) {
+function* getFilterProduct(payload:getFilter<string,number>) {
     console.log("payload", payload);
     try {
         const resp: AxiosResponse = yield call(privateService.getFilterCreateProduct,payload.data);

@@ -3,9 +3,10 @@ import { itemCategoryProduct } from "@/types/actions/categoryPr";
 import { itemFilter } from "@/types/actions/filterCreate";
 import { itemProduct } from "@/types/actions/product";
 
-export const ShowProduct = () => {
+export const ShowProduct = (number:number) => {
     return {
         type: productInfor.GET_PRODUCT_INFO,
+        number:number
     };
 };
 
@@ -49,7 +50,7 @@ export const CategoryProductFailed = (error:string) => {
     };
 };
 
-export const FilterProduct = (data:itemFilter<string>) => {
+export const FilterProduct = (data:itemFilter<string,number>) => {
     return {
         type: productFilter.GET_PRODUCT_FILTER,
         data

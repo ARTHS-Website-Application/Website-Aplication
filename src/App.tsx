@@ -1,5 +1,5 @@
 import { Routes, Route } from 'react-router-dom';
-import { publicRoutes} from './routes/router';
+import { publicRoutes } from './routes/router';
 import NotFound from './pages/notFound/NotFound';
 import Layout from './pages/Layout';
 import RequireAuth from './hooks/RequireAuth';
@@ -21,46 +21,48 @@ const ROLES = {
 };
 function App() {
   return (
-      <Routes>
-        <Route path="/" element={<Layout />}>
-          
-          {/* public router */}
-          {publicRoutes.map((route, index) => {
-            const Page = route.component;
-            return (
-              <Route
-                key={index}
-                path={route.path}
-                element={<Page />}
-              />
-            )
-          })}
-          {/* private router */}
-          
-          <Route element={<PersistLogin/>}>
-            <Route element={<RequireAuth allowedRoles={ROLES.Admin} />}>
+    <Routes>
+      <Route path="/" element={<Layout />}>
+
+        {/* public router */}
+        {publicRoutes.map((route, index) => {
+          const Page = route.component;
+          return (
+            <Route
+              key={index}
+              path={route.path}
+              element={<Page />}
+            />
+          )
+        })}
+        {/* private router */}
+
+        <Route element={<PersistLogin />}>
+
+          <Route element={<RequireAuth allowedRoles={ROLES.Admin} />}>
             <Route path="/" element={<Home />} />
           </Route>
 
           <Route element={<RequireAuth allowedRoles={ROLES.Teller} />}>
-            <Route path="teller" element={<HomeTeller />}/>
+            <Route path="teller" element={<HomeTeller />} />
             <Route path="manage-order" element={<ManageOrder />}>
-              <Route path="create-order" index element={<CreateOrder />}/>
-              <Route path="list-order" element={<ListOrder />}/>
-              <Route path=":orderId" element={<DetailOrder />}/>
-              <Route path="history-order" element={<HistoryOrder />}/>
+              <Route path="create-order" index element={<CreateOrder />} />
+              <Route path="list-order" element={<ListOrder />} />
+              <Route path=":orderId" element={<DetailOrder />} />
+              <Route path="history-order" element={<HistoryOrder />} />
             </Route>
-
           </Route>
+
           <Route element={<RequireAuth allowedRoles={ROLES.Owner} />}>
-            <Route path="owner" element={<HomeOwner />}/>
+            <Route path="owner" element={<HomeOwner />} />
           </Route>
-          </Route>
-          
 
-          <Route path="*" element={<NotFound />} />
         </Route>
-      </Routes>
+
+
+        <Route path="*" element={<NotFound />} />
+      </Route>
+    </Routes>
   );
 }
 

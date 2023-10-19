@@ -4,24 +4,25 @@ import { useEffect, useState } from 'react'
 import TableOrder from '@/components/teller/TableOrder'
 import { useDispatch, useSelector } from 'react-redux'
 import { getOrder } from '@/actions/order'
-import { itemOrder, selectorOrder } from '@/types/actions/listOrder'
-import { statusOrder } from '@/types/actions/statusOrder'
+import { itemOrder, listOrder, selectorOrder } from '@/types/actions/listOrder'
+import { statusOrder } from '@/types/typeOrder'
 
 
 const ListOrder = () => {
   const dispatch = useDispatch()
-  const orderInfor: itemOrder<string, number>[] = useSelector((state: selectorOrder<string, number>) => state.orderReducer.orderInfor);
+  const orderInfor: listOrder<string, number> = useSelector((state: selectorOrder<string, number>) => state.orderReducer.orderInfor);
   const [orderData, setOrderData] = useState([] as itemOrder<string, number>[]);
+  const [paginationNumber,setPaginationNumber] =useState<number>(0);
   console.log(orderData)
 
   useEffect(() => {
-    dispatch(getOrder());
-  }, [dispatch])
+    dispatch(getOrder(paginationNumber));
+  }, [dispatch,])
 
   useEffect(()=>{
-    const filteredOrderInfor = orderInfor.filter(item => item.status !== statusOrder.Paid);
+    const filteredOrderInfor = orderInfor.data?.filter(item => item.status !== statusOrder.Paid);
     setOrderData(filteredOrderInfor)
-  },[orderInfor])
+  },[orderInfor.data])
 
   return (
     <div className="w-full min-h-full">

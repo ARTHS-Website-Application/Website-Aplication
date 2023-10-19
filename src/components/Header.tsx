@@ -6,8 +6,9 @@ import { itemProfile, selectorProfile } from '@/types/actions/profile';
 
 type props = {
   handleLogout: () => void;
+  handleNotification:()=> void;
 }
-const Header = ({ handleLogout }: props) => {
+const Header = ({ handleLogout ,handleNotification}: props) => {
   const dispatch = useDispatch();
   useEffect(() => {
     dispatch(ShowProfile());
@@ -31,7 +32,9 @@ const Header = ({ handleLogout }: props) => {
         <p className='text-[#757575] text-sm'>Chúc một ngày tốt lành</p>
       </div>
       <div className="flex items-center">
-        <button className='px-5'>
+        <button className='px-5'
+        onClick={handleNotification}
+        >
           <BellIcon className='h-6 w-6' />
         </button>
         <div className='flex  border-l-2 border-[#C2C2C2] px-5 py-2 '>

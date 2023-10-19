@@ -2,13 +2,14 @@ import { getDetailOrderFailed, getDetailOrderSuccess, getOrderFailed, getOrderSu
 import {listOrder, detailOrder } from '@/constants/mainConstants';
 import { orderService } from '@/services/orderService';
 import { sagaDetailOrder } from '@/types/actions/detailOrder';
+import { payloadOrder } from '@/types/actions/listOrder';
 import { AxiosResponse } from 'axios';
 import { call, put, takeEvery } from 'redux-saga/effects';
 
 
-function* getOrder(){
+function* getOrder(payload:payloadOrder<number>){
     try {
-        const resp: AxiosResponse = yield call(orderService.getOrder);
+        const resp: AxiosResponse = yield call(orderService.getOrder,payload.number);
         const { status, data } = resp;
         if (data && status === 200) {
             yield put(getOrderSuccess(data));

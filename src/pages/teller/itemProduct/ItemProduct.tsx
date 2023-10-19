@@ -1,11 +1,11 @@
-import { discountItem, itemProduct } from "@/types/actions/product";
+import { discountItem, item } from "@/types/actions/product";
 import { useState } from "react";
 
 type Props = {
     _name: string,
     _priceCurrent: number,
     _imageUrl: string,
-    profileItem: itemProduct<string, number>,
+    profileItem: item<string, number>,
     _discount:discountItem<string,number>
     onClickAdd:()=> void,
 }

@@ -1,35 +1,12 @@
-import { postOrder,listOrder, detailOrder } from "@/constants/mainConstants";
-import { itemCreateOrder } from "@/types/actions/createOrder";
+import { listOrder, detailOrder, updateUserOrder } from "@/constants/mainConstants";
 import { itemDetailOrder } from "@/types/actions/detailOrder";
 import { itemOrder } from "@/types/actions/listOrder";
 
-export const createOrder = (data:itemCreateOrder<string,number>) => {
-    return {
-        type: postOrder.POST_ORDER,
-        data
-    };
-};
 
-export const createOrderSuccess = (data) => {
-    return {
-        type: postOrder.POST_ORDER_SUCCESS,
-        payload: {
-            data,
-        },
-    };
-};
-export const createOrderFailed = (error:string) => {
-    return {
-        type: postOrder.POST_ORDER_FAIL,
-        payload: {
-            error,
-        },
-    };
-};
-
-export const getOrder = () => {
+export const getOrder = (number:number) => {
     return {
         type: listOrder.LIST_ORDER,
+        number
     };
 };
 
@@ -68,6 +45,30 @@ export const getDetailOrderSuccess = (data:itemDetailOrder<string,number>) => {
 export const getDetailOrderFailed = (error:string) => {
     return {
         type: detailOrder.DETAIL_ORDER_FAIL,
+        payload: {
+            error,
+        },
+    };
+};
+
+export const updateCustomerOrder = (id:string) => {
+    return {
+        type: updateUserOrder.UPDATE_USER_ORDER,
+        id
+    };
+};
+
+export const updateCustomerOrderSuccess = (data) => {
+    return {
+        type: updateUserOrder.UPDATE_USER_ORDER_SUCCESS,
+        payload: {
+            data,
+        },
+    };
+};
+export const updateCustomerOrderFailed = (error:string) => {
+    return {
+        type: updateUserOrder.UPDATE_USER_ORDER_FAIL,
         payload: {
             error,
         },

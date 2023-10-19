@@ -60,7 +60,10 @@ const Login = () => {
             } else if (roles === "Teller") {
                 const from = "/teller";
                 navigate(from, { replace: true });
-            } else {
+            } else if (roles === "Owner") {
+                const from = "/owner";
+                navigate(from, { replace: true });
+            }else {
                 navigate('/unauthorized')
             }
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -98,7 +101,7 @@ const Login = () => {
                                 <input
                                     type="text"
                                     ref={userRef}
-                                    placeholder="Email"
+                                    placeholder="Số điện thoại"
                                     className="h-[70px] w-full text-xl border-2 border-[#9D9D9D] rounded-[10px] px-2"
                                     value={phoneNumber}
                                     onChange={(e) => setPhoneNumber(e.target.value)}

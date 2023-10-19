@@ -5,3 +5,8 @@ export enum statusOrder {
     Finished = "Hoàn thành",
     Paid = "Đã thanh toán",
 }
+
+export enum typeOrder{
+    Purchase = "Đơn mua hàng",
+    Repair = "Đơn sửa chữa",
+}

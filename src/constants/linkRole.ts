@@ -10,11 +10,11 @@ const roleOwner = [
         name: 'quan ly',
     },
     {
-        to: '/admin',
+        to: '',
         name: 'quan ly',
     },
     {
-        to: '/admin',
+        to: '',
         name: 'quan ly',
     },
 ]
