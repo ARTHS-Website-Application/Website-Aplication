@@ -16,31 +16,30 @@ const CreateOrder = () => {
   const productInfor: itemProduct<string, number> = useSelector((state: selectorProduct<string, number>) => state.productReducer.productInfor);
   const categoryProduct: itemCategoryProduct<string>[] = useSelector((state: selectorCategoryProduct<string>) => state.categoryProductReducer.categoryProduct);
   const [productData, setProductData] = useState([] as item<string, number>[]);
-  const [addProduct, setAddProduct] = useState<item<string, number>[]>();
+  const [addProduct, setAddProduct] = useState<item<string, number>[]>([]);
   const [addCategory, setAddCategory] = useState<string>("");
   const [addSearch, setAddSearch] = useState<string>("")
   const [searchTimeout, setSearchTimeout] = useState<number | null>(null);
-  const [paginationNumber,setPaginationNumber] =useState<number>(0);
-  //dispatch
+  const [paginationNumber, setPaginationNumber] = useState<number>(0);
+
+  //dispatch loại product
   useEffect(() => {
     dispatch(CategoryProduct());
   }, [dispatch])
 
-  //data product
+  //hiển thị sản phẩm theo api
   useEffect(() => {
-    setTimeout(() => {
-      setProductData(productInfor.data);
-      setIsLoading(false);
-    })
+    setProductData(productInfor.data);
+    setIsLoading(false);
   }, [productInfor.data]);
 
-  //add product
+  //thêm sản phẩm
   useEffect(() => {
     const existingCartItems = JSON.parse(localStorage.getItem('cartItems') as string) || [];
     setAddProduct(existingCartItems);
   }, []);
 
-  //filter data
+  //lọc sản phẩm
   useEffect(() => {
     if (addCategory !== "" || addSearch !== "") {
       const data = {
@@ -52,13 +51,13 @@ const CreateOrder = () => {
         dispatch(FilterProduct(data))
         setIsLoading(true);
       }, 200)
-    }else{
+    } else {
       dispatch(ShowProduct(paginationNumber));
       setIsLoading(true);
     }
-  }, [dispatch, addCategory, addSearch,paginationNumber])
+  }, [dispatch, addCategory, addSearch, paginationNumber])
 
-  //add product
+  //thêm product
   const handleAddProduct = (data: item<string, number>) => {
     const itemToAdd = data;
     const existingCartItems = addProduct || [];
@@ -67,13 +66,13 @@ const CreateOrder = () => {
     if (isProductInCart) {
       showWarningAlert(`Sản phẩm đã được thêm, mời bạn kiểm tra lại`)
     } else {
-      const updatedItems = [itemToAdd, ...existingCartItems];
+      const updatedItems = [...existingCartItems,itemToAdd];
       setAddProduct(updatedItems);
       localStorage.setItem('cartItems', JSON.stringify(updatedItems));
     }
   }
 
-  //remove product
+  //xóa product
   const handleRemoveProduct = (itemId: string) => {
     const existingCartItems: item<string, number>[] = JSON.parse(localStorage.getItem('cartItems') as string) || [];
     const updatedItems = existingCartItems.filter((item: item<string, number>) => item.id !== itemId);
@@ -112,12 +111,11 @@ const CreateOrder = () => {
                   if (searchTimeout) {
                     clearTimeout(searchTimeout);
                   }
-                  // Set a new search timeout
                   const newTimeSearch = window.setTimeout(() => {
                     setAddSearch(e.target.value);
                   }, 800);
 
-                  // Update the searchTimeout state
+                  // Cập nhật trạng thái searchTimeout
                   setSearchTimeout(newTimeSearch);
                 }}
 
@@ -127,10 +125,10 @@ const CreateOrder = () => {
           </form>
         </div>
 
-        {/* list Item */}
+        {/* danh sách sản phẩm*/}
         {isLoading ? (
           <Loading />
-        ) : productData? (
+        ) : productData ? (
           <div className='flex flex-col space-y-3'>
             <div className='w-full py-3 '>
               <h1 className="text-[20px] w-full font-semibold">Tất cả sản phẩm</h1>
@@ -154,6 +152,7 @@ const CreateOrder = () => {
         )}
       </div>
       <InforUser
+        setAddProduct={setAddProduct}
         addProduct={addProduct}
         removeProduct={handleRemoveProduct}
       />

@@ -28,6 +28,7 @@ export interface itemDetailOrder<T, N> {
     customerPhone: T,
     licensePlate: T,
     status: T,
+    paymentMethod: T,
     totalAmount: N,
     orderType: T,
     orderDate: Date,

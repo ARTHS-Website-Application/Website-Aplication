@@ -59,9 +59,25 @@ export interface pagination<N> {
     totalRow: N;
 }
 
-export interface payloadSaga<N>{
-    type:'get_product_info';
-    number:N
+export interface payloadSaga<N> {
+    type: 'get_product_info';
+    number: N
+}
+
+export interface addProductOrder<T, N> {
+    idProduct: T;
+    nameProduct: T;
+    priceCurrent: N|null;
+    priceProduct:N;
+    discountAmount: N | null;
+    image: string;
+    productQuantity: N;
+    repairService: {
+        id: T;
+        name: T;
+        price: N;
+        image: T
+    }|null;
 }
 
 

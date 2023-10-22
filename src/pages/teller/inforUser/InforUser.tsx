@@ -5,12 +5,14 @@ import { item } from '@/types/actions/product'
 import { itemOrder } from '@/types/actions/createOrder';
 import { showSuccessAlert } from '@/constants/chooseToastify';
 import userAxiosPrivate from '@/hooks/useAxiosPrivate';
+import { formatPhoneNumber } from '@/utils/formatPhone';
 type Props = {
     addProduct?: item<string, number>[];
     removeProduct: (itemId: string) => void,
+    setAddProduct: React.Dispatch<React.SetStateAction<item<string, number>[]>>
 }
 
-const InforUser = ({ addProduct = [], removeProduct }: Props) => {
+const InforUser = ({ addProduct = [], removeProduct, setAddProduct }: Props) => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const navigate = useNavigate();
     const [phoneCustomer, setPhoneCustomer] = useState<string>('');
@@ -62,7 +64,7 @@ const InforUser = ({ addProduct = [], removeProduct }: Props) => {
         // Cập nhật localStorage
         localStorage.setItem('orderData', JSON.stringify(updatedOrder));
     };
-
+    //Ẩn/hiện dịch vụ
     const toggleService = (index: number) => {
         const updatedShowService = [...showService];
         updatedShowService[index] = !updatedShowService[index];
@@ -88,16 +90,6 @@ const InforUser = ({ addProduct = [], removeProduct }: Props) => {
 
         // Cập nhật lại state
         setOrderData(updatedData);
-    };
-
-    const formatPhoneNumber = (inputValue: string) => {
-        const numericValue = inputValue.replace(/\D/g, '');
-
-        if (numericValue.length > 0) {
-            return `0${numericValue.substring(1, 10)}`;
-        }
-
-        return '';
     };
 
     const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -148,7 +140,7 @@ const InforUser = ({ addProduct = [], removeProduct }: Props) => {
                                 <p>Số điện thoại</p>
                                 <p>Tên khách hàng</p>
                                 <p>Biển số xe</p>
-                                {showService.some((isSelected) => isSelected) && (
+                                {addProduct.length > 0 && showService.some((isSelected) => isSelected) && (
                                     <p>Nhân viên sửa chữa</p>
                                 )}
                             </div>
@@ -174,7 +166,7 @@ const InforUser = ({ addProduct = [], removeProduct }: Props) => {
                                         className="focus:outline-none focus:border-b-2 focus:border-main  border-b-2 border-black text-right"
                                         onChange={(e) => setLicensePlate(e.target.value)}
                                     />
-                                    {showService.some((isSelected) => isSelected) && (
+                                    {addProduct.length > 0 && showService.some((isSelected) => isSelected) && (
                                         <select className='h-10 border-2 border-gray-300 text-[18px]'
                                             value={staffId}
                                             onChange={(e) => {
@@ -182,7 +174,9 @@ const InforUser = ({ addProduct = [], removeProduct }: Props) => {
                                             }}
                                         >
                                             <option value="" >Nhân viên</option>
-                                            <option value="6b345ba2-4068-4bc1-8f5a-42427cfe4b98">Staff 01</option>
+                                            {!orderData.every((item) => item.repairServiceId === null) && (
+                                                <option value="6b345ba2-4068-4bc1-8f5a-42427cfe4b98">Staff 01</option>
+                                            )}
                                         </select>
                                     )}
 
@@ -193,7 +187,7 @@ const InforUser = ({ addProduct = [], removeProduct }: Props) => {
                     </div>
                 </div>
                 <div className=" w-full h-[35vh] px-3 pb-2 overflow-y-scroll space-y-2">
-                    {addProduct && addProduct &&
+                    {addProduct &&
                         addProduct.map((item: item<string, number>, index: number) => (
                             <div key={index} className="w-full">
                                 <div className='bg-white w-full rounded-lg flex justify-between pb-3'>
@@ -221,8 +215,9 @@ const InforUser = ({ addProduct = [], removeProduct }: Props) => {
                                                     type="number"
                                                     defaultValue={1}
                                                     min={1}
-                                                    max={item.quantity}
-                                                    onChange={(e) => handleQuantityChange(item.id, parseInt(e.target.value))}
+                                                    onChange={(e) => {
+                                                        handleQuantityChange(item.id, parseInt(e.target.value))
+                                                    }}
                                                     className='w-[60px] border-b-2 border-black text-center focus:outline-none focus:border-b-2 focus:border-main'
                                                 />
                                                 {item.repairService ? (
@@ -236,7 +231,13 @@ const InforUser = ({ addProduct = [], removeProduct }: Props) => {
                                         </div>
 
                                     </div>
-                                    <button className='text-red-700 h-[30px] font-semibold pr-4 pl-1 pt-2' onClick={() => removeProduct(item.id)}>Xóa</button>
+                                    <button className='text-red-700 h-[30px] font-semibold pr-4 pl-1 pt-2'
+                                        onClick={() => {
+                                            removeProduct(item.id)
+                                            const updatedShowService = [...showService];
+                                            updatedShowService[index] = false;
+                                            setShowService(updatedShowService);
+                                        }}>Xóa</button>
 
                                 </div>
                                 {showService[index] && item?.repairService &&
@@ -263,15 +264,30 @@ const InforUser = ({ addProduct = [], removeProduct }: Props) => {
                         ))
                     }
                 </div>
-                {phoneCustomer.length === 10 && nameCustomer && licensePlate && orderData.length > 0
-                    ? (
+                {phoneCustomer.length === 10 && nameCustomer && orderData.length > 0
+                    ?
+
+                    (
                         <div className='w-full bg-white h-[10vh] flex justify-around py-5'>
-                            <button className='w-[150px] bg-slate-200 hover:bg-red-700 hover:text-white font-semibold text-[18px] rounded-lg'>Hủy đơn</button>
+                            <button className='w-[150px] bg-slate-200 hover:bg-red-700 hover:text-white font-semibold text-[18px] rounded-lg'
+                                onClick={() => {
+                                    setPhoneCustomer('');
+                                    setNameCustomer('');
+                                    setLicensePlate('');
+                                    localStorage.removeItem('cartItems');
+                                    localStorage.removeItem('orderData');
+                                    setOrderData([]);
+                                    setAddProduct([]);
+
+                                }}
+                            >Hủy đơn</button>
                             <button className='w-[200px] bg-slate-200 hover:bg-main hover:text-white font-semibold text-[18px] rounded-lg'
                                 onClick={handleCreateOrder}
                             >Tiếp theo</button>
                         </div>
-                    ) : (
+                    )
+
+                    : (
                         <div className='w-full h-[10vh] py-5'>
                         </div>
                     )}

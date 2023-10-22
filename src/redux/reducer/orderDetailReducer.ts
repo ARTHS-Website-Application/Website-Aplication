@@ -1,4 +1,4 @@
-import { detailOrder } from '../../constants/mainConstants';
+import { detailOrder, updateProductOrdered, updateUserOrder } from '../../constants/mainConstants';
 import { orderDetailPayloadReducer, storeOrderDetail } from '@/types/actions/detailOrder';
 
 
@@ -25,6 +25,29 @@ const orderDetailReducer = (
             return {
                 ...state,
                 orderDetail: [],
+                showError: payload.showError
+            }
+        case updateUserOrder.UPDATE_USER_ORDER_SUCCESS:
+            return {
+                ...state,
+                orderDetail: payload.data
+            }
+        case updateUserOrder.UPDATE_USER_ORDER_FAIL:
+            return {
+                ...state,
+                orderDetail: [],
+                showError: payload.showError
+            }
+        case updateProductOrdered.UPDATE_PRODUCT_ORDER_SUCCESS:
+            return {
+                ...state,
+                orderDetail: payload.data
+            }
+        case updateProductOrdered.UPDATE_PRODUCT_ORDER_FAIL:
+            return {
+                ...state,
+                orderDetail: [],
+                showError: payload.showError
             }
 
         default:

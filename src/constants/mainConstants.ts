@@ -1,15 +1,3 @@
-export const loginConstants = {
-    LOGIN: "login",
-    LOGIN_SUCCESS: "login_success",
-    LOGIN_FAIL: "login_fail",
-}
-
-export const refreshConstants = {
-    REFRESH: "refresh",
-    REFRESH_SUCCESS: "refresh_success",
-    REFRESH_FAIL: "refresh_fail",
-}
-
 export const userInfor = {
     GET_USER_INFO: "get_user_info",
     GET_USER_INFO_SUCCESS: "get_user_info_success",
@@ -56,5 +44,11 @@ export const updateUserOrder = {
     UPDATE_USER_ORDER: "update_user_order",
     UPDATE_USER_ORDER_SUCCESS: "update_user_success",
     UPDATE_USER_ORDER_FAIL: "update_user_fail",
+}
+
+export const updateProductOrdered = {
+    UPDATE_PRODUCT_ORDER: "update_product_order",
+    UPDATE_PRODUCT_ORDER_SUCCESS: "update_product_success",
+    UPDATE_PRODUCT_ORDER_FAIL: "update_product_fail",
 }
 
