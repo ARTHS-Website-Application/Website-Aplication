@@ -38,12 +38,12 @@ const Header = ({ handleLogout ,handleNotification}: props) => {
           <BellIcon className='h-6 w-6' />
         </button>
         <div className='flex  border-l-2 border-[#C2C2C2] px-5 py-2 '>
-          {profile.avatar
-            ? <div className='bg-gray-20 bg-center h-[45px] w-[45px] rounded-full'
-              style={{ backgroundImage: `url(${profile.avatar})` }}>
+          {profile?.avatar
+            ? <div className='bg-gray-20 h-[45px] w-[45px] rounded-full'>
+              <img src={profile?.avatar} alt="" className='h-[45px] w-[45px] rounded-full' />
             </div>
-            : <div className='bg-gray-20 bg-center h-[45px] w-[45px] rounded-full'
-              style={{ backgroundImage: "url('https://mdbcdn.b-cdn.net/img/Photos/Vertical/mountain3.webp')" }}>
+            : <div className='bg-gray-20 bg-center h-[45px] w-[45px] rounded-full'>
+              <img src={'https://mdbcdn.b-cdn.net/img/Photos/Vertical/mountain3.webp'} alt="" className='h-[45px] w-[45px] rounded-full' />
             </div>
           }
 

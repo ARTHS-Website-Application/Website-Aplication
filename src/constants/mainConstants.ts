@@ -4,6 +4,7 @@ export const userInfor = {
     GET_USER_INFO_FAIL: "get_user_info_fail",
 }
 
+//product
 export const productInfor = {
     GET_PRODUCT_INFO: "get_product_info",
     GET_PRODUCT_INFO_SUCCESS: "get_product_info_success",
@@ -22,6 +23,13 @@ export const productFilter = {
     GET_PRODUCT_FILTER_FAIL: "get_product_filter_fail",
 }
 
+export const detailProduct = {
+    DETAIL_PRODUCT: "detail_product",
+    DETAIL_PRODUCT_SUCCESS: "detail_product_success",
+    DETAIL_PRODUCT_FAIL: "detail_product_fail",
+}
+
+//order
 export const postOrder = {
     POST_ORDER: "post_order",
     POST_ORDER_SUCCESS: "post_order_success",
@@ -51,4 +59,6 @@ export const updateProductOrdered = {
     UPDATE_PRODUCT_ORDER_SUCCESS: "update_product_success",
     UPDATE_PRODUCT_ORDER_FAIL: "update_product_fail",
 }
+
+
 

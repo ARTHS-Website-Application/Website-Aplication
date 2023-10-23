@@ -17,8 +17,8 @@ const SiderBar = ({ role }: Props) => {
               <NavLink  to={route.to}
               className={({ isActive }) =>
                 isActive
-                  ? "w-full text-center py-3 text-white bg-main rounded-md"
-                  : " w-full text-center py-3 hover:text-main"
+                  ? "w-full text-start pl-5 py-3 text-white bg-main rounded-md"
+                  : "w-full text-start pl-5 py-3 hover:text-main text-[#757575]"
               }>
               {route.name}
             </NavLink>

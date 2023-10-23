@@ -7,34 +7,35 @@ import { useState, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
 import Pagination from '../Pagination';
 import ListProduct from '@/pages/teller/listProduct/ListProduct';
-import Loading from '../Loading';
+import Loading from '../LoadingPage';
 import UpdateProduct from '@/components/teller/UpdateProduct';
 import { inStoreOrderDetails } from '@/types/actions/detailOrder';
+import { typeActiveProduct } from '@/types/typeProduct';
 
 type Props = {
     isVisible: boolean;
     onClose: () => void;
-    dataProduct?:inStoreOrderDetails<string,number>[];
+    dataProduct?: inStoreOrderDetails<string, number>[];
     idOrder: string | null;
 }
 
-const RepairProduct = ({ isVisible, onClose,dataProduct,idOrder }: Props) => {
-    const tranfomDataProduct:addProductOrder<string,number>[] = (dataProduct ?? []).map((item:inStoreOrderDetails<string,number>) => {
-        const transformedItem:addProductOrder<string,number> = {
+const RepairProduct = ({ isVisible, onClose, dataProduct, idOrder }: Props) => {
+    const tranfomDataProduct: addProductOrder<string, number>[] = (dataProduct ?? []).map((item: inStoreOrderDetails<string, number>) => {
+        const transformedItem: addProductOrder<string, number> = {
             idProduct: item?.motobikeProduct.id,
             nameProduct: item?.motobikeProduct.name,
             priceCurrent: item?.productPrice,
-            priceProduct:item.motobikeProduct.priceCurrent,
-            discountAmount:null,
+            priceProduct: item.motobikeProduct.priceCurrent,
+            discountAmount: null,
             image: item.motobikeProduct.image,
             productQuantity: item.productQuantity,
-            repairService: item?.repairService ??null,
+            repairService: item?.repairService ?? null,
         };
         return transformedItem;
     });
-    useEffect(()=>{ 
+    useEffect(() => {
         setAddProduct(tranfomDataProduct);
-    },[dataProduct])
+    }, [dataProduct])
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [productData, setProductData] = useState([] as item<string, number>[]);
     const [addProduct, setAddProduct] = useState<addProductOrder<string, number>[]>(tranfomDataProduct);
@@ -50,10 +51,11 @@ const RepairProduct = ({ isVisible, onClose,dataProduct,idOrder }: Props) => {
     }, [dispatch])
 
     useEffect(() => {
-        setProductData(productInfor.data);
+        const activeProducts = productInfor.data?.filter((product) => product.status === typeActiveProduct.Active);
+        setProductData(activeProducts);
         setIsLoading(false);
     }, [productInfor?.data]);
-    
+
     useEffect(() => {
         if (addCategory !== "" || addSearch !== "") {
             const data = {
@@ -73,12 +75,12 @@ const RepairProduct = ({ isVisible, onClose,dataProduct,idOrder }: Props) => {
 
     //thêm product
     const handleAddProduct = (data: item<string, number>) => {
-        const newData:addProductOrder<string,number>={
+        const newData: addProductOrder<string, number> = {
             idProduct: data.id,
             nameProduct: data.name,
             priceCurrent: null,
-            priceProduct:data.priceCurrent,
-            discountAmount: data?.discount?data.discount?.discountAmount:null,
+            priceProduct: data.priceCurrent,
+            discountAmount: data?.discount ? data.discount?.discountAmount : null,
             image: data.images[0].imageUrl,
             productQuantity: 1,
             repairService: data?.repairService
@@ -90,7 +92,7 @@ const RepairProduct = ({ isVisible, onClose,dataProduct,idOrder }: Props) => {
         if (isProductInCart) {
             showWarningAlert(`Sản phẩm đã được thêm, mời bạn kiểm tra lại`)
         } else {
-            const updatedItems = [ ...existingCartItems,itemToAdd];
+            const updatedItems = [...existingCartItems, itemToAdd];
             setAddProduct(updatedItems);
             localStorage.setItem('cartItemsUpdate', JSON.stringify(updatedItems));
         }

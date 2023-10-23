@@ -7,11 +7,15 @@ import productReducer from './reducer/productReducer';
 import categoryProductReducer from './reducer/categoryProductReducer';
 import orderReducer from './reducer/orderReducer';
 import orderDetailReducer from './reducer/orderDetailReducer';
+import productDetailReducer from './reducer/productDetailReducer';
 const middleSaga = createMiddleWareSaga();
 const allReducer = combineReducers({
   userReducer,
+  // product
   productReducer,
+  productDetailReducer,
   categoryProductReducer,
+  // order
   orderReducer,
   orderDetailReducer,
   });

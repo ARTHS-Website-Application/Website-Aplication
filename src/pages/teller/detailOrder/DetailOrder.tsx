@@ -15,7 +15,7 @@ import { inStoreOrderDetails, itemDetailOrder, selectorDetailOrder } from '@/typ
 import userAxiosPrivate from '@/hooks/useAxiosPrivate';
 import { statusOrder, typeOrder } from '@/types/typeOrder';
 import RepairCustomer from '@/components/teller/RepairCustomer';
-import Loading from '@/components/Loading';
+import Loading from '@/components/LoadingPage';
 import RepairProduct from '@/components/teller/RepairProduct';
 
 const DetailOrder = () => {

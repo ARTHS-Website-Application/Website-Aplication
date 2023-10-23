@@ -1,7 +1,7 @@
-import { productInfor, productCategory, productFilter } from "@/constants/mainConstants";
+import { productInfor, productCategory, productFilter, detailProduct } from "@/constants/mainConstants";
 import { itemCategoryProduct } from "@/types/actions/categoryPr";
 import { itemFilter } from "@/types/actions/filterCreate";
-import { itemProduct } from "@/types/actions/product";
+import { item, itemProduct } from "@/types/actions/product";
 
 export const ShowProduct = (number:number) => {
     return {
@@ -68,6 +68,30 @@ export const FilterProductSuccess = (data:itemProduct<string,number>) => {
 export const FilterProductFailed = (error:string) => {
     return {
         type: productFilter.GET_PRODUCT_FILTER_FAIL,
+        payload: {
+            error,
+        },
+    };
+};
+
+export const getDetailProduct = (id: string) => {
+    return {
+        type: detailProduct.DETAIL_PRODUCT,
+        id
+    };
+};
+
+export const getDetailProductSuccess = (data: item<string, number>) => {
+    return {
+        type: detailProduct.DETAIL_PRODUCT_SUCCESS,
+        payload: {
+            data,
+        },
+    };
+};
+export const getDetailProductFailed = (error: string) => {
+    return {
+        type: detailProduct.DETAIL_PRODUCT_FAIL,
         payload: {
             error,
         },

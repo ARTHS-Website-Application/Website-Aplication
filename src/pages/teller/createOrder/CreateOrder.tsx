@@ -8,7 +8,8 @@ import Pagination from '@/components/Pagination'
 import { showWarningAlert } from '@/constants/chooseToastify'
 import { itemCategoryProduct, selectorCategoryProduct } from '@/types/actions/categoryPr'
 import { MagnifyingGlassIcon } from '@heroicons/react/24/solid'
-import Loading from '@/components/Loading'
+import Loading from '@/components/LoadingPage'
+import { typeActiveProduct } from '@/types/typeProduct'
 
 const CreateOrder = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -29,7 +30,8 @@ const CreateOrder = () => {
 
   //hiển thị sản phẩm theo api
   useEffect(() => {
-    setProductData(productInfor.data);
+    const activeProducts = productInfor.data?.filter((product) => product.status === typeActiveProduct.Active);
+    setProductData(activeProducts);
     setIsLoading(false);
   }, [productInfor.data]);
 

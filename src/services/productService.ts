@@ -27,6 +27,11 @@ export class Private {
         }
     }
 
+    getDetailProduct = async (id: string) => {
+        const axiosPrivate = userAxiosPrivate();
+        return await axiosPrivate.get(`/motobike-products/${id}`)
+    }
+
 }
 
 export const privateService = new Private();

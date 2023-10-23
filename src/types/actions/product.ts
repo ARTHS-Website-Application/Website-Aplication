@@ -42,16 +42,57 @@ export interface item<T, N> {
     priceCurrent: N;
     quantity: N;
     warrantyDuration: N;
-    status: boolean;
+    description: T;
+    status: T;
+    updateAt: Date;
+    createAt: Date;
     discount: discountItem<T, N>;
+    category: {
+        id: T,
+        categoryName: T
+    };
     repairService: {
         id: T;
         name: T;
         price: N;
         image: T;
-    },
-    images: imageItem<T>[]
+    };
+    images: imageItem<T>[];
+    feedbackProducts: feedbackProducts<T, N>[];
+    motobikeProductPrices: motobikeProductPrices<T, N>[];
+    vehicles:vehicles<T>[]
+
 }
+
+export interface motobikeProductPrices<T, N> {
+    id: T,
+    dateApply: Date,
+    priceCurrent: N,
+    createAt: Date
+}
+export interface feedbackProducts<T, N> {
+    id: T,
+    title: T,
+    rate: N,
+    content: T,
+    updateAt: Date,
+    createAt: Date,
+    customer: {
+        accountId: T,
+        fullName: T,
+        gender: T,
+        address: T,
+        avatar: T,
+    }
+
+}
+
+export interface vehicles<T> {
+    id: T,
+    vehicleName: T
+}
+
+
 
 export interface pagination<N> {
     pageNumber: N;
@@ -67,8 +108,8 @@ export interface payloadSaga<N> {
 export interface addProductOrder<T, N> {
     idProduct: T;
     nameProduct: T;
-    priceCurrent: N|null;
-    priceProduct:N;
+    priceCurrent: N | null;
+    priceProduct: N;
     discountAmount: N | null;
     image: string;
     productQuantity: N;
@@ -77,7 +118,7 @@ export interface addProductOrder<T, N> {
         name: T;
         price: N;
         image: T
-    }|null;
+    } | null;
 }
 
 

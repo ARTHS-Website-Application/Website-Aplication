@@ -7,15 +7,27 @@ const roleAdmin = [
 const roleOwner = [
     {
         to: '/owner',
-        name: 'quan ly',
+        name: 'Trang chủ',
     },
     {
-        to: '',
-        name: 'quan ly',
+        to: '/manage-employees',
+        name: 'Quản lý nhân viên',
     },
     {
-        to: '',
-        name: 'quan ly',
+        to: '/manage-products',
+        name: 'Quản lý sản phẩm',
+    },
+    {
+        to: '/manage-orders-owner',
+        name: 'Quản lý đơn hàng',
+    },
+    {
+        to: '/manage-discounts',
+        name: 'Quản lý khuyến mãi',
+    },
+    {
+        to: '/manage-services',
+        name: 'Quản lý dịch vụ',
     },
 ]
 const roleTeller = [

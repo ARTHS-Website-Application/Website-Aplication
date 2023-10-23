@@ -12,7 +12,7 @@ export interface selectorDetailOrder<T,N> {
 
 export interface storeOrderDetail<T,N> {
     showError: T | null,
-    orderDetail: orderDetailPayloadReducer<T,N>[];
+    orderDetail: itemDetailOrder<T,N>[];
 }
 
 export interface orderDetailPayloadReducer<T,N> {

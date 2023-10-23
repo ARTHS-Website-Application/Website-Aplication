@@ -120,7 +120,7 @@ const VnPayReturn = () => {
                     <hr className="my-6 border-t border-gray-300" />
 
                     <div className="mt-8">
-                        <NavLink to={`/manage-order/${data?.orderId}`} className="text-main hover:underline">Quay về trang quản lý đơn hàng</NavLink>
+                        <NavLink to={`/manage-order/${data?.orderId}`} className="text-blue-600  hover:underline">Quay về trang quản lý đơn hàng</NavLink>
                     </div>
                 </div>
             </div>
