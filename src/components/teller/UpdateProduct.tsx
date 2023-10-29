@@ -4,6 +4,7 @@ import { itemOrder } from '@/types/actions/createOrder';
 import { useDispatch } from 'react-redux';
 import { updateProductOrder } from '@/actions/order';
 import { showSuccessAlert } from '@/constants/chooseToastify';
+import StaffSelect from './StaffSelect';
 type Props = {
     addProduct?: addProductOrder<string, number>[];
     removeProduct: (itemId: string) => void,
@@ -13,13 +14,16 @@ type Props = {
     idOrder: string | null;
 }
 
-const UpdateProduct = ({ addProduct = [], removeProduct, onClose, setAddProduct, tranfomDataProduct,idOrder }: Props) => {
+const UpdateProduct = ({ addProduct = [], removeProduct, onClose, setAddProduct, tranfomDataProduct, idOrder }: Props) => {
     const dispatch = useDispatch();
-    const [showService, setShowService] = useState<boolean[]>(addProduct.map(() => false));
+    const [showStaff, setShowStaff] = useState<boolean>(false);
+    const [staffId, setStaffId] = useState<string>('');
+    // const [checkedService, setCheckedService] = useState<boolean[]>(Array(addProduct.length).fill(false));
     const [orderData, setOrderData] = useState<itemOrder<string, number>[]>([]);
     const [productQuantity, setProductQuantity] = useState<{ [key: string]: number }>({});
-    const selectedItems = new Set<string>();
     //check tranfomDataProduct và addProduct trùng nhau không
+    const selectedItems = new Set<string>();
+    const [showService, setShowService] = useState<boolean[]>(addProduct.map(() => false));
     const [checkedService, setCheckedService] = useState<boolean[]>(addProduct.map((item) => {
         if (item.repairService && !selectedItems.has(item.idProduct)) {
             selectedItems.add(item.idProduct);
@@ -58,7 +62,7 @@ const UpdateProduct = ({ addProduct = [], removeProduct, onClose, setAddProduct,
                     };
                 }
             });
-            
+
             localStorage.setItem('updateOrderData', JSON.stringify(dataCart));
             setOrderData(dataCart);
         }
@@ -134,18 +138,35 @@ const UpdateProduct = ({ addProduct = [], removeProduct, onClose, setAddProduct,
         setOrderData(updatedData);
     };
     //gửi dispatch update
-    const handleUpdateStaffProduct = ()=>{
-        const data={
-            staffId:null,
-            orderDetailModel:orderData
+    const handleUpdateStaffProduct = () => {
+        const data = {
+            staffId: staffId,
+            orderDetailModel: orderData
         }
-        if(idOrder){
-            dispatch(updateProductOrder(idOrder,data))
+        if (idOrder) {
+            dispatch(updateProductOrder(idOrder, data))
             showSuccessAlert("Cập nhật thành công")
             onClose();
         }
     }
-    console.log("first", orderData)
+
+    const handleRemoveItemNotChange = (indexToRemove: number) => {
+        if (indexToRemove >= 0 && indexToRemove < showService.length) {
+            setShowService((prevShowService) => {
+                const updatedShowService = [...prevShowService];
+                updatedShowService.splice(indexToRemove, 1);
+                return updatedShowService;
+            });
+        }
+
+        if (indexToRemove >= 0 && indexToRemove < checkedService.length) {
+            setCheckedService((prevCheckedService) => {
+                const updatedCheckedService = [...prevCheckedService];
+                updatedCheckedService.splice(indexToRemove, 1);
+                return updatedCheckedService;
+            });
+        }
+    };
 
     return (
         <div className="w-[33%] ">
@@ -161,7 +182,6 @@ const UpdateProduct = ({ addProduct = [], removeProduct, onClose, setAddProduct,
                                     <div className='flex'>
                                         <div className='pl-3 h-[13vh] py-2'>
                                             <img src={item.image} className='w-auto h-full' alt="" />
-
                                         </div>
                                         <div className='h-full pl-3 flex flex-col justify-between'>
                                             <div className='font-semibold pt-2'>
@@ -198,17 +218,15 @@ const UpdateProduct = ({ addProduct = [], removeProduct, onClose, setAddProduct,
                                     </div>
                                     <button className='text-red-700 h-[30px] font-semibold pr-4 pl-1 pt-2'
                                         onClick={() => {
-                                            removeProduct(item.idProduct)
-                                            const updatedShowService = [...showService];
-                                            updatedShowService[index] = false;
-                                            setShowService(updatedShowService);
+                                            removeProduct(item?.idProduct)
+                                            handleRemoveItemNotChange(index);
                                         }}>Xóa</button>
 
                                 </div>
                                 {showService[index] && item?.repairService &&
                                     (<label className='w-full h-[70px] bg-white mt-3 flex items-center'>
                                         <input type="checkbox"
-                                            defaultChecked={checkedService[index]}
+                                            checked={checkedService[index] || false}
                                             onChange={() =>
                                                 handleCheckboxChange(item.idProduct, item.repairService ? item.repairService?.id : null, index)
                                             }
@@ -232,20 +250,35 @@ const UpdateProduct = ({ addProduct = [], removeProduct, onClose, setAddProduct,
                 <div className='w-full bg-white h-[10vh] flex justify-around py-5'>
                     <button className='w-[150px] bg-slate-200 hover:bg-red-700 hover:text-white font-semibold text-[18px] rounded-lg'
                         onClick={() => {
-                            localStorage.removeItem('cartItemsUpdate');
                             localStorage.removeItem('updateOrderData');
                             setOrderData([]);
                             setAddProduct([...tranfomDataProduct]);
                             onClose();
                         }}
                     >Hủy</button>
-                    <button className='w-[200px] bg-slate-200 hover:bg-main hover:text-white font-semibold text-[18px] rounded-lg'
-                    onClick={handleUpdateStaffProduct}
-                    >Cập nhật</button>
+                    {addProduct.length >0
+                    ?orderData.some((item) => item.repairServiceId)
+                    
+                    ? (
+                        <button className='w-[200px] bg-slate-200 hover:bg-main hover:text-white font-semibold text-[18px] rounded-lg'
+                            onClick={() => setShowStaff(true)}
+                        >Tiếp theo</button>
+                    ) : (
+                        <button className='w-[200px] bg-slate-200 hover:bg-main hover:text-white font-semibold text-[18px] rounded-lg'
+                            onClick={handleUpdateStaffProduct}
+                        >Tạo đơn hàng</button>
+                    )
+                    :""}
+                    
                 </div>
-
-
             </div>
+            <StaffSelect
+                handleCreateOrder={handleUpdateStaffProduct}
+                staffId={staffId}
+                setStaffId={setStaffId}
+                isVisible={showStaff}
+                onClose={() => setShowStaff(false)}
+            />
         </div>
     )
 }

@@ -5,16 +5,18 @@ export const userInfor = {
 }
 
 //product
+
+export const productCreate = {
+    PRODUCT_CREATE: "product_create",
+}
+
+export const productUpdate = {
+    PRODUCT_UPDATE: "product_update",
+}
 export const productInfor = {
     GET_PRODUCT_INFO: "get_product_info",
     GET_PRODUCT_INFO_SUCCESS: "get_product_info_success",
     GET_PRODUCT_INFO_FAIL: "get_product_info_fail",
-}
-
-export const productCategory = {
-    GET_PRODUCT_CATEGORY: "get_product_category",
-    GET_PRODUCT_CATEGORY_SUCCESS: "get_product_category_success",
-    GET_PRODUCT_CATEGORY_FAIL: "get_product_category_fail",
 }
 
 export const productFilter = {
@@ -42,6 +44,12 @@ export const listOrder = {
     LIST_ORDER_FAIL: "list_order_fail",
 }
 
+export const listOrderPaid = {
+    LIST_ORDER_PAID: "list_order_paid",
+    LIST_ORDER_PAID_SUCCESS: "list_order_paid_success",
+    LIST_ORDER_PAID_FAIL: "list_order_paid_fail",
+}
+
 export const detailOrder = {
     DETAIL_ORDER: "detail_order",
     DETAIL_ORDER_SUCCESS: "detail_order_success",
@@ -60,5 +68,9 @@ export const updateProductOrdered = {
     UPDATE_PRODUCT_ORDER_FAIL: "update_product_fail",
 }
 
-
+export const payWithCash = {
+    PAY_WITH_CASH: "pay_with_cash",
+    PAY_WITH_CASH_SUCCESS: "pay_with_cash_success",
+    PAY_WITH_CASH_FAIL: "pay_with_cash_fail",
+}
 

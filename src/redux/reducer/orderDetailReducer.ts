@@ -1,4 +1,4 @@
-import { detailOrder, updateProductOrdered, updateUserOrder } from '../../constants/mainConstants';
+import { detailOrder, payWithCash, updateProductOrdered, updateUserOrder } from '../../constants/mainConstants';
 import { orderDetailPayloadReducer, storeOrderDetail } from '@/types/actions/detailOrder';
 
 
@@ -49,6 +49,18 @@ const orderDetailReducer = (
                 orderDetail: [],
                 showError: payload.showError
             }
+        
+            case payWithCash.PAY_WITH_CASH_SUCCESS:
+                return {
+                    ...state,
+                    orderDetail: payload.data
+                }
+            case payWithCash.PAY_WITH_CASH_FAIL:
+                return {
+                    ...state,
+                    orderDetail: [],
+                    showError: payload.showError
+                }
 
         default:
             return state;

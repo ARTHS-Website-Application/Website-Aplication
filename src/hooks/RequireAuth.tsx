@@ -45,7 +45,7 @@ const RequireAuth = ({ allowedRoles }: Props) => {
             />
             <div className='w-full relative'>
               {showNotification&&(
-                <Notification />
+                <Notification handleNotification={handleNotification} />
               )}
 
               {show &&

@@ -6,10 +6,11 @@ import { itemOrder } from '@/types/actions/createOrder';
 import { showSuccessAlert } from '@/constants/chooseToastify';
 import userAxiosPrivate from '@/hooks/useAxiosPrivate';
 import { formatPhoneNumber } from '@/utils/formatPhone';
+import StaffSelect from '@/components/teller/StaffSelect';
 type Props = {
     addProduct?: item<string, number>[];
     removeProduct: (itemId: string) => void,
-    setAddProduct: React.Dispatch<React.SetStateAction<item<string, number>[]>>
+    setAddProduct: React.Dispatch<React.SetStateAction<item<string, number>[]>>;
 }
 
 const InforUser = ({ addProduct = [], removeProduct, setAddProduct }: Props) => {
@@ -22,6 +23,7 @@ const InforUser = ({ addProduct = [], removeProduct, setAddProduct }: Props) => 
     const [showService, setShowService] = useState<boolean[]>(Array(addProduct.length).fill(false));
     const [checkedService, setCheckedService] = useState<boolean[]>(Array(addProduct.length).fill(false));
     const [orderData, setOrderData] = useState<itemOrder<string, number>[]>([]);
+    const [showStaff, setShowStaff] = useState<boolean>(false);
     const axiosPrivate = userAxiosPrivate();
 
     useEffect(() => {
@@ -123,6 +125,24 @@ const InforUser = ({ addProduct = [], removeProduct, setAddProduct }: Props) => 
         }
     }
 
+    const handleRemoveItemNotChange = (indexToRemove: number) => {
+        if (indexToRemove >= 0 && indexToRemove < showService.length) {
+            setShowService((prevAddProduct) => {
+                const updatedAddProduct = [...prevAddProduct];
+                updatedAddProduct.splice(indexToRemove,1);
+                return updatedAddProduct;
+            });
+        }
+        console.log(indexToRemove)
+        if (indexToRemove >= 0 && indexToRemove < checkedService.length) {
+            setCheckedService((prevAddProduct) => {
+                const updatedAddProduct = [...prevAddProduct];
+                updatedAddProduct.splice(indexToRemove,1);
+                return updatedAddProduct;
+            });
+        }
+    };
+
     return (
         <div className="w-[33%] border-x-2 border-t-2 border-gray-400">
             <div className='bg-white w-full text-center py-[20px] border-b-2 border-gray-400'>
@@ -140,9 +160,6 @@ const InforUser = ({ addProduct = [], removeProduct, setAddProduct }: Props) => 
                                 <p>Số điện thoại</p>
                                 <p>Tên khách hàng</p>
                                 <p>Biển số xe</p>
-                                {addProduct.length > 0 && showService.some((isSelected) => isSelected) && (
-                                    <p>Nhân viên sửa chữa</p>
-                                )}
                             </div>
 
                             <div>
@@ -166,20 +183,6 @@ const InforUser = ({ addProduct = [], removeProduct, setAddProduct }: Props) => 
                                         className="focus:outline-none focus:border-b-2 focus:border-main  border-b-2 border-black text-right"
                                         onChange={(e) => setLicensePlate(e.target.value)}
                                     />
-                                    {addProduct.length > 0 && showService.some((isSelected) => isSelected) && (
-                                        <select className='h-10 border-2 border-gray-300 text-[18px]'
-                                            value={staffId}
-                                            onChange={(e) => {
-                                                setStaffId(e.target.value);
-                                            }}
-                                        >
-                                            <option value="" >Nhân viên</option>
-                                            {!orderData.every((item) => item.repairServiceId === null) && (
-                                                <option value="6b345ba2-4068-4bc1-8f5a-42427cfe4b98">Staff 01</option>
-                                            )}
-                                        </select>
-                                    )}
-
                                 </div>
 
                             </div>
@@ -234,16 +237,14 @@ const InforUser = ({ addProduct = [], removeProduct, setAddProduct }: Props) => 
                                     <button className='text-red-700 h-[30px] font-semibold pr-4 pl-1 pt-2'
                                         onClick={() => {
                                             removeProduct(item.id)
-                                            const updatedShowService = [...showService];
-                                            updatedShowService[index] = false;
-                                            setShowService(updatedShowService);
+                                            handleRemoveItemNotChange(index);
                                         }}>Xóa</button>
 
                                 </div>
                                 {showService[index] && item?.repairService &&
                                     (<label className='w-full h-[70px] bg-white mt-3 flex items-center'>
                                         <input type="checkbox"
-                                            defaultChecked={checkedService[index]}
+                                            checked={checkedService[index]||false}
                                             onChange={() =>
                                                 handleCheckboxChange(item.id, item.repairService?.id, index)
                                             }
@@ -281,9 +282,17 @@ const InforUser = ({ addProduct = [], removeProduct, setAddProduct }: Props) => 
 
                                 }}
                             >Hủy đơn</button>
-                            <button className='w-[200px] bg-slate-200 hover:bg-main hover:text-white font-semibold text-[18px] rounded-lg'
-                                onClick={handleCreateOrder}
-                            >Tiếp theo</button>
+                            {orderData.some((item) => item.repairServiceId)
+                                ? (
+                                    <button className='w-[200px] bg-slate-200 hover:bg-main hover:text-white font-semibold text-[18px] rounded-lg'
+                                        onClick={() => setShowStaff(true)}
+                                    >Tiếp theo</button>
+                                ) : (
+                                    <button className='w-[200px] bg-slate-200 hover:bg-main hover:text-white font-semibold text-[18px] rounded-lg'
+                                        onClick={handleCreateOrder}
+                                    >Tạo đơn hàng</button>
+                                )}
+
                         </div>
                     )
 
@@ -293,6 +302,13 @@ const InforUser = ({ addProduct = [], removeProduct, setAddProduct }: Props) => 
                     )}
 
             </div>
+            <StaffSelect
+                handleCreateOrder={handleCreateOrder}
+                staffId={staffId}
+                setStaffId={setStaffId}
+                isVisible={showStaff}
+                onClose={() => setShowStaff(false)}
+            />
         </div>
     )
 }

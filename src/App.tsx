@@ -20,6 +20,7 @@ import ManageService from './pages/owner/manageService/ManageService';
 import CreateProduct from './pages/owner/createProduct/CreateProduct';
 import ListProduct from './pages/owner/listProduct/ListProduct';
 import ProductDetail from './pages/owner/productDetail/ProductDetail';
+import UpdateProduct from './pages/owner/updateProduct/UpdateProduct';
 
 const ROLES = {
   Owner: "Owner",
@@ -68,6 +69,7 @@ function App() {
               <Route index element={<ListProduct />} />
               <Route path="create-product" element={<CreateProduct />} />
               <Route path=":productId" element={<ProductDetail />} />
+              <Route path="update-product/:productId" element={<UpdateProduct />} />
             </Route>
 
             <Route path="manage-orders-owner" element={<ManageOrderOwner />} />

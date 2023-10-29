@@ -52,7 +52,7 @@ const Pagination = ({
   return (
     <div>
       {pageNumbers.length > 1 ? (
-        <div className="w-full py-4 flex justify-center items-center">
+        <div className="w-full pt-4 flex justify-center items-center">
 
           <div className="flex pr-1">
             <div className="flex justify-center items-center px-2 space-x-2 text-[18px] bg-[#4d4bb9] h-[36px] text-white shadow-lg rounded-l-md">

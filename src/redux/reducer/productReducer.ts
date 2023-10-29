@@ -25,6 +25,7 @@ const productReducer = (
             return {
                 ...state,
                 productInfor: [],
+                showError: payload.data
             }
         case productFilter.GET_PRODUCT_FILTER_SUCCESS:
             return {
@@ -36,6 +37,7 @@ const productReducer = (
             return {
                 ...state,
                 productInfor: [],
+                showError: payload.data
             }
         default:
             return state;

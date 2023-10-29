@@ -1,16 +1,16 @@
-import { getDetailOrderFailed, getDetailOrderSuccess, getOrderFailed, getOrderSuccess, updateCustomerOrderFailed, updateCustomerOrderSuccess } from '@/actions/order';
-import {listOrder, detailOrder, updateUserOrder, updateProductOrdered } from '@/constants/mainConstants';
+import { getDetailOrderFailed, getDetailOrderSuccess, getOrderFailed, getOrderPaidFailed, getOrderPaidSuccess, getOrderSuccess, updateCustomerOrderFailed, updateCustomerOrderSuccess, updateStatusOrderFailed, updateStatusOrderSuccess } from '@/actions/order';
+import {listOrder, detailOrder, updateUserOrder, updateProductOrdered, payWithCash, listOrderPaid } from '@/constants/mainConstants';
 import { orderService } from '@/services/orderService';
 import { sagaDetailOrder } from '@/types/actions/detailOrder';
-import { payloadOrder } from '@/types/actions/listOrder';
-import { payloadItemCustomer, payloadItemStaffProduct } from '@/types/actions/updateCustomerOrder';
+import { payloadOrder, payloadOrderPaid } from '@/types/actions/listOrder';
+import { payByCash, payloadItemCustomer, payloadItemStaffProduct } from '@/types/actions/updateCustomerOrder';
 import { AxiosResponse } from 'axios';
 import { call, put, takeEvery } from 'redux-saga/effects';
 
 
-function* getOrder(payload:payloadOrder<number>){
+function* getOrder(payload:payloadOrder<string,number>){
     try {
-        const resp: AxiosResponse = yield call(orderService.getOrder,payload.number);
+        const resp: AxiosResponse = yield call(orderService.getOrder,payload.number,payload.excludeOrderStatus);
         const { status, data } = resp;
         if (data && status === 200) {
             yield put(getOrderSuccess(data));
@@ -21,6 +21,22 @@ function* getOrder(payload:payloadOrder<number>){
     } catch (error: any) {
         const msg: string = error.message;
         yield put(getOrderFailed(msg));
+    }
+}
+
+function* getOrderPaid(payload:payloadOrderPaid<string,number>){
+    try {
+        const resp: AxiosResponse = yield call(orderService.getOrderPaid,payload.number,payload.orderStatus);
+        const { status, data } = resp;
+        if (data && status === 200) {
+            yield put(getOrderPaidSuccess(data));
+        } else {
+            yield put(getOrderPaidFailed(data));
+        }
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
+        const msg: string = error.message;
+        yield put(getOrderPaidFailed(msg));
     }
 }
 
@@ -72,9 +88,27 @@ function* updateProductOrder(payload:payloadItemStaffProduct<string,number>){
     }
 }
 
+function* updateStatusOrder(payload:payByCash<string>){
+    try {
+        const resp: AxiosResponse = yield call(orderService.updateStatusOrder,payload.idOrder,payload.statusOrder);
+        const { status, data } = resp;
+        if (data && status === 201) {
+            yield put(updateStatusOrderSuccess(data));
+        } else {
+            yield put(updateStatusOrderFailed(data));
+        }
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
+        const msg: string = error.message;
+        yield put(updateStatusOrderFailed(msg));
+    }
+}
+
 export function* lookupOrder() {
     yield takeEvery(listOrder.LIST_ORDER , getOrder);
+    yield takeEvery(listOrderPaid.LIST_ORDER_PAID , getOrderPaid);
     yield takeEvery(detailOrder.DETAIL_ORDER , getDetailOrder);
     yield takeEvery(updateUserOrder.UPDATE_USER_ORDER , updateCustomer);
     yield takeEvery(updateProductOrdered.UPDATE_PRODUCT_ORDER , updateProductOrder);
+    yield takeEvery(payWithCash.PAY_WITH_CASH , updateStatusOrder);
 }

@@ -17,8 +17,11 @@ const ListProduct = () => {
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [addSearch, setAddSearch] = useState<string>("");
     useEffect(() => {
+        setTimeout(() => {
+            setIsLoading(false);
+        }, 500)
         setProductData(productInfor.data);
-        setIsLoading(false);
+
     }, [productInfor.data]);
     useEffect(() => {
         dispatch(ShowProduct(paginationNumber));
@@ -42,15 +45,22 @@ const ListProduct = () => {
             <div className="">
                 {isLoading
                     ? <LoadingPage />
-                    : <TableProductOwner productData={productData} />
+                    : (
+                        <div>
+                            <div className="min-h-[70vh]">
+                            <TableProductOwner productData={productData} />
+                            </div>
+                            <Pagination
+                                totalPosts={productInfor.pagination?.totalRow}
+                                postsPerPage={productInfor.pagination?.pageSize}
+                                setCurrentPage={setPaginationNumber}
+                                currentPage={paginationNumber}
+                            />
+                        </div>
+                    )
                 }
             </div>
-            <Pagination
-                totalPosts={productInfor.pagination?.totalRow}
-                postsPerPage={productInfor.pagination?.pageSize}
-                setCurrentPage={setPaginationNumber}
-                currentPage={paginationNumber}
-            />
+
 
         </div>
     )

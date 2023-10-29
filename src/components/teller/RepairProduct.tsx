@@ -55,23 +55,30 @@ const RepairProduct = ({ isVisible, onClose, dataProduct, idOrder }: Props) => {
         setProductData(activeProducts);
         setIsLoading(false);
     }, [productInfor?.data]);
-
     useEffect(() => {
-        if (addCategory !== "" || addSearch !== "") {
-            const data = {
-                paginationNumber: paginationNumber,
-                name: addSearch,
-                category: addCategory,
-            }
+        if (productInfor.pagination?.totalRow) {
+            setPaginationNumber(0);
+            setIsLoading(false);
+        }
+    }, [productInfor.pagination?.totalRow]);
+    useEffect(() => {
+        const data = {
+            paginationNumber: paginationNumber,
+            name: addSearch,
+            category: addCategory,
+        }
+        if (addCategory || addSearch) {
             setTimeout(() => {
                 dispatch(FilterProduct(data))
                 setIsLoading(true);
             }, 200)
+
         } else {
             dispatch(ShowProduct(paginationNumber));
             setIsLoading(true);
         }
     }, [dispatch, addCategory, addSearch, paginationNumber])
+
 
     //thêm product
     const handleAddProduct = (data: item<string, number>) => {
@@ -94,15 +101,12 @@ const RepairProduct = ({ isVisible, onClose, dataProduct, idOrder }: Props) => {
         } else {
             const updatedItems = [...existingCartItems, itemToAdd];
             setAddProduct(updatedItems);
-            localStorage.setItem('cartItemsUpdate', JSON.stringify(updatedItems));
         }
     }
 
     //xóa product
     const handleRemoveProduct = (itemId: string) => {
-        const existingCartItems: addProductOrder<string, number>[] = JSON.parse(localStorage.getItem('cartItemsUpdate') as string) || [];
-        const updatedItems = existingCartItems.filter((item: addProductOrder<string, number>) => item.idProduct !== itemId);
-        localStorage.setItem('cartItemsUpdate', JSON.stringify(updatedItems));
+        const updatedItems = addProduct.filter((item: addProductOrder<string, number>) => item.idProduct !== itemId);
         setAddProduct(updatedItems);
     }
 
@@ -158,13 +162,6 @@ const RepairProduct = ({ isVisible, onClose, dataProduct, idOrder }: Props) => {
                                     <MagnifyingGlassIcon className="w-6 h-6 absolute right-3 top-0 bottom-0 my-auto stroke-gray-500" />
                                 </div>
                             </form>
-                        </div>
-                        <div className="w-[30vw] flex space-x-5 items-center justify-center">
-                            <p className="text-lg font-semibold">Nhân viên sửa</p>
-                            <select className='h-10 border-2 border-gray-300 text-[18px] rounded-lg'>
-                                <option value="" >Nhân viên</option>
-                                <option value="6b345ba2-4068-4bc1-8f5a-42427cfe4b98">Staff 01</option>
-                            </select>
                         </div>
                     </div>
                     <div className='flex'>

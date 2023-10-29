@@ -10,6 +10,7 @@ import { itemCategoryProduct, selectorCategoryProduct } from '@/types/actions/ca
 import { MagnifyingGlassIcon } from '@heroicons/react/24/solid'
 import Loading from '@/components/LoadingPage'
 import { typeActiveProduct } from '@/types/typeProduct'
+// import StaffSelect from '@/components/teller/StaffSelect'
 
 const CreateOrder = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -43,6 +44,12 @@ const CreateOrder = () => {
 
   //lọc sản phẩm
   useEffect(() => {
+    if (productInfor.pagination?.totalRow) {
+      setPaginationNumber(0);
+      setIsLoading(false);
+    }
+  }, [productInfor.pagination?.totalRow]);
+  useEffect(() => {
     if (addCategory !== "" || addSearch !== "") {
       const data = {
         paginationNumber: paginationNumber,
@@ -68,7 +75,7 @@ const CreateOrder = () => {
     if (isProductInCart) {
       showWarningAlert(`Sản phẩm đã được thêm, mời bạn kiểm tra lại`)
     } else {
-      const updatedItems = [...existingCartItems,itemToAdd];
+      const updatedItems = [...existingCartItems, itemToAdd];
       setAddProduct(updatedItems);
       localStorage.setItem('cartItems', JSON.stringify(updatedItems));
     }
@@ -130,7 +137,7 @@ const CreateOrder = () => {
         {/* danh sách sản phẩm*/}
         {isLoading ? (
           <Loading />
-        ) : productData ? (
+        ) : productData.length>0 ? (
           <div className='flex flex-col space-y-3'>
             <div className='w-full py-3 '>
               <h1 className="text-[20px] w-full font-semibold">Tất cả sản phẩm</h1>
@@ -149,7 +156,7 @@ const CreateOrder = () => {
           </div>
         ) : (
           <div className='w-full h-[60vh] flex justify-center items-center'>
-            <p className='text-[20px]'>không tìm thấy sản phẩm</p>
+            <p className='text-[20px]'>Không tìm thấy sản phẩm</p>
           </div>
         )}
       </div>
@@ -157,7 +164,9 @@ const CreateOrder = () => {
         setAddProduct={setAddProduct}
         addProduct={addProduct}
         removeProduct={handleRemoveProduct}
+      // showStaff={setShowStaff}
       />
+
     </div>
   )
 }

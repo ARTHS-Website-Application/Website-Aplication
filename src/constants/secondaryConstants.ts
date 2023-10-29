@@ -1,0 +1,39 @@
+export const productCategory = {
+    GET_PRODUCT_CATEGORY: "get_product_category",
+    GET_PRODUCT_CATEGORY_SUCCESS: "get_product_category_success",
+    GET_PRODUCT_CATEGORY_FAIL: "get_product_category_fail",
+}
+
+export const listServices = {
+    GET_LIST_SERVICES_CHOOSE: "list_services_choose",
+    GET_LIST_SERVICES: "list_services",
+    GET_LIST_SERVICES_SUCCESS: "list_services_success",
+    GET_LIST_SERVICES_FAIL: "list_services_fail",
+}
+
+export const listVehicles = {
+    GET_LIST_VEHICLES: "list_vehicles",
+    GET_LIST_VEHICLES_SEARCH: "list_vehicles_search",
+    GET_LIST_VEHICLES_SUCCESS: "list_vehicles_success",
+    GET_LIST_VEHICLES_FAil: "list_vehicles_fail",
+
+}
+
+export const listWarranty = {
+    GET_LIST_WARRANTY: "list_warranty",
+    GET_LIST_WARRANTY_SUCCESS: "list_warranty_success",
+    GET_LIST_WARRANTY_FAIL: "list_warranty_fail",
+}
+
+export const listDiscount = {
+    GET_LIST_DISCOUNT_CHOOSE: "list_discount_choose",
+    GET_LIST_DISCOUNT: "list_discount",
+    GET_LIST_DISCOUNT_SUCCESS: "list_discount_success",
+    GET_LIST_DISCOUNT_FAIL: "list_discount_fail",
+}
+
+export const listStaff = {
+    LIST_STAFF: "list_staff",
+    LIST_STAFF_SUCCESS: "list_staff_success",
+    LIST_STAFF_FAIL: "list_staff_fail",
+}

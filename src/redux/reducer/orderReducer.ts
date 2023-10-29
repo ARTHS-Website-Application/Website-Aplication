@@ -1,9 +1,10 @@
 import { orderSaga, storeOrder } from '@/types/actions/listOrder';
-import { listOrder } from '../../constants/mainConstants';
+import { listOrder, listOrderPaid } from '../../constants/mainConstants';
 
 
 const initialState: storeOrder<string, number> = {
     orderInfor: [],
+    orderPaidInfor:[],
     showError: null,
 };
 
@@ -26,17 +27,16 @@ const orderReducer = (
                 ...state,
                 orderInfor: [],
             }
-        // case productFilter.GET_PRODUCT_FILTER_SUCCESS:
-        //     return {
-        //         ...state,
-        //         productInfor: payload.data,
-
-        //     }
-        // case productFilter.GET_PRODUCT_FILTER_FAIL:
-        //     return {
-        //         ...state,
-        //         productInfor: [],
-        //     }
+            case listOrderPaid.LIST_ORDER_PAID_SUCCESS:
+                return {
+                    ...state,
+                    orderPaidInfor: payload.data,
+                }
+            case listOrderPaid.LIST_ORDER_PAID_FAIL:
+                return {
+                    ...state,
+                    orderPaidInfor: [],
+                }
         default:
             return state;
     }

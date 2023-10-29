@@ -1,7 +1,26 @@
-import { productInfor, productCategory, productFilter, detailProduct } from "@/constants/mainConstants";
+import { productInfor, productFilter, detailProduct, productCreate, productUpdate } from "@/constants/mainConstants";
+import { listVehicles, productCategory } from "@/constants/secondaryConstants";
 import { itemCategoryProduct } from "@/types/actions/categoryPr";
 import { itemFilter } from "@/types/actions/filterCreate";
+import { itemVehicleProduct } from "@/types/actions/listVehicle";
 import { item, itemProduct } from "@/types/actions/product";
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const postCreateProduct = (data:any) => {
+    return {
+        type: productCreate.PRODUCT_CREATE,
+        data
+    };
+};
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const updateProduct = (idProduct:string,data:any) => {
+    return {
+        type: productUpdate.PRODUCT_UPDATE,
+        data,
+        idProduct
+    };
+};
 
 export const ShowProduct = (number:number) => {
     return {
@@ -33,7 +52,7 @@ export const CategoryProduct = () => {
     };
 };
 
-export const CategoryProductSuccess = (data:itemCategoryProduct<string>) => {
+export const CategoryProductSuccess = (data:itemCategoryProduct<string>[]) => {
     return {
         type: productCategory.GET_PRODUCT_CATEGORY_SUCCESS,
         payload: {
@@ -44,6 +63,36 @@ export const CategoryProductSuccess = (data:itemCategoryProduct<string>) => {
 export const CategoryProductFailed = (error:string) => {
     return {
         type: productCategory.GET_PRODUCT_CATEGORY_FAIL,
+        payload: {
+            error,
+        },
+    };
+};
+
+export const getVehicleProduct = () => {
+    return {
+        type: listVehicles.GET_LIST_VEHICLES,
+    };
+};
+
+export const getVehicleSearch = (vehicleName:string) => {
+    return {
+        type: listVehicles.GET_LIST_VEHICLES_SEARCH,
+        vehicleName
+    };
+};
+
+export const vehicleProductSuccess = (data:itemVehicleProduct<string>[]) => {
+    return {
+        type: listVehicles.GET_LIST_VEHICLES_SUCCESS,
+        payload: {
+            data,
+        },
+    };
+};
+export const vehicleProductFailed = (error:string) => {
+    return {
+        type: listVehicles.GET_LIST_VEHICLES_FAil,
         payload: {
             error,
         },

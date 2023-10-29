@@ -1,5 +1,5 @@
 import { storeCategoryProduct,categoryProductSaga} from '@/types/actions/categoryPr';
-import { productCategory } from '../../constants/mainConstants';
+import { productCategory } from '../../constants/secondaryConstants';
 
 
 const initialState: storeCategoryProduct<string> = {

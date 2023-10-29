@@ -3,9 +3,11 @@ import LoadingPage from '@/components/LoadingPage';
 import { selectorDetailProduct } from '@/types/actions/detailProduct';
 import { item } from '@/types/actions/product';
 import { typeActiveProduct } from '@/types/typeProduct';
+import { formatDateFeedback } from '@/utils/formatDate';
 import { formatPrice } from '@/utils/formatPrice';
 import { ChevronRightIcon, StarIcon } from '@heroicons/react/24/solid';
 import { useEffect, useState } from 'react'
+import { RxDotsHorizontal } from 'react-icons/rx';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, useParams } from 'react-router-dom';
 
@@ -14,6 +16,7 @@ const ProductDetail = () => {
     const dispatch = useDispatch();
     const detailProduct: item<string, number> = useSelector((state: selectorDetailProduct<string, number>) => state.productDetailReducer.productDetail)
     const [isLoading, setIsLoading] = useState<boolean>(false);
+    const [showVehicle, setShowVehicle] = useState<boolean>(false);
     const [data, setData] = useState<item<string, number>>();
 
     useEffect(() => {
@@ -24,11 +27,15 @@ const ProductDetail = () => {
 
     }, [dispatch, productId]);
     useEffect(() => {
+        setData(detailProduct);
         setTimeout(() => {
-            setData(detailProduct);
             setIsLoading(false);
         }, 500)
     }, [detailProduct])
+
+    const handleBoxVehicle = () => {
+        setShowVehicle(!showVehicle);
+    }
     console.log(data)
     return (
         <div className="w-full">
@@ -39,9 +46,9 @@ const ProductDetail = () => {
             </div>
             {isLoading
                 ? <LoadingPage />
-                : (
-                    <div className="flex py-7">
-                        <div className="w-[60%]">
+                : (<div>
+                    <div className="flex justify-between pt-5">
+                        <div className="w-[70%]">
                             <div className="bg-white p-5 text-[17px] rounded-lg">
                                 <div className='flex justify-between items-center'>
                                     <p className='font-semibold text-[20px]'>{data?.name}</p>
@@ -52,24 +59,46 @@ const ProductDetail = () => {
                                         </p>
                                     </div>
                                 </div>
-                                <p className='py-3 text-[#6B7280] text-[15px]'>{data?.description}</p>
-                                <p className='font-semibold text-[19px] pb-4'> Chi tiết</p>
+                                <p className='font-semibold text-[19px] py-4'> Chi tiết</p>
                                 <div className='flex justify-between text-[#6B7280]'>
                                     <div className='space-y-5'>
-                                        <p>Các loại xe</p>
-                                        <p>Loại</p>
-                                        <p>Giá</p>
+                                        <p>Loại xe phù hợp</p>
+                                        <p>Loại sản phẩm</p>
+                                        <p>Giá bán</p>
                                         <p>Trạng thái giảm giá</p>
                                         <p>Phần trăm chiết khấu</p>
                                         {data?.discount && <p>Giá sau khuyến mãi</p>}
                                     </div>
-                                    <div className='space-y-5 flex flex-col items-center'>
-                                        <select className='outline-none border-2 border-gray-200 p-1 rounded-md'>
-                                            <option value="">Xe phù hợp</option>
-                                            {data?.vehicles?.map((item, index) => (
-                                                <option key={index} value="">{item.vehicleName}</option>
+                                    <div className='space-y-5 flex flex-col text-end'>
+                                        <div className='flex justify-center space-x-1 relative'>
+                                            {data?.vehicles && data?.vehicles.slice(0, 3).map((vehicle, index) => (
+                                                <div key={index} className='px-1 py-2 border-2 border-gray-200 rounded-lg'>
+                                                    <p>{vehicle.vehicleName}</p>
+
+                                                </div>
                                             ))}
-                                        </select>
+                                            {data?.vehicles && data?.vehicles.length > 3 && (
+                                                <button className='p-1 border-2 border-gray-200 rounded-lg'
+                                                    onClick={handleBoxVehicle}
+                                                >
+                                                    <RxDotsHorizontal className='w-5 h-5' />
+                                                </button>
+
+                                            )}
+                                            {showVehicle ? (
+                                                <div
+                                                    className='bg-white shadow-lg w-[500px] h-[240px] overflow-y-scroll absolute right-9 p-3 rounded-lg'>
+                                                    <div className='grid grid-cols-3 gap-2'>
+                                                        {data?.vehicles && data?.vehicles.map((vehicle, index) => (
+                                                            <div key={index} className='px-1 py-2 border-2 border-gray-200 rounded-lg'>
+                                                                <p>{vehicle.vehicleName}</p>
+                                                            </div>
+                                                        ))}
+                                                    </div>
+                                                </div>
+                                            ) : ""}
+
+                                        </div>
                                         <p>{data?.category?.categoryName}</p>
                                         <p>{formatPrice(data?.priceCurrent)}VNĐ</p>
                                         <p>{data?.discount ? "Có" : "Không"}</p>
@@ -86,96 +115,120 @@ const ProductDetail = () => {
                                         </div>
                                     </div>
                                 )}
+
                             </div>
                         </div>
-                        <div className="w-[40%] font-semibold pl-[40px]">
+                        <div className=" font-semibold pl-[40px]">
                             <div className="flex space-x-16 items-center pb-5">
                                 <p className=' text-[20px] '>Ảnh sản phẩm</p>
-                                <button className='bg-white p-1 px-2 rounded-md hover:bg-main hover:text-white'
-
+                                {/* Thực hiện sau */}
+                                {/* <button className='bg-white p-1 px-2 rounded-md hover:bg-main hover:text-white'
                                 >
                                     Đổi ảnh
-                                </button>
+                                </button> */}
                             </div>
-                            <div className='bg-white w-[200px] h-[200px] rounded-lg flex justify-center items-center shadow-lg'>
-                                <img src={data?.images[0]?.imageUrl} alt="" className='w-[180px] h-[180px] object-cover' />
-                            </div>
-
-                            <div className='bg-white mt-10 p-5 rounded-lg'>
-                                <div className='flex justify-between items-center pb-5'>
-                                    <p className='text-[20px]'>Tổng ảnh</p>
-                                    <button
-                                        className='px-2 py-1 border-2 border-gray-200 rounded-lg hover:bg-main hover:text-white'
-
-                                    >Sửa kho ảnh
-                                    </button>
+                            {data?.images && (
+                                <div className='bg-white p-2 rounded-lg flex justify-center items-center shadow-lg'>
+                                    <img src={data?.images[0].imageUrl} alt="" className='h-[280px]  object-contain' />
                                 </div>
-                                <div className='grid grid-cols-3 gap-y-4'>
+                            )}
+                        </div>
+                    </div>
+                    <div className='flex justify-center'>
+                        <div className='bg-white mt-10 p-5 rounded-lg w-[80%]'>
+                            <div className='flex justify-between items-center pb-5'>
+                                <p className='text-[20px] font-semibold'>Tổng ảnh</p>
+                                {/* <button
+                                className='px-2 py-1 border-2 border-gray-200 rounded-lg hover:bg-main hover:text-white'
+                            >Sửa kho ảnh
+                            </button> */}
+                            </div>
+                            <div className='flex justify-center'>
+                                <div className={`grid grid-cols-${data?.images?.length??1} gap-x-7`}>
                                     {data?.images && data?.images.map((item, index) => (
-                                        <div className='bg-white w-[190px] h-[190px] rounded-lg flex justify-center items-center shadow-lg' key={index}>
-                                            <img src={item.imageUrl} alt="" className='w-[170px] h-[170px] object-cover' />
+                                        <div key={index} className='bg-white p-2 rounded-lg flex justify-center items-center shadow-lg'>
+                                            <img src={item.imageUrl} alt="" className='h-[270px] object-contain'/>
                                         </div>
                                     ))}
                                 </div>
                             </div>
+
                         </div>
                     </div>
+
+                    <div className=' flex justify-center items-center py-5'>
+                        {data?.description && (
+                            <div className='bg-white w-full rounded-lg p-5 space-y-3'>
+                                <p className='font-semibold text-[20px]'>Mô tả sản phẩm</p>
+                                <div dangerouslySetInnerHTML={{ __html: data?.description }}></div>
+                            </div>
+                        )}
+                    </div>
+                    <div className='bg-white px-[5%]  py-5 mb-7 space-y-5'>
+                        <p className='text-[20px] font-semibold'>Nhận xét sản phẩm</p>
+                        <div className='bg-[#D8D8D8] rounded-lg p-5 flex justify-center'>
+                            <div className='flex flex-col items-center pr-5'>
+                                <p className='text-[30px] text-yellow-700 font-semibold'>5 trên 5</p>
+                                <div className='flex space-x-3'>
+                                    {[1, 2, 3, 4, 5].map((index) => (
+                                        <StarIcon key={index} className='w-9 h-9 stroke-yellow-400 fill-yellow-400' />
+                                    ))}
+                                </div>
+                            </div>
+                            <div className='flex font-semibold space-x-8 text-[20px]'>
+                                <button className='px-7 h-[40px] border-2 border-yellow-400 text-yellow-400 bg-white'>All</button>
+                                <button className='px-7 h-[40px] border-2 border-gray-400 text-gray-300 bg-white'>5 sao (12)</button>
+                                <button className='px-7 h-[40px] border-2 border-gray-400 text-gray-300 bg-white'>4 sao (2) </button>
+                                <button className='px-7 h-[40px] border-2 border-gray-400 text-gray-300 bg-white'>3 sao (10) </button>
+                                <button className='px-7 h-[40px] border-2 border-gray-400 text-gray-300 bg-white'>2 sao (2) </button>
+                                <button className='px-7 h-[40px] border-2 border-gray-400 text-gray-300 bg-white'>1 sao (1) </button>
+                            </div>
+                        </div>
+                        {data?.feedbackProducts && data?.feedbackProducts.length > 0
+                            ? (
+                                <div className='space-y-3'>
+                                    {data?.feedbackProducts.map((item, index) => (
+                                        <div key={index}>
+                                            <div className='flex items-center'>
+                                                {item?.customer?.avatar
+                                                    ? (
+                                                        <img src={item?.customer.avatar} alt="" className='w-[90px] h-[90px] rounded-full object-cover' />
+                                                    ) :
+                                                    <img src={'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQNL_ZnOTpXSvhf1UaK7beHey2BX42U6solRA&usqp=CAU'}
+                                                        alt="" className='w-[90px] h-[90px] rounded-full object-cover' />
+                                                }
+
+                                                <div className='pl-[30px] flex flex-col justify-start items-start space-y-4'>
+                                                    <p className='font-semibold text-[18px]'>{item?.customer.fullName}</p>
+                                                    <div className='flex space-x-3'>
+                                                        {[1, 2, 3, 4, 5].map((index) => (
+                                                            <span key={index}>
+                                                                {index <= item?.rate ? (
+                                                                    <StarIcon className='w-5 h-5 stroke-yellow-400 fill-yellow-400' />
+                                                                ) : (
+                                                                    <StarIcon className='w-5 h-5 stroke-gray-300 fill-gray-300' />
+                                                                )}
+                                                            </span>
+                                                        ))}
+                                                    </div>
+                                                    <p className='text-[#9D9D9D]'>{formatDateFeedback(item?.createAt?.toString())} </p>
+                                                </div>
+                                            </div>
+                                            <div className='mt-5 bg-[#D8D8D8] opacity-80 text-[17px] rounded-full py-4 px-7'>
+                                                <p>{item?.content}</p>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            ) : (
+                                <div className=' space-y-3'>
+                                    <p className='text-[30px] text-center'>Chưa có nhận xét</p>
+                                </div>
+                            )}
+                    </div>
+                </div>
                 )
             }
-            <div className='bg-white px-[5%]  py-5 space-y-5'>
-                <p className='text-[20px] font-semibold'>Nhận xét sản phẩm</p>
-                <div className='bg-[#D8D8D8] rounded-lg p-3 flex'>
-                    <div className='flex flex-col items-center pr-5'>
-                        <p className='text-[30px] text-[#EA1818]'>5 trên 5</p>
-                        <div className='flex space-x-3'>
-                            {[1, 2, 3, 4, 5].map((index) => (
-                                <StarIcon key={index} className='w-9 h-9 stroke-[#EA1818] fill-[#EA1818]' />
-                            ))}
-                        </div>
-                    </div>
-                    <div className='flex font-semibold space-x-9 text-[20px]'>
-                        <button className='px-7 h-[40px] border-2 border-[#EA1818] text-[#EA1818] bg-white'>All</button>
-                        <button className='px-7 h-[40px] border-2 border-gray-400 text-gray-300 bg-white'>5 sao (12)</button>
-                        <button className='px-7 h-[40px] border-2 border-gray-400 text-gray-300 bg-white'>4 sao (2) </button>
-                        <button className='px-7 h-[40px] border-2 border-gray-400 text-gray-300 bg-white'>3 sao (10) </button>
-                        <button className='px-7 h-[40px] border-2 border-gray-400 text-gray-300 bg-white'>2 sao (2) </button>
-                        <button className='px-7 h-[40px] border-2 border-gray-400 text-gray-300 bg-white'>1 sao (1) </button>
-                    </div>
-                </div>
-                {/* {data?.feedbackProducts
-                    ? (
-                        <div className=''>
-                            {data?.feedbackProducts.map((item, index) => (*/}
-                                <div> 
-                <div className='flex'>
-                    {/* {item?.customer?.avatar
-                                            ? (
-                                                <img src={item?.customer.avatar} alt="" className='w-[60px] h-[70px] rounded-full object-cover' />
-                                            ) :  */}
-                    <img src={'https://mdbcdn.b-cdn.net/img/Photos/Vertical/mountain3.webp'} alt="" className='w-[90px] h-[90px] rounded-full object-cover' />
-                    {/* } */}
-
-                    <div className='pl-[30px] flex flex-col justify-start items-start space-y-4'>
-                        <p className='font-semibold text-[18px]'>Vip sieu cap pro</p>
-                        <div className='flex space-x-3'>
-                            {[1, 2, 3, 4, 5].map((index) => (
-                                <StarIcon key={index} className='w-5 h-5 stroke-[#EA1818] fill-[#EA1818]' />
-                            ))}
-                        </div>
-                        <p className='text-[#9D9D9D]'>17:54 | 07-09-2023 </p>
-                    </div>
-                </div>
-                <div className='mt-5 bg-[#D8D8D8] opacity-30 rounded-full py-4 px-7'>
-                    Latest model CNC brake lever for Honda SH 2 disc brakes (SH 125/150i, SH300i, SH350i) all generations... Beautiful CNC, sharp details, chosen by many customers. Latest model CNC brake lever for Honda SH 2 disc brakes (SH 125/150i, SH300i, SH350i) all generations... Beautiful CNC, sharp details, chosen by many customers.
-                    
-                </div>
-            </div>
-            {/* ))}
-                        </div>
-                    ) : (
-                        ""
-                    )} */}
-        </div>
 
 
 

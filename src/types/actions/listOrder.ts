@@ -1,6 +1,7 @@
 export interface selectorOrder<T,N> {
     orderReducer: {
         orderInfor: listOrder<T,N>;
+        orderPaidInfor: listOrder<T,N>;
         showError: T | null;
     }
 }
@@ -8,10 +9,18 @@ export interface selectorOrder<T,N> {
 export interface storeOrder<T,N> {
     showError: T | null,
     orderInfor: orderSaga<T,N>[];
+    orderPaidInfor: orderSaga<T,N>[];
 }
-export interface payloadOrder<N>{
+export interface payloadOrder<T,N>{
     type:'list_order';
-    number:N
+    number:N,
+    excludeOrderStatus:T
+}
+
+export interface payloadOrderPaid<T,N>{
+    type:'list_order_paid';
+    number:N,
+    orderStatus:T
 }
 
 export interface orderSaga<T,N> {

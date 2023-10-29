@@ -13,6 +13,13 @@ export interface payloadItemStaffProduct<T,N> {
 
 }
 
+export interface payByCash<T> {
+    type: "pay_with_cash";
+    idOrder: T;
+    statusOrder: T
+
+}
+
 export interface itemCustomer<T> {
 
     customerName: T,

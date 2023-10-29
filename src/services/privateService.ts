@@ -7,6 +7,11 @@ export class Private {
 
         return await axiosPrivate.get(`/auth`)
     }
+    getListStaff = async () => {
+        const axiosPrivate = userAxiosPrivate();
+
+        return await axiosPrivate.get(`/staffs`)
+    }
 }
 
 export const privateService = new Private();

@@ -10,13 +10,14 @@ import {
 } from '@heroicons/react/24/solid';
 import { FaMotorcycle } from 'react-icons/fa';
 import { useDispatch, useSelector } from 'react-redux'
-import { getDetailOrder } from '@/actions/order'
+import { getDetailOrder, updateStatusOrder } from '@/actions/order'
 import { inStoreOrderDetails, itemDetailOrder, selectorDetailOrder } from '@/types/actions/detailOrder'
 import userAxiosPrivate from '@/hooks/useAxiosPrivate';
 import { statusOrder, typeOrder } from '@/types/typeOrder';
 import RepairCustomer from '@/components/teller/RepairCustomer';
 import Loading from '@/components/LoadingPage';
 import RepairProduct from '@/components/teller/RepairProduct';
+import { showSuccessAlert } from '@/constants/chooseToastify';
 
 const DetailOrder = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -37,10 +38,10 @@ const DetailOrder = () => {
 
   }, [dispatch, orderId]);
   useEffect(() => {
+    setData(detailOrder);
     setTimeout(() => {
-      setData(detailOrder);
       setIsLoading(false);
-    }, 500)
+    }, 1000)
 
   }, [detailOrder])
 
@@ -89,13 +90,21 @@ const DetailOrder = () => {
     }
 
   }
+  const handleCash = ()=>{
+    if(data?.id){
+      dispatch(updateStatusOrder(data?.id,statusOrder.Paid));
+      setIsLoading(true);
+      showSuccessAlert('Thanh toán thành công, đơn hàng đang xuất bill');
+    }
+  }
 
   return (
     <div>
       {isLoading
         ? <Loading />
         : data && (
-          <div className={`w-full bg-white rounded-md px-3 ${data?.status === statusOrder.Paid ? "py-3" : ""}`}>
+          <div className={`w-full bg-white rounded-md px-3 
+          ${data?.status === statusOrder.Paid || (data?.orderType === typeOrder.Repair && data?.status !== statusOrder.WaitForPay) ? "py-3" : ""}`}>
             <div className="font-semibold text-[20px] flex space-x-4 items-center pt-3">
               {data?.status !== statusOrder.Paid
                 ? (
@@ -109,22 +118,27 @@ const DetailOrder = () => {
             {/* Thông tin người dùng */}
             <div className='flex space-x-5 py-3'>
               <div className='w-[50%] border-2 border-[#E0E2E7] px-5 pt-5 pb-2 space-y-3  rounded-lg'>
-                <p className={`rounded-2xl font-semibold  py-1 w-[170px] text-center   text-[19px]
-            ${data?.status === statusOrder.Paid ? "bg-[#E7F4EE] text-[#0D894F]" : data?.status === statusOrder.NewOrder ? "bg-[#bac5e9] text-blue-500" : ""}
-          `}>
+                <p className={`rounded-2xl font-semibold py-1 w-[170px] text-center text-[19px]
+                    ${data?.status === statusOrder.Paid ? "bg-[#E7F4EE] text-[#0D894F]" :
+                    data?.status === statusOrder.NewOrder ? "bg-[#bac5e9] text-blue-500" :
+                      data?.status === statusOrder.WaitForPay ? "bg-[#FBEABC] text-[#90530C]" :
+                        ""}`}>
                   {data?.status}
                 </p>
                 <div className='pt-3 text-[18px] flex justify-between'>
-                  <div className='text-[#1A1C21] font-semibold flex flex-col space-y-5'>
+                  <div className='text-[#1A1C21] font-semibold flex flex-col space-y-7'>
                     <div className=' flex space-x-3'>
                       <CalendarDaysIcon className='w-7 h-7 fill-slate-500' />
                       <p>Ngày đặt</p>
                     </div>
-                    <div className='flex space-x-3'>
-                      <CreditCardIcon className='w-7 h-7  fill-slate-500 ' />
-                      <p>Phương thức thanh toán</p>
-                    </div>
-                    {data?.staffName && (
+                    {data?.orderType === typeOrder.Purchase || (data?.orderType === typeOrder.Repair && data?.status === statusOrder.WaitForPay) ? (
+                      <div className='flex space-x-3'>
+                        <CreditCardIcon className='w-7 h-7  fill-slate-500 ' />
+                        <p>Phương thức thanh toán</p>
+                      </div>
+                    ) : ""}
+
+                    {data.orderType === typeOrder.Repair && data?.staffName && (
                       <div className='flex space-x-3'>
                         <UserIcon className='w-7 h-7 fill-slate-500' />
                         <p>Nhân viên sửa chữa</p>
@@ -136,7 +150,7 @@ const DetailOrder = () => {
                       <p>Loại đơn</p>
                     </div>
                   </div>
-                  <div className='text-[#1A1C21] font-semibold flex flex-col space-y-4 text-end'>
+                  <div className='text-[#1A1C21] font-semibold flex flex-col space-y-6 text-end'>
                     <div>
                       <p>
                         {data && data.orderDate && (
@@ -146,21 +160,22 @@ const DetailOrder = () => {
                         )}
                       </p>
                     </div>
-                    {data?.paymentMethod ? (
-                      <p>{data?.paymentMethod}</p>
-                    ) : (
-                      <select className='border-2 bg-main text-white pl-1 border-mainB w-[140px] py-2 rounded-lg'
-                        defaultValue={payment}
-                        onChange={(e) => setPayment(e.target.value)}
-                      >
-                        <option className='bg-white text-black '>
-                          Tiền mặt
-                        </option>
-                        <option className='bg-white text-black'>
-                          VN Pay
-                        </option>
-                      </select>
-                    )}
+                    {data?.orderType === typeOrder.Purchase || (data?.orderType === typeOrder.Repair && data?.status === statusOrder.WaitForPay)
+                      ? data?.paymentMethod ? (
+                        <p>{data?.paymentMethod}</p>
+                      ) : (
+                        <select className='border-2 bg-main text-white pl-1 border-mainB w-[140px] py-2 rounded-lg'
+                          defaultValue={payment}
+                          onChange={(e) => setPayment(e.target.value)}
+                        >
+                          <option className='bg-white text-black '>
+                            Tiền mặt
+                          </option>
+                          <option className='bg-white text-black'>
+                            VN Pay
+                          </option>
+                        </select>
+                      ) : ""}
                     {data?.orderType !== "Đơn mua hàng" && (
                       data?.staffName && (
                         <div>
@@ -222,15 +237,16 @@ const DetailOrder = () => {
             </div>
 
             {/* thông tin sản phẩm */}
-            <div className={`w-full  ${data?.status !== statusOrder.Paid ? "border-x-2 border-t-2 rounded-t-md pt-3" : "border-2 rounded-md py-3"} border-[#E0E2E7]   space-y-3`}>
+            <div className={`w-full border-[#E0E2E7] space-y-3  
+            ${data?.status === statusOrder.Paid ||(data?.orderType === typeOrder.Repair && data?.status !== statusOrder.WaitForPay)   ? "border-2 rounded-md py-3" : "border-x-2 border-t-2 rounded-t-md pt-3"} `}>
               <div className='flex justify-between w-full px-3'>
                 <div className='font-semibold flex items-center space-x-3 '>
                   <h2 className='text-[20px]'>Danh sách sản phẩm</h2>
                   <h3 className='bg-[#E7F4EE] text-[#0D894F] w-[100px] py-1 text-center rounded-lg'>{data?.inStoreOrderDetails?.length} sản phẩm</h3>
                 </div>
-                {data?.status !== statusOrder.Paid && (
+                {data?.status !== statusOrder.Paid && data?.status !== statusOrder.WaitForPay && (
                   <button className='bg-main w-[200px] text-center py-3 rounded-lg font-semibold text-white hover:bg-[#ec504b]'
-                  onClick={() => setShowUpdateProduct(true)}
+                    onClick={() => setShowUpdateProduct(true)}
                   >Thêm / Sửa sản phẩm</button>
                 )}
               </div>
@@ -332,21 +348,25 @@ const DetailOrder = () => {
                 <p className='text-[19px] font-semibold'>Tổng cộng</p>
                 <p className='font-semibold text-[19px]'>{formatPrice(TotalOrderDetail + TotalService)} VNĐ</p>
               </div>
-              {data?.status !== statusOrder.Paid ? (
-                payment === "Tiền mặt" ? (
-                  <div className='flex justify-end pr-[90px] pt-2'>
-                    <button className='bg-main hover:bg-red-800 w-[190px] py-5 text-white rounded-md'
-                      onClick={() => ""}
-                    >Xác nhận thanh toán</button>
-                  </div>
-                ) : (
-                  <div className='flex justify-end pr-[90px] pt-2'>
-                    <button className='bg-main hover:bg-red-800 w-[190px] py-5 text-white rounded-md'
-                      onClick={handlePayment}
-                    >Quét mã OR</button>
-                  </div>
-                )
-              ) : ""}
+              {data?.orderType === typeOrder.Purchase || (data?.orderType === typeOrder.Repair && data?.status === statusOrder.WaitForPay) 
+              ?
+                data?.status !== statusOrder.Paid ? (
+                  payment === "Tiền mặt" ? (
+                    <div className='flex justify-end pr-[90px] pt-2'>
+                      <button className='bg-main hover:bg-red-800 w-[190px] py-5 text-white rounded-md'
+                        onClick={handleCash}
+                      >Xác nhận thanh toán</button>
+                    </div>
+                  ) : (
+                    <div className='flex justify-end pr-[90px] pt-2'>
+                      <button className='bg-main hover:bg-red-800 w-[190px] py-5 text-white rounded-md'
+                        onClick={handlePayment}
+                      >Quét mã OR</button>
+                    </div>
+                  )
+                ) : ""
+              : ""
+              }
 
             </div>
 
@@ -361,10 +381,10 @@ const DetailOrder = () => {
               licensePlate={data?.licensePlate}
             />
             <RepairProduct
-            dataProduct = {data?.inStoreOrderDetails}
-            idOrder={data?.id}
-            isVisible={showUpdateProduct}
-            onClose={() => setShowUpdateProduct(false)}
+              dataProduct={data?.inStoreOrderDetails}
+              idOrder={data?.id}
+              isVisible={showUpdateProduct}
+              onClose={() => setShowUpdateProduct(false)}
             />
           </div>
         )
