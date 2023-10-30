@@ -21,6 +21,10 @@ import CreateProduct from './pages/owner/createProduct/CreateProduct';
 import ListProduct from './pages/owner/listProduct/ListProduct';
 import ProductDetail from './pages/owner/productDetail/ProductDetail';
 import UpdateProduct from './pages/owner/updateProduct/UpdateProduct';
+import ManageBooking from './pages/teller/manageBooking/ManageBooking'
+import ListBooking from './pages/teller/manageBooking/ListBooking';
+import WaitForConfirmBooking from './pages/teller/manageBooking/WaitForConfirmBooking';
+import HistoryBooking from './pages/teller/manageBooking/HistoryBooking';
 
 const ROLES = {
   Owner: "Owner",
@@ -58,6 +62,11 @@ function App() {
               <Route path="list-order" element={<ListOrder />} />
               <Route path=":orderId" element={<DetailOrder />} />
               <Route path="history-order" element={<HistoryOrder />} />
+            </Route>
+            <Route path="manage-booking" element={<ManageBooking/>}>
+              <Route path="list-booking" index element={<ListBooking/>}/>
+              <Route path="wait-for-confirm-booking" element={<WaitForConfirmBooking/>}/>
+              <Route path="history-booking" element={<HistoryBooking/>}/>
             </Route>
           </Route>
           {/* Page của Owner */}

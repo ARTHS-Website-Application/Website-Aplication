@@ -93,16 +93,22 @@ const UpdateProduct = () => {
     const handleShowVehicle = () => {
         setShowVehicle(!showVehicle);
     }
-    const handleAddService = (e: string) => {
-        setAddService(e)
-    }
-    const handleAddCategory = (e: string) => {
-        setAddCategory(e)
-    }
-
-    const handleAddDiscount = (e: string) => {
-        setAddDiscount(e)
-    }
+    const handleAddService = (e: string|undefined) => {
+        if(e){
+          setAddService(e)
+        }
+      }
+      const handleAddCategory = (e: string|undefined) => {
+        if(e){
+          setAddCategory(e)
+        }
+      }
+    
+      const handleAddDiscount = (e: string|undefined) => {
+        if(e){
+          setAddDiscount(e)
+        }
+      }
     const handleVehicleChange = (value: string) => {
         if (addVehicle.includes(value)) {
             setAddVehicle(addVehicle.filter(item => item !== value));

@@ -1,0 +1,56 @@
+import { listBooking, updateBooking } from "@/constants/mainConstants"
+import { itemBooking } from "@/types/listBooking";
+
+
+
+export const getBooking = (pageNumber: number, filters: any) => {
+    return {
+        type: listBooking.LIST_BOOKING,
+        pageNumber,
+        filters,
+    };
+}
+
+export const getBookingSuccess = (data: itemBooking<string,number>) => {
+    return {
+        type: listBooking.LIST_BOOKING_SUCCESS,
+        payload:{
+            data,
+        },
+    };
+}
+
+export const getBookingFailed = (error: string) => {
+    return {
+        type: listBooking.LIST_BOOKING_FAIL,
+        payload: {
+            error,
+        },
+    };
+}
+
+export const putBooking = (bookingId: string | undefined, data: any) => {
+    return{
+        type: updateBooking.UPDATE_BOOKING,
+        bookingId,
+        data
+    };
+}
+
+export const putUpdateSuccess = (data: itemBooking<string,number>[]) => {
+    return {
+        type: updateBooking.UPDATE_BOOKING_SUCCESS,
+        payload:{
+            data,
+        },
+    };
+}
+
+export const putUpdateFailed = (error: string) => {
+    return {
+        type: updateBooking.UPDATE_BOOKING_FAIL,
+        payload: {
+            error,
+        },
+    };
+}
