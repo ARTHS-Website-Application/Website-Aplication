@@ -12,6 +12,8 @@ import orderDetailReducer from './reducer/orderDetailReducer';
 import productDetailReducer from './reducer/productDetailReducer';
 import serviceReducer from './reducer/serviceReducer';
 import discountReducer from './reducer/discountReducer';
+import bookingReducer from './reducer/bookingReducer';
+
 const middleSaga = createMiddleWareSaga();
 const allReducer = combineReducers({
   userReducer,
@@ -30,6 +32,9 @@ const allReducer = combineReducers({
 
   //discount
   discountReducer,
+
+  bookingReducer,
+
   });
 
   const store = configureStore({

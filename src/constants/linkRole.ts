@@ -40,8 +40,8 @@ const roleTeller = [
         name: 'Quản lý đơn hàng',
     },
     {
-        to: '/admin',
-        name: 'quan ly',
+        to: '/manage-booking',
+        name: 'Danh sách đặt lịch',
     },
 ]
 

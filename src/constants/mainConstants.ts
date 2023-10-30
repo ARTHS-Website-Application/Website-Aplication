@@ -50,6 +50,7 @@ export const listOrderPaid = {
     LIST_ORDER_PAID_FAIL: "list_order_paid_fail",
 }
 
+
 export const detailOrder = {
     DETAIL_ORDER: "detail_order",
     DETAIL_ORDER_SUCCESS: "detail_order_success",
@@ -66,6 +67,18 @@ export const updateProductOrdered = {
     UPDATE_PRODUCT_ORDER: "update_product_order",
     UPDATE_PRODUCT_ORDER_SUCCESS: "update_product_success",
     UPDATE_PRODUCT_ORDER_FAIL: "update_product_fail",
+}
+
+export const listBooking = {
+    LIST_BOOKING: "list_booking",
+    LIST_BOOKING_SUCCESS: "list_booking_success",
+    LIST_BOOKING_FAIL: "list_booking_fail",
+}
+
+export const updateBooking = {
+    UPDATE_BOOKING: "update_booking",
+    UPDATE_BOOKING_SUCCESS: "update_booking_success",
+    UPDATE_BOOKING_FAIL: "update_booking_fail",
 }
 
 export const payWithCash = {
