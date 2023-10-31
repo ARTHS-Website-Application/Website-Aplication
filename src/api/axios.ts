@@ -1,6 +1,6 @@
 import axios from 'axios';
 // export const BASE_URL = 'http://localhost:3500/'
-export const BASE_URL = 'https://thanh-huy-motorbike.azurewebsites.net/api'
+export const BASE_URL = 'https://thanh-huy.azurewebsites.net/api'
 export default axios.create({
     baseURL: BASE_URL
 });

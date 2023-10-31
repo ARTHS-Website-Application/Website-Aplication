@@ -1,5 +1,5 @@
 import { Select, Option } from "@material-tailwind/react";
-import { CategoryProduct, getVehicleProduct, getVehicleSearch, postCreateProduct } from '@/actions/product';
+import { CategoryProduct, WarrantyProduct, getVehicleProduct, getVehicleSearch, postCreateProduct } from '@/actions/product';
 import { getServicesChoose } from '@/actions/service';
 import { itemCategoryProduct, selectorCategoryProduct } from '@/types/actions/categoryPr';
 import { dataService, selectorService } from '@/types/actions/listService';
@@ -10,19 +10,17 @@ import { useDispatch, useSelector } from 'react-redux';
 import { itemVehicleProduct, selectorVehicleProduct } from "@/types/actions/listVehicle";
 import { getDiscountChoose } from "@/actions/discount";
 import { itemDiscount, selectorDiscount } from "@/types/actions/listDiscout";
-import { item } from "@/types/actions/product";
-import { selectorDetailProduct } from "@/types/actions/detailProduct";
-import { useNavigate } from "react-router-dom";
 import Description from "@/components/Description";
+import { itemWarrantyProduct, selectorWarrantyProduct } from "@/types/actions/listWarranty";
 
 const CreateProduct = () => {
   const [showVehicle, setShowVehicle] = useState<boolean>(false);
   const dispatch = useDispatch();
   const categoryProduct: itemCategoryProduct<string>[] = useSelector((state: selectorCategoryProduct<string>) => state.categoryProductReducer.categoryProduct);
+  const warrantyChoose: itemWarrantyProduct<string,number>[] = useSelector((state: selectorWarrantyProduct<string,number>) => state.warrantyReducer.warrantyProduct);
   const discountProduct: itemDiscount<string, number>[] = useSelector((state: selectorDiscount<string, number>) => state.discountReducer.discountInfor);
   const vehicleProduct: itemVehicleProduct<string>[] = useSelector((state: selectorVehicleProduct<string>) => state.vehicleProductReducer.vehicleProduct);
   const serviceChoose: dataService<string, number> = useSelector((state: selectorService<string, number>) => state.serviceReducer.serviceInfor);
-  const detailProduct: item<string, number> = useSelector((state: selectorDetailProduct<string, number>) => state.productDetailReducer.productDetail)
 
   const [nameProduct, setNameProduct] = useState<string>('');
   const [quantityProduct, setQuantityProduct] = useState<number>(1);
@@ -37,16 +35,14 @@ const CreateProduct = () => {
   const [images, setImages] = useState<File[]>([]);
   const [addSearch, setAddSearch] = useState<string>("")
   const [searchTimeout, setSearchTimeout] = useState<number | null>(null);
-  console.log(addVehicle)
-  const navigate = useNavigate()
-  useEffect(() => {
-  }, [])
+  console.log(addWarranty)
   useEffect(() => {
     const matched = vehicleProduct?.filter((vehicle) => addVehicle.includes(vehicle.id));
     setCheckedVehicles(matched);
   }, [addVehicle, vehicleProduct]);
   useEffect(() => {
     dispatch(CategoryProduct());
+    dispatch(WarrantyProduct());
     dispatch(getDiscountChoose());
     dispatch(getServicesChoose(50));
     if (addSearch !== "") {
@@ -68,6 +64,12 @@ const CreateProduct = () => {
   const handleAddCategory = (e: string|undefined) => {
     if(e){
       setAddCategory(e)
+    }
+  }
+
+  const handleAddWarranty= (e: string|undefined) => {
+    if(e){
+      setAddWarranty(e)
     }
   }
 
@@ -125,8 +127,6 @@ const CreateProduct = () => {
       images: images
     }
     dispatch(postCreateProduct(dataCreate))
-    navigate(`/manage-products/${detailProduct.id}`)
-    console.log("data", dataCreate)
   }
   return (
     <div>
@@ -171,10 +171,23 @@ const CreateProduct = () => {
             <div className="flex justify-between pt-7">
               <div className="flex flex-col space-y-3">
                 <p className="pl-1">Thời gian bảo hành</p>
-                <select name="" id="" className="w-[250px] border-2 border-[#E5E7EB] p-3 rounded-lg ">
-                  <option value="">Thời gian bảo hành</option>
-                  <option value="">3 tháng</option>
-                </select>
+                <Select
+                className="text-[18px] h-[50px] bg-gray-50"
+                size="lg"
+                label="Lựa thời gian bảo hành"
+                onChange={handleAddWarranty}
+              >
+                {warrantyChoose
+                  ? warrantyChoose?.map((item, index) => (
+                    <Option
+                      value={item?.id}
+                      key={index}
+                      className="text-[18px]"
+                    >{item?.duration} tháng</Option>
+                  ))
+                  : ""
+                }
+              </Select>
               </div>
               <div className="flex flex-col space-y-3">
                 <p className="pl-1">Khuyến mãi</p>

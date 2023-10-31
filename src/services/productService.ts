@@ -63,6 +63,12 @@ export class Private {
         return await axiosPrivate.get(`/categories`)
     }
 
+    getWarrantyProduct = async () => {
+        const axiosPrivate = userAxiosPrivate();
+
+        return await axiosPrivate.get(`/warranties`)
+    }
+
     getVehicleProduct = async () => {
         const axiosPrivate = userAxiosPrivate();
 
