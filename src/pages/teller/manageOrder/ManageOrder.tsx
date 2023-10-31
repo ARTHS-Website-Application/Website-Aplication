@@ -1,5 +1,4 @@
 import { NavLink, Outlet } from 'react-router-dom';
-import {useEffect} from 'react'
 const linkRole =[ 
   {
     to:'/manage-order/create-order',

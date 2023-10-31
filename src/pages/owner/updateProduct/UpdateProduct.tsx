@@ -1,5 +1,5 @@
 import { Select, Option } from "@material-tailwind/react";
-import { CategoryProduct, getDetailProduct, getVehicleProduct, getVehicleSearch, postCreateProduct, updateProduct } from '@/actions/product';
+import { CategoryProduct, WarrantyProduct, getDetailProduct, getVehicleProduct, getVehicleSearch, updateProduct } from '@/actions/product';
 import { getServicesChoose } from '@/actions/service';
 import { itemCategoryProduct, selectorCategoryProduct } from '@/types/actions/categoryPr';
 import { dataService, selectorService } from '@/types/actions/listService';
@@ -15,12 +15,14 @@ import { selectorDetailProduct } from "@/types/actions/detailProduct";
 import { useNavigate, useParams } from "react-router-dom";
 import Description from "@/components/Description";
 import { images } from "@/types/images";
+import { itemWarrantyProduct, selectorWarrantyProduct } from "@/types/actions/listWarranty";
 
 const UpdateProduct = () => {
     const { productId } = useParams();
     const [showVehicle, setShowVehicle] = useState<boolean>(false);
     const dispatch = useDispatch();
     const categoryProduct: itemCategoryProduct<string>[] = useSelector((state: selectorCategoryProduct<string>) => state.categoryProductReducer.categoryProduct);
+    const warrantyChoose: itemWarrantyProduct<string, number>[] = useSelector((state: selectorWarrantyProduct<string, number>) => state.warrantyReducer.warrantyProduct);
     const discountProduct: itemDiscount<string, number>[] = useSelector((state: selectorDiscount<string, number>) => state.discountReducer.discountInfor);
     const vehicleProduct: itemVehicleProduct<string>[] = useSelector((state: selectorVehicleProduct<string>) => state.vehicleProductReducer.vehicleProduct);
     const serviceChoose: dataService<string, number> = useSelector((state: selectorService<string, number>) => state.serviceReducer.serviceInfor);
@@ -34,7 +36,7 @@ const UpdateProduct = () => {
     const [addDiscount, setAddDiscount] = useState<string>("");
     const [addService, setAddService] = useState<string>("");
     const [addWarranty, setAddWarranty] = useState<string>("");
-    const [warrantyDuration, setWarrantyDuration] = useState<number>(0);
+    // const [warrantyDuration, setWarrantyDuration] = useState<number>(0);
     const [checkedVehicles, setCheckedVehicles] = useState<itemVehicleProduct<string>[]>([]);
     const [addVehicle, setAddVehicle] = useState<string[]>([]);
     const [images, setImages] = useState<File[]>([]);
@@ -67,7 +69,7 @@ const UpdateProduct = () => {
                 setAddService(detailProduct.repairService.id);
             }
 
-            setWarrantyDuration(detailProduct.warrantyDuration);
+            // setWarrantyDuration(detailProduct.warrantyDuration);
             const vehicleIds = detailProduct?.vehicles?.map(vehicle => vehicle.id);
             setAddVehicle(vehicleIds);
             setCheckedVehicles(detailProduct.vehicles);
@@ -80,6 +82,7 @@ const UpdateProduct = () => {
     }, [addVehicle, vehicleProduct]);
     useEffect(() => {
         dispatch(CategoryProduct());
+        dispatch(WarrantyProduct());
         dispatch(getDiscountChoose());
         dispatch(getServicesChoose(50));
         if (addSearch !== "") {
@@ -93,22 +96,28 @@ const UpdateProduct = () => {
     const handleShowVehicle = () => {
         setShowVehicle(!showVehicle);
     }
-    const handleAddService = (e: string|undefined) => {
-        if(e){
-          setAddService(e)
+    const handleAddService = (e: string | undefined) => {
+        if (e) {
+            setAddService(e)
         }
-      }
-      const handleAddCategory = (e: string|undefined) => {
-        if(e){
-          setAddCategory(e)
+    }
+    const handleAddCategory = (e: string | undefined) => {
+        if (e) {
+            setAddCategory(e)
         }
-      }
-    
-      const handleAddDiscount = (e: string|undefined) => {
-        if(e){
-          setAddDiscount(e)
+    }
+
+    const handleAddWarranty = (e: string | undefined) => {
+        if (e) {
+            setAddWarranty(e)
         }
-      }
+    }
+
+    const handleAddDiscount = (e: string | undefined) => {
+        if (e) {
+            setAddDiscount(e)
+        }
+    }
     const handleVehicleChange = (value: string) => {
         if (addVehicle.includes(value)) {
             setAddVehicle(addVehicle.filter(item => item !== value));
@@ -157,7 +166,7 @@ const UpdateProduct = () => {
             vehiclesId: addVehicle,
             images: images
         }
-        dispatch(updateProduct(detailProduct.id,dataCreate))
+        dispatch(updateProduct(detailProduct.id, dataCreate))
         navigate(`/manage-products/${productId}`)
         console.log("data", dataCreate)
     }
@@ -171,36 +180,36 @@ const UpdateProduct = () => {
                     <div className="w-[97%] text-[#6B7280] text-[19px] py-5 ">
                         <div className="space-y-3">
                             <p className="pl-1">Tên</p>
-                            
-                                <input
-                                    type="text"
-                                    value={nameProduct??""}
-                                    placeholder='Tên sản phẩm'
-                                    className='outline-none  w-full p-3 border-2 border-[#E5E7EB] bg-gray-50 rounded-xl '
-                                    onChange={(e) => setNameProduct(e.target.value)}
-                                />
+
+                            <input
+                                type="text"
+                                value={nameProduct ?? ""}
+                                placeholder='Tên sản phẩm'
+                                className='outline-none  w-full p-3 border-2 border-[#E5E7EB] bg-gray-50 rounded-xl '
+                                onChange={(e) => setNameProduct(e.target.value)}
+                            />
 
                         </div>
                         <div className="flex justify-between pt-7">
                             <div className="flex items-center space-x-3">
                                 <p>Số lượng</p>
-                                    <input type="number"
-                                        value={quantityProduct??1}
-                                        min={1}
-                                        className='outline-none p-2 border-2 border-[#E5E7EB] bg-gray-50 rounded-xl'
-                                        onChange={(e) => setQuantityProduct(parseInt(e.target.value))}
-                                    />
+                                <input type="number"
+                                    value={quantityProduct ?? 1}
+                                    min={1}
+                                    className='outline-none p-2 border-2 border-[#E5E7EB] bg-gray-50 rounded-xl'
+                                    onChange={(e) => setQuantityProduct(parseInt(e.target.value))}
+                                />
                             </div>
                             <div className="flex items-center space-x-3">
                                 <p>Giá tiền</p>
                                 <div className="flex items-center space-x-2">
-                                        <input type="number"
-                                            min={1}
-                                            value={priceProduct??0}
-                                            placeholder="Nhập số tiền"
-                                            className='outline-none p-2 border-2 border-[#E5E7EB] bg-gray-50 rounded-xl'
-                                            onChange={(e) => setPriceProduct(parseInt(e.target.value))}
-                                        />
+                                    <input type="number"
+                                        min={1}
+                                        value={priceProduct ?? 0}
+                                        placeholder="Nhập số tiền"
+                                        className='outline-none p-2 border-2 border-[#E5E7EB] bg-gray-50 rounded-xl'
+                                        onChange={(e) => setPriceProduct(parseInt(e.target.value))}
+                                    />
                                     <p>VNĐ</p>
                                 </div>
                             </div>
@@ -208,10 +217,23 @@ const UpdateProduct = () => {
                         <div className="flex justify-between pt-7">
                             <div className="flex flex-col space-y-3">
                                 <p className="pl-1">Thời gian bảo hành</p>
-                                <select name="" id="" className="w-[250px] border-2 border-[#E5E7EB] p-3 rounded-lg ">
-                                    <option value="">Thời gian bảo hành</option>
-                                    <option value="">3 tháng</option>
-                                </select>
+                                <Select
+                                    className="text-[18px] h-[50px] bg-gray-50"
+                                    size="lg"
+                                    label="Lựa thời gian bảo hành"
+                                    onChange={handleAddWarranty}
+                                >
+                                    {warrantyChoose
+                                        ? warrantyChoose?.map((item, index) => (
+                                            <Option
+                                                value={item?.id}
+                                                key={index}
+                                                className="text-[18px]"
+                                            >{item?.duration} tháng</Option>
+                                        ))
+                                        : ""
+                                    }
+                                </Select>
                             </div>
                             <div className="flex flex-col space-y-3">
                                 <p className="pl-1">Khuyến mãi</p>
@@ -375,10 +397,10 @@ const UpdateProduct = () => {
                                 <div className="flex justify-center items-center space-x-7 pb-5">
                                     {imagesUrl.map((image, index) => (
                                         <div key={index} className="relative">
-                                            <img 
-                                            // src={URL.createObjectURL(image)} 
-                                            src={image.imageUrl}
-                                            alt="Uploaded" className="h-32 object-cover border-2 border-[#E0E2E7]" />
+                                            <img
+                                                // src={URL.createObjectURL(image)} 
+                                                src={image.imageUrl}
+                                                alt="Uploaded" className="h-32 object-cover border-2 border-[#E0E2E7]" />
                                             <button onClick={() => handleRemoveImage(index)} className="absolute right-1 top-1 text-gray-400 w-5 h-5 bg-white rounded-full flex justify-center items-center">x</button>
                                         </div>
                                     ))}
