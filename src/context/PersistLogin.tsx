@@ -1,14 +1,14 @@
 import { Outlet } from "react-router-dom";
 import { useState, useEffect } from "react";
 import userRefreshToken from "../hooks/useRefreshToken";
-import useAuth from "@/hooks/useAuth";
+// import useAuth from "@/hooks/useAuth";
 import Loading from "@/components/LoadingPage";
 
 const PersistLogin = () => {
     const [isLoading, setIsLoading] = useState(true);
     const refresh = userRefreshToken();
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const { auth }: any = useAuth();
+    // const { auth }: any = useAuth();
     const storedAuth = localStorage.getItem('auth');
     const initialAuth = storedAuth ? JSON.parse(storedAuth) : {};
     useEffect(() => {
@@ -22,7 +22,7 @@ const PersistLogin = () => {
                 setIsLoading(false);
             }
         }
-         !initialAuth?.accessToken ? verifyRefreshToken():setIsLoading(false);
+        !initialAuth?.accessToken ? verifyRefreshToken() : setIsLoading(false);
     }, [])
 
     useEffect(() => {
@@ -33,7 +33,7 @@ const PersistLogin = () => {
     return (
         <>
             {isLoading
-                ? <Loading/>
+                ? <Loading />
                 : <Outlet />
             }
         </>

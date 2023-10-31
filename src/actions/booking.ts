@@ -3,6 +3,7 @@ import { itemBooking } from "@/types/listBooking";
 
 
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const getBooking = (pageNumber: number, filters: any) => {
     return {
         type: listBooking.LIST_BOOKING,
@@ -29,6 +30,7 @@ export const getBookingFailed = (error: string) => {
     };
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const putBooking = (bookingId: string | undefined, data: any) => {
     return{
         type: updateBooking.UPDATE_BOOKING,

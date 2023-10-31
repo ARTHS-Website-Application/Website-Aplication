@@ -1,8 +1,5 @@
-import React from 'react'
 
-type Props = {}
-
-const ManageDiscount = (props: Props) => {
+const ManageDiscount = () => {
   return (
     <div>ManageDiscount</div>
   )
