@@ -1,8 +1,6 @@
-import React from 'react'
 
-type Props = {}
 
-const ManageOrderOwner = (props: Props) => {
+const ManageOrderOwner = () => {
   return (
     <div>ManageOrderOwner</div>
   )

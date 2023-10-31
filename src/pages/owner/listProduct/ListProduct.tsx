@@ -15,7 +15,7 @@ const ListProduct = () => {
     const [productData, setProductData] = useState([] as item<string, number>[]);
     const [paginationNumber, setPaginationNumber] = useState<number>(0);
     const [isLoading, setIsLoading] = useState<boolean>(false);
-    const [addSearch, setAddSearch] = useState<string>("");
+    // const [addSearch, setAddSearch] = useState<string>("");
     useEffect(() => {
         setTimeout(() => {
             setIsLoading(false);

@@ -1,4 +1,5 @@
 import { getBooking } from "@/actions/booking";
+import Pagination from "@/components/Pagination";
 import TableBooking from "@/components/teller/TableBooking";
 import { itemBooking, listBooking, selectorBooking } from "@/types/listBooking";
 import { statusBooking } from "@/types/typeBooking";
@@ -20,14 +21,14 @@ const WaitForConfirmBooking = () => {
   //   const localTime = new Date(date.getTime() - (offset * 60 * 60 * 1000));
   //   return localTime.toISOString().split('T')[0];
   // }
-  
+
   useEffect(() => {
     const filters = {
       bookingStatus: statusBooking.WaitForConfirm
     }
     dispatch(getBooking(paginationNumber, filters));
   }, [dispatch]);
-  
+
   useEffect(() => {
     let searchedBookingInfo: itemBooking<string, number>[] = [];
     if (bookingInfo && Array.isArray(bookingInfo.data)) {
@@ -68,6 +69,13 @@ const WaitForConfirmBooking = () => {
 
       </div>
       <TableBooking data={bookingData} />
+
+      <Pagination
+        totalPosts={bookingInfo.pagination?.totalRow}
+        postsPerPage={bookingInfo.pagination?.pageSize}
+        setCurrentPage={setPaginationNumber}
+        currentPage={paginationNumber}
+      />
     </div>
   )
 }

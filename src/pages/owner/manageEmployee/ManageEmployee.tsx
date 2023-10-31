@@ -1,8 +1,6 @@
-import React from 'react'
 
-type Props = {}
 
-const ManageEmployee = (props: Props) => {
+const ManageEmployee = () => {
   return (
     <div>ManageEmployee</div>
   )

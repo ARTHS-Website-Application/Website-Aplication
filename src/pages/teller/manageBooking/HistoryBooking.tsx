@@ -1,4 +1,5 @@
 import { getBooking } from "@/actions/booking";
+import Pagination from "@/components/Pagination";
 import TableBooking from "@/components/teller/TableBooking";
 import { listBooking, selectorBooking, itemBooking } from "@/types/listBooking";
 import { useEffect, useState } from "react";
@@ -13,31 +14,31 @@ const HistoryBooking = () => {
   const [searchQuery, setSearchQuery] = useState<string>(""); // State to keep track of the search query
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
   const formatDateToISO = (date: Date): string => {
-      const offset = -7; // Vietnam is UTC+7, but the offset is the negative
-      const localTime = new Date(date.getTime() - (offset * 60 * 60 * 1000));
-      return localTime.toISOString().split('T')[0];
+    const offset = -7; // Vietnam is UTC+7, but the offset is the negative
+    const localTime = new Date(date.getTime() - (offset * 60 * 60 * 1000));
+    return localTime.toISOString().split('T')[0];
   }
 
-  
+
   useEffect(() => {
-      const filters ={
-      }
-      dispatch(getBooking(paginationNumber, filters));
+    const filters = {
+    }
+    dispatch(getBooking(paginationNumber, filters));
   }, [dispatch]);
 
   useEffect(() => {
-      
-      const searchedBookingInfo = searchQuery ?
-          bookingInfo?.data.filter(item => item.customer.phoneNumber.toString().includes(searchQuery)) : bookingInfo.data;
-          //console.log(searchedBookingInfo.toString());
-      const finalData = selectedDate ?
-          searchedBookingInfo?.filter(item => formatDateToISO(new Date(item.dateBook)) === selectedDate) :
-          searchedBookingInfo;
 
-      setBookingData(finalData);
+    const searchedBookingInfo = searchQuery ?
+      bookingInfo?.data.filter(item => item.customer.phoneNumber.toString().includes(searchQuery)) : bookingInfo.data;
+    //console.log(searchedBookingInfo.toString());
+    const finalData = selectedDate ?
+      searchedBookingInfo?.filter(item => formatDateToISO(new Date(item.dateBook)) === selectedDate) :
+      searchedBookingInfo;
+
+    setBookingData(finalData);
   }, [bookingInfo.data, searchQuery, selectedDate]);
 
-  
+
 
   return (
     <div className="w-full min-h-full p-5">
@@ -65,22 +66,28 @@ const HistoryBooking = () => {
           )}
         </div>
         <div className="flex items-center bg-white border border-gray-200 rounded-full px-4 py-2">
-    <FaCalendarAlt className="text-gray-400" />
-    <input
-        type="date"
-        className="outline-none bg-transparent"
-        value={selectedDate || ""}
-        onChange={e => setSelectedDate(e.target.value)}
-    />
-    {selectedDate && (
-        <button onClick={() => setSelectedDate(null)}>
-            <FaTimes />
-        </button>
-    )}
-</div>
+          <FaCalendarAlt className="text-gray-400" />
+          <input
+            type="date"
+            className="outline-none bg-transparent"
+            value={selectedDate || ""}
+            onChange={e => setSelectedDate(e.target.value)}
+          />
+          {selectedDate && (
+            <button onClick={() => setSelectedDate(null)}>
+              <FaTimes />
+            </button>
+          )}
+        </div>
 
       </div>
       <TableBooking data={bookingData} />
+      <Pagination
+        totalPosts={bookingInfo.pagination?.totalRow}
+        postsPerPage={bookingInfo.pagination?.pageSize}
+        setCurrentPage={setPaginationNumber}
+        currentPage={paginationNumber}
+      />
     </div>
   )
 }

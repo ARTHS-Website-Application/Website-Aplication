@@ -1,8 +1,8 @@
 import { getBooking } from "@/actions/booking";
+import Pagination from "@/components/Pagination";
 import TableBooking from "@/components/teller/TableBooking";
 import { itemBooking, listBooking, selectorBooking } from "@/types/listBooking";
- import { statusBooking } from "@/types/typeBooking";
-;
+import { statusBooking } from "@/types/typeBooking";
 import { useEffect, useState } from "react";
 import { FaSearch, FaCalendarAlt, FaTimes } from 'react-icons/fa';
 import { useDispatch, useSelector } from "react-redux";
@@ -13,8 +13,8 @@ const ListBooking = () => {
     const [bookingData, setBookingData] = useState<itemBooking<string, number>[]>([]);
     const [paginationNumber, setPaginationNumber] = useState<number>(0);
     const [searchQuery, setSearchQuery] = useState<string>(""); // State to keep track of the search query
-    
-    
+
+
     const formatDateToISO = (date: Date): string => {
         const offset = -7; // Vietnam is UTC+7, but the offset is the negative
         const localTime = new Date(date.getTime() - (offset * 60 * 60 * 1000));
@@ -22,19 +22,19 @@ const ListBooking = () => {
     }
 
     const [selectedDate, setSelectedDate] = useState<string>(formatDateToISO(new Date()));
-    
+
     useEffect(() => {
-        const filters ={
+        const filters = {
             excludeBookingStatus: statusBooking.WaitForConfirm
         }
         dispatch(getBooking(paginationNumber, filters));
     }, [dispatch]);
 
     useEffect(() => {
-        
+
         const searchedBookingInfo = searchQuery ?
             bookingInfo?.data.filter(item => item.customer.phoneNumber.toString().includes(searchQuery)) : bookingInfo.data;
-            //console.log(searchedBookingInfo.toString());
+        //console.log(searchedBookingInfo.toString());
         const finalData = selectedDate ?
             searchedBookingInfo?.filter(item => formatDateToISO(new Date(item.dateBook)) === selectedDate) :
             searchedBookingInfo;
@@ -78,6 +78,12 @@ const ListBooking = () => {
                 </div>
             </div>
             <TableBooking data={bookingData} />
+            <Pagination
+                totalPosts={bookingInfo.pagination?.totalRow}
+                postsPerPage={bookingInfo.pagination?.pageSize}
+                setCurrentPage={setPaginationNumber}
+                currentPage={paginationNumber}
+            />
         </div>
     )
 }

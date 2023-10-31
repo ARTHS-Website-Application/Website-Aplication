@@ -1,8 +1,6 @@
-import React from 'react'
 
-type Props = {}
 
-const ManageService = (props: Props) => {
+const ManageService = () => {
   return (
     <div>ManageService</div>
   )

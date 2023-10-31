@@ -1,6 +1,6 @@
-import React from 'react'
-import { ArrowLeftIcon } from '@heroicons/react/24/solid';
-import { Link } from 'react-router-dom';
+// import React from 'react'
+// import { ArrowLeftIcon } from '@heroicons/react/24/solid';
+// import { Link } from 'react-router-dom';
 
 const ChangePassword = () => {
     return (
@@ -15,7 +15,7 @@ const ChangePassword = () => {
                         </div>
                         <form
                             onSubmit={() => {
-                                postData("");
+                                ""
                             }}
                         >
 
