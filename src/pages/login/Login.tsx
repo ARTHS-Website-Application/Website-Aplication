@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react';
-import logoLogin from "@/assets/logoLogin.jpeg";
+import logoLogin from "@/assets/LogoLogin.jpeg";
 import { useState } from "react";
 import { Link, useNavigate } from 'react-router-dom';
 // import useAuth from "@/hooks/useAuth";
