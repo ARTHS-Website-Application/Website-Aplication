@@ -2,12 +2,13 @@ import { call, put, takeEvery } from 'redux-saga/effects';
 import { productInfor,productFilter, detailProduct, productCreate, productUpdate } from '../../../constants/mainConstants';
 import { privateService } from '@/services/productService';
 import { AxiosResponse } from 'axios';
-import { ShowProductSuccess,ShowProductFailed, CategoryProductSuccess, CategoryProductFailed, FilterProductSuccess, FilterProductFailed, getDetailProductSuccess, getDetailProductFailed, vehicleProductSuccess, vehicleProductFailed } from '@/actions/product';
+import { ShowProductSuccess,ShowProductFailed, CategoryProductSuccess, CategoryProductFailed, FilterProductSuccess, FilterProductFailed, getDetailProductSuccess, getDetailProductFailed, vehicleProductSuccess, vehicleProductFailed, WarrantyProductSuccess, WarrantyProductFailed } from '@/actions/product';
 import { getFilter } from '@/types/actions/filterCreate';
 import { payloadCreateProduct, payloadSaga, payloadUpdateProduct } from '@/types/actions/product';
 import { sagaDetailProduct } from '@/types/actions/detailProduct';
-import { listVehicles, productCategory } from '@/constants/secondaryConstants';
+import { listVehicles, listWarranty, productCategory } from '@/constants/secondaryConstants';
 import { payloadVehicle } from '@/types/actions/listVehicle';
+import { History } from '@/context/NavigateSetter';
 
 function* createProduct(payload:payloadCreateProduct) {
     try {
@@ -16,6 +17,8 @@ function* createProduct(payload:payloadCreateProduct) {
         console.log("create",data)
         if (data && status === 201) {
             yield put(getDetailProductSuccess(data));
+            if(History.navigate)
+            History.navigate(`/manage-products/${data.id}`)
         } else {
             yield put(getDetailProductFailed(data));
         }
@@ -72,6 +75,23 @@ function* getCategoryProduct() {
     } catch (error: any) {
         const msg: string = error.message;
         yield put(CategoryProductFailed(msg));
+    }
+
+}
+
+function* getWarrantyProduct() {
+    try {
+        const resp: AxiosResponse = yield call(privateService.getWarrantyProduct);
+        const { status, data } = resp;
+        if (data && status === 200) {
+            yield put(WarrantyProductSuccess(data));
+        } else {
+            yield put(WarrantyProductFailed(data));
+        }
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
+        const msg: string = error.message;
+        yield put(WarrantyProductFailed(msg));
     }
 
 }
@@ -151,6 +171,7 @@ export function* lookupProduct() {
     yield takeEvery(productUpdate.PRODUCT_UPDATE , updateProduct);
     yield takeEvery(productInfor.GET_PRODUCT_INFO , getProduct);
     yield takeEvery( productCategory.GET_PRODUCT_CATEGORY, getCategoryProduct);
+    yield takeEvery( listWarranty.GET_LIST_WARRANTY, getWarrantyProduct);
     yield takeEvery( listVehicles.GET_LIST_VEHICLES, getVehicleProduct);
     yield takeEvery( listVehicles.GET_LIST_VEHICLES_SEARCH, getVehicleSearchProduct);
     yield takeEvery( productFilter.GET_PRODUCT_FILTER, getFilterProduct);

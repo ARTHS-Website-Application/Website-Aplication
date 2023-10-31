@@ -1,8 +1,9 @@
 import { productInfor, productFilter, detailProduct, productCreate, productUpdate } from "@/constants/mainConstants";
-import { listVehicles, productCategory } from "@/constants/secondaryConstants";
+import { listVehicles, listWarranty, productCategory } from "@/constants/secondaryConstants";
 import { itemCategoryProduct } from "@/types/actions/categoryPr";
 import { itemFilter } from "@/types/actions/filterCreate";
 import { itemVehicleProduct } from "@/types/actions/listVehicle";
+import { itemWarrantyProduct } from "@/types/actions/listWarranty";
 import { item, itemProduct } from "@/types/actions/product";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -63,6 +64,29 @@ export const CategoryProductSuccess = (data:itemCategoryProduct<string>[]) => {
 export const CategoryProductFailed = (error:string) => {
     return {
         type: productCategory.GET_PRODUCT_CATEGORY_FAIL,
+        payload: {
+            error,
+        },
+    };
+};
+
+export const WarrantyProduct = () => {
+    return {
+        type: listWarranty.GET_LIST_WARRANTY,
+    };
+};
+
+export const WarrantyProductSuccess = (data:itemWarrantyProduct<string,number>[]) => {
+    return {
+        type: listWarranty.GET_LIST_WARRANTY_SUCCESS,
+        payload: {
+            data,
+        },
+    };
+};
+export const WarrantyProductFailed = (error:string) => {
+    return {
+        type: listWarranty.GET_LIST_WARRANTY_FAIL,
         payload: {
             error,
         },
