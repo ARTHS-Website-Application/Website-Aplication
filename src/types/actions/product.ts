@@ -132,6 +132,14 @@ export interface addProductOrder<T, N> {
         price: N;
         image: T
     } | null;
+    checked:boolean;
+}
+
+export interface addProductService<T,N>{
+    id: T;
+    name: T;
+    price: N;
+    image: T
 }
 
 

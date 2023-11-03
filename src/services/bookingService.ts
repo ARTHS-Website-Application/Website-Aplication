@@ -1,5 +1,6 @@
 import userAxiosPrivate from "@/hooks/useAxiosPrivate";
 export class Private{
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     getBooking = async (pageNumber: number, filters: any) =>{
         //console.log(filters);
         const axiosPrivate = userAxiosPrivate();
@@ -8,6 +9,7 @@ export class Private{
         return await axiosPrivate.get(`/repair-bookings?${queryParams}`);
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     updateBooking = async (bookingId: string, data: any) =>{
         const axiosPrivate = userAxiosPrivate();
         console.log('call api update nè');

@@ -7,6 +7,7 @@ export const productCategory = {
 export const listServices = {
     GET_LIST_SERVICES_CHOOSE: "list_services_choose",
     GET_LIST_SERVICES: "list_services",
+    GET_LIST_SERVICES_FILTER: "list_services_filter",
     GET_LIST_SERVICES_SUCCESS: "list_services_success",
     GET_LIST_SERVICES_FAIL: "list_services_fail",
 }

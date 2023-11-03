@@ -13,7 +13,6 @@ const ListProduct = ({ data, onClickAdd }: Props) => {
             {data.map((item: item<string, number>, index: number) => (
                 <ItemProduct
                     onClickAdd={() => onClickAdd(item)} // Pass the item as an argument
-                    profileItem={item}
                     key={index}
                     _name={item.name}
                     _priceCurrent={item.priceCurrent}

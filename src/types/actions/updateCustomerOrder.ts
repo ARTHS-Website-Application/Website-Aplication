@@ -34,6 +34,6 @@ export interface itemStaffProduct<T,N> {
 }
 export interface itemProductOrder<T, N> {
     repairServiceId: T|null,
-    motobikeProductId?: T,
+    motobikeProductId: T|null,
     productQuantity?: N,
 }

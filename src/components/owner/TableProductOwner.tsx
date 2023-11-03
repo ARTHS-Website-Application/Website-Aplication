@@ -11,11 +11,14 @@ type Props = {
 }
 
 const TableProductOwner = ({ productData }: Props) => {
-    const [showDiv, setShowDiv] = useState(Array(productData?.length).fill(false));
+    const [showDivIndex, setShowDivIndex] = useState<number>(-1);
+
     const handleShowDiv = (index: number) => {
-        const updatedShowDiv = [...showDiv];
-        updatedShowDiv[index] = !updatedShowDiv[index];
-        setShowDiv(updatedShowDiv);
+        if (showDivIndex === index) {
+            setShowDivIndex(-1);
+        } else {
+            setShowDivIndex(index);
+        }
     }
     return (
         <table className="min-w-full bg-white divide-y divide-gray-200 table-fixed text-center">
@@ -44,7 +47,7 @@ const TableProductOwner = ({ productData }: Props) => {
                 </tr>
             </thead>
             <tbody className="divide-y divide-gray-200 text-[17px]">
-                {productData && productData.map((item: item<string, number>, index) => (
+                {productData && productData.map((item: item<string, number>, index:number) => (
                     <tr key={index}>
                         <td className="flex pl-3 items-center py-[10px] ">
                             <img src={item.images[0].imageUrl} alt="" className='w-8 h-8' />
@@ -77,10 +80,10 @@ const TableProductOwner = ({ productData }: Props) => {
                             <button
                                 onClick={() => handleShowDiv(index)}
                             >
-                                <RxDotsHorizontal className='w-5 h-5 hover:text-main'/>
+                                <RxDotsHorizontal className='w-5 h-5 hover:text-main' />
                             </button>
 
-                            {showDiv[index] && (
+                            {showDivIndex === index && (
                                 <div className="absolute flex flex-col items-center bg-white shadow-lg rounded-lg w-[140px] right-0 space-y-3 py-2 font-semibold text-[#667085]">
                                     <Link to={item.id} className="hover:text-main">Chi tiết</Link>
                                     <Link to={`update-product/${item.id}`} className='flex items-center space-x-1 hover:text-main hover:stroke-main'
