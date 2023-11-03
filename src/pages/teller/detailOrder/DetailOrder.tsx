@@ -37,35 +37,35 @@ const DetailOrder = () => {
   const [showUpdateProduct, setShowUpdateProduct] = useState<boolean>(false)
   const [showUpdateService, setShowUpdateService] = useState<boolean>(false)
 
-    const [itemProductOrdered, setItemProductOrdered] = useState<item<string, number>[]>([])
-    useEffect(() => {
-        if (detailOrder?.inStoreOrderDetails?.some((item) => item.motobikeProduct)) {
-            // eslint-disable-next-line @typescript-eslint/no-unused-vars
-            const promises = detailOrder?.inStoreOrderDetails
-                .filter(product => product.motobikeProduct)
-                .map(product => {
-                    const productId = product?.motobikeProduct?.id;
+  const [itemProductOrdered, setItemProductOrdered] = useState<item<string, number>[]>([])
+  useEffect(() => {
+    if (detailOrder?.inStoreOrderDetails?.some((item) => item.motobikeProduct)) {
+      const promises = detailOrder?.inStoreOrderDetails
+        .filter(product => product.motobikeProduct)
+        .map(product => {
+          const productId = product?.motobikeProduct?.id;
 
-                    if (productId) {
-                        // Gọi action để fetch dữ liệu và lưu vào Redux
-                        dispatch(getDetailProduct(productId));
-                    }
-                });
-        }
-    }, [detailOrder?.inStoreOrderDetails, dispatch]);
-    const detailProduct: item<string, number> = useSelector((state: selectorDetailProduct<string, number>) => state.productDetailReducer.productDetail);
-    useEffect(() => {
-        if (detailProduct && detailProduct.id) {
-            // Kiểm tra xem cùng id
-            const isProductInList = itemProductOrdered.some(product => product.id === detailProduct.id);
-            if (!isProductInList) {
-                setItemProductOrdered((prevItemProductOrdered) => [
-                    ...prevItemProductOrdered,
-                    detailProduct,
-                ]);
-            }
-        }
-    }, [detailProduct, itemProductOrdered]);
+          if (productId) {
+            // Gọi action để fetch dữ liệu và lưu vào Redux
+            dispatch(getDetailProduct(productId));
+          }
+        });
+      promises;
+    }
+  }, [detailOrder?.inStoreOrderDetails, dispatch]);
+  const detailProduct: item<string, number> = useSelector((state: selectorDetailProduct<string, number>) => state.productDetailReducer.productDetail);
+  useEffect(() => {
+    if (detailProduct && detailProduct.id) {
+      // Kiểm tra xem cùng id
+      const isProductInList = itemProductOrdered.some(product => product.id === detailProduct.id);
+      if (!isProductInList) {
+        setItemProductOrdered((prevItemProductOrdered) => [
+          ...prevItemProductOrdered,
+          detailProduct,
+        ]);
+      }
+    }
+  }, [detailProduct, itemProductOrdered]);
 
   useEffect(() => {
     if (orderId) {
