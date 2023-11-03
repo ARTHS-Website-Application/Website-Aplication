@@ -25,6 +25,7 @@ import ManageBooking from './pages/teller/manageBooking/ManageBooking'
 import ListBooking from './pages/teller/manageBooking/ListBooking';
 import WaitForConfirmBooking from './pages/teller/manageBooking/WaitForConfirmBooking';
 import HistoryBooking from './pages/teller/manageBooking/HistoryBooking';
+import CreateOrderService from './pages/teller/createOrderService/CreateOrderService';
 
 const ROLES = {
   Owner: "Owner",
@@ -58,7 +59,9 @@ function App() {
           <Route element={<RequireAuth allowedRoles={ROLES.Teller} />}>
             <Route path="teller" element={<HomeTeller />} />
             <Route path="manage-order" element={<ManageOrder />}>
-              <Route path="create-order" index element={<CreateOrder />} />
+
+              <Route path="create-order" element={<CreateOrder />}/>
+                <Route path="order-service" element={<CreateOrderService/>}/>
               <Route path="list-order" element={<ListOrder />} />
               <Route path=":orderId" element={<DetailOrder />} />
               <Route path="history-order" element={<HistoryOrder />} />

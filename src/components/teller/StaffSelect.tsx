@@ -63,7 +63,7 @@ const handleBoxCreateOrder = ()=>{
                 
                 <div className="font-bold text-white flex flex-row-reverse justify-center space-x-5 space-x-reverse pt-[60px]">
                     <button
-                        className="hover:bg-blue-800 bg-slate-600 px-5 h-[40px]  rounded-md"
+                        className="hover:bg-blue-800 bg-gray-400 px-5 h-[40px]  rounded-md"
                         onClick={handleBoxCreateOrder}
                     >
                         Tạo đơn hàng

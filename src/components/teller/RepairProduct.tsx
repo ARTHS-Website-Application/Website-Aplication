@@ -4,7 +4,7 @@ import { itemCategoryProduct, selectorCategoryProduct } from '@/types/actions/ca
 import { addProductOrder, item, itemProduct, selectorProduct } from '@/types/actions/product';
 import { MagnifyingGlassIcon } from '@heroicons/react/24/solid';
 import { useState, useEffect } from 'react'
-import { useDispatch, useSelector } from 'react-redux';
+import {useDispatch, useSelector } from 'react-redux';
 import Pagination from '../Pagination';
 import ListProduct from '@/pages/teller/listProduct/ListProduct';
 import Loading from '../LoadingPage';
@@ -17,9 +17,11 @@ type Props = {
     onClose: () => void;
     dataProduct?: inStoreOrderDetails<string, number>[];
     idOrder: string | null;
+    productOrdered:item<string, number>[]
 }
 
-const RepairProduct = ({ isVisible, onClose, dataProduct, idOrder }: Props) => {
+const RepairProduct = ({ isVisible, onClose, dataProduct, idOrder,productOrdered }: Props) => {
+    const dispatch = useDispatch();
     const tranfomDataProduct: addProductOrder<string, number>[] = (dataProduct ?? []).map((item: inStoreOrderDetails<string, number>) => {
         const transformedItem: addProductOrder<string, number> = {
             idProduct: item?.motobikeProduct.id,
@@ -30,10 +32,21 @@ const RepairProduct = ({ isVisible, onClose, dataProduct, idOrder }: Props) => {
             image: item.motobikeProduct.image,
             productQuantity: item.productQuantity,
             repairService: item?.repairService ?? null,
+            checked: false,
         };
+        // let matchingRepairService = null;
+        const matchingItem = productOrdered?.find(product => product?.repairService?.id === transformedItem.repairService?.id && product.repairService !== null);
+        if (matchingItem) {
+            transformedItem.checked = true;
+        }
+        const matchingService = productOrdered?.find(product => product.id === transformedItem.idProduct);
+        if (matchingService) {
+            transformedItem.repairService = matchingService?.repairService;
+        }
         return transformedItem;
     });
     useEffect(() => {
+        if(tranfomDataProduct)
         setAddProduct(tranfomDataProduct);
     }, [dataProduct])
     const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -45,7 +58,7 @@ const RepairProduct = ({ isVisible, onClose, dataProduct, idOrder }: Props) => {
     const [paginationNumber, setPaginationNumber] = useState<number>(0);
     const categoryProduct: itemCategoryProduct<string>[] = useSelector((state: selectorCategoryProduct<string>) => state.categoryProductReducer.categoryProduct);
     const productInfor: itemProduct<string, number> = useSelector((state: selectorProduct<string, number>) => state.productReducer.productInfor);
-    const dispatch = useDispatch();
+
     useEffect(() => {
         dispatch(CategoryProduct());
     }, [dispatch])
@@ -90,7 +103,8 @@ const RepairProduct = ({ isVisible, onClose, dataProduct, idOrder }: Props) => {
             discountAmount: data?.discount ? data.discount?.discountAmount : null,
             image: data.images[0].imageUrl,
             productQuantity: 1,
-            repairService: data?.repairService
+            repairService: data?.repairService,
+            checked:false,
         }
         const itemToAdd = newData;
         const existingCartItems = addProduct || [];
@@ -115,7 +129,6 @@ const RepairProduct = ({ isVisible, onClose, dataProduct, idOrder }: Props) => {
     }
     return (
         <div className="fixed inset-0 bg-black bg-opacity-25 backdrop-blur-sm flex justify-center items-center">
-
             <div className="w-[80%] bg-white rounded-lg">
                 <div className="bg-gray-600 py-2 rounded-t-lg">
                     <div className="w-full flex flex-row justify-between py-[5px] text-white ">

@@ -1,4 +1,5 @@
 import { listServices } from "@/constants/secondaryConstants";
+import { serviceFilter } from "@/types/actions/filterCreate";
 import { dataService } from "@/types/actions/listService";
 
 export const getServicesChoose = (pageSize: number) => {
@@ -12,6 +13,13 @@ export const getServices = (pageNumber: number) => {
     return {
         type: listServices.GET_LIST_SERVICES,
         pageNumber
+    };
+};
+
+export const getFilterServices = (data: serviceFilter<string,number>) => {
+    return {
+        type: listServices.GET_LIST_SERVICES_FILTER,
+        data
     };
 };
 

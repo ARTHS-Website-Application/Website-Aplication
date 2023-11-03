@@ -18,18 +18,55 @@ import RepairCustomer from '@/components/teller/RepairCustomer';
 import Loading from '@/components/LoadingPage';
 import RepairProduct from '@/components/teller/RepairProduct';
 import { showSuccessAlert } from '@/constants/chooseToastify';
+import RepairService from '@/components/teller/RepairService';
+import { getDetailProduct } from '@/actions/product';
+import { item } from '@/types/actions/product';
+import { selectorDetailProduct } from '@/types/actions/detailProduct';
 
 const DetailOrder = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const { orderId } = useParams();
   const dispatch = useDispatch();
   const detailOrder: itemDetailOrder<string, number> = useSelector((state: selectorDetailOrder<string, number>) => state.orderDetailReducer.orderDetail)
+  // console.log(detailOrder)
   const [data, setData] = useState<itemDetailOrder<string, number>>();
   const axiosPrivate = userAxiosPrivate();
   // const navigate = useNavigate();
   const [payment, setPayment] = useState<string>("Tiền mặt");
   const [showUpdate, setShowUpdate] = useState<boolean>(false)
   const [showUpdateProduct, setShowUpdateProduct] = useState<boolean>(false)
+  const [showUpdateService, setShowUpdateService] = useState<boolean>(false)
+
+    const [itemProductOrdered, setItemProductOrdered] = useState<item<string, number>[]>([])
+    useEffect(() => {
+        if (detailOrder?.inStoreOrderDetails?.some((item) => item.motobikeProduct)) {
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
+            const promises = detailOrder?.inStoreOrderDetails
+                .filter(product => product.motobikeProduct)
+                .map(product => {
+                    const productId = product?.motobikeProduct?.id;
+
+                    if (productId) {
+                        // Gọi action để fetch dữ liệu và lưu vào Redux
+                        dispatch(getDetailProduct(productId));
+                    }
+                });
+        }
+    }, [detailOrder?.inStoreOrderDetails, dispatch]);
+    const detailProduct: item<string, number> = useSelector((state: selectorDetailProduct<string, number>) => state.productDetailReducer.productDetail);
+    useEffect(() => {
+        if (detailProduct && detailProduct.id) {
+            // Kiểm tra xem cùng id
+            const isProductInList = itemProductOrdered.some(product => product.id === detailProduct.id);
+            if (!isProductInList) {
+                setItemProductOrdered((prevItemProductOrdered) => [
+                    ...prevItemProductOrdered,
+                    detailProduct,
+                ]);
+            }
+        }
+    }, [detailProduct, itemProductOrdered]);
+
   useEffect(() => {
     if (orderId) {
       dispatch(getDetailOrder(orderId));
@@ -90,9 +127,9 @@ const DetailOrder = () => {
     }
 
   }
-  const handleCash = ()=>{
-    if(data?.id){
-      dispatch(updateStatusOrder(data?.id,statusOrder.Paid));
+  const handleCash = () => {
+    if (data?.id) {
+      dispatch(updateStatusOrder(data?.id, statusOrder.Paid));
       setIsLoading(true);
       showSuccessAlert('Thanh toán thành công, đơn hàng đang xuất bill');
     }
@@ -238,7 +275,7 @@ const DetailOrder = () => {
 
             {/* thông tin sản phẩm */}
             <div className={`w-full border-[#E0E2E7] space-y-3  
-            ${data?.status === statusOrder.Paid ||(data?.orderType === typeOrder.Repair && data?.status !== statusOrder.WaitForPay)   ? "border-2 rounded-md py-3" : "border-x-2 border-t-2 rounded-t-md pt-3"} `}>
+            ${data?.status === statusOrder.Paid || (data?.orderType === typeOrder.Repair && data?.status !== statusOrder.WaitForPay) ? "border-2 rounded-md py-3" : "border-x-2 border-t-2 rounded-t-md pt-3"} `}>
               <div className='flex justify-between w-full px-3'>
                 <div className='font-semibold flex items-center space-x-3 '>
                   <h2 className='text-[20px]'>Danh sách sản phẩm</h2>
@@ -246,69 +283,83 @@ const DetailOrder = () => {
                 </div>
                 {data?.status !== statusOrder.Paid && data?.status !== statusOrder.WaitForPay && (
                   <button className='bg-main w-[200px] text-center py-3 rounded-lg font-semibold text-white hover:bg-[#ec504b]'
-                    onClick={() => setShowUpdateProduct(true)}
+                    onClick={() => {
+                      if (data?.inStoreOrderDetails?.some((item) => item.motobikeProduct)) {
+                        setShowUpdateProduct(true);
+                        setShowUpdateService(false); // Ẩn modal RepairService nếu có
+                      } else {
+                        setShowUpdateService(true);
+                        setShowUpdateProduct(false); // Ẩn modal RepairProduct nếu có
+                      }
+                    }}
                   >Thêm / Sửa sản phẩm</button>
                 )}
               </div>
 
               <div className={`overflow-y-scroll ${data?.orderType === typeOrder.Repair ? "h-[27vh]" : "h-[30vh]"}  flex flex-col`}>
-                <table className="w-full bg-white divide-y divide-gray-200 table-fixed text-center">
-                  <thead>
-                    <tr className="text-left text-xs uppercase tracking-wider bg-mainB text-center">
-                      <th scope="col" className="py-3 flex justify-center items-center space-x-2">
-                        <p>Tên sản phẩm</p>
-                      </th>
-                      <th scope="col" className="">
-                        <p>Bảo hành đến</p>
-                      </th>
-                      <th scope="col" className="">
-                        <p>Số lượng</p>
-                      </th>
-                      <th scope="col" className="">
-                        <p>Đơn giá</p>
-                      </th>
-                      <th scope="col" className="">
-                        <p>Tổng tiền(VND)</p>
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-gray-200">
-                    {data?.inStoreOrderDetails?.map((item: inStoreOrderDetails<string, number>, index) => (
-                      <tr key={index}>
-                        <td className="py-3 px-3 flex items-center">
-                          <img src={item?.motobikeProduct.image} alt="" className="h-11 mr-5" />
-                          <p>{item?.motobikeProduct.name}</p>
-                        </td>
-                        <td className="">
-                          {item && item.warrantyPeriod && (
-                            new Intl.DateTimeFormat('en-GB', {
-                              timeZone: 'UTC'
-                            }).format(new Date(Date.parse(item.warrantyPeriod.toString()) + 7 * 60 * 60 * 1000))
-                          )}
-                        </td>
-                        <td className="">
-                          {item?.productQuantity}
-                        </td>
-                        <td className="">
-                          {formatPrice(item?.productPrice)}
-                        </td>
-                        <td className="">
-                          {formatPrice(item?.productQuantity * item?.productPrice)}
-                        </td>
-                      </tr>
-                    ))}
+                {data?.inStoreOrderDetails?.some((item) => item.motobikeProduct)
+                  ? (
+                    <div>
+                      <table className="w-full bg-white divide-y divide-gray-200 table-fixed text-center">
+                        <thead>
+                          <tr className="text-xs uppercase tracking-wider bg-mainB text-center">
+                            <th scope="col" className="py-3 flex justify-center items-center space-x-2">
+                              <p>Tên sản phẩm</p>
+                            </th>
+                            <th scope="col" className="">
+                              <p>Bảo hành đến</p>
+                            </th>
+                            <th scope="col" className="">
+                              <p>Số lượng</p>
+                            </th>
+                            <th scope="col" className="">
+                              <p>Đơn giá</p>
+                            </th>
+                            <th scope="col" className="">
+                              <p>Tổng tiền(VND)</p>
+                            </th>
+                          </tr>
+                        </thead>
+                        <tbody className="divide-y divide-gray-200">
+                          {data?.inStoreOrderDetails?.map((item: inStoreOrderDetails<string, number>, index) => (
+                            <tr key={index}>
+                              <td className="py-3 px-3 flex items-center">
+                                <img src={item?.motobikeProduct.image} alt="" className="h-11 mr-5" />
+                                <p>{item?.motobikeProduct.name}</p>
+                              </td>
+                              <td className="">
+                                {item && item.warrantyPeriod && (
+                                  new Intl.DateTimeFormat('en-GB', {
+                                    timeZone: 'UTC'
+                                  }).format(new Date(Date.parse(item.warrantyPeriod.toString()) + 7 * 60 * 60 * 1000))
+                                )}
+                              </td>
+                              <td className="">
+                                {item?.productQuantity}
+                              </td>
+                              <td className="">
+                                {formatPrice(item?.productPrice)}
+                              </td>
+                              <td className="">
+                                {formatPrice(item?.productQuantity * item?.productPrice)}
+                              </td>
+                            </tr>
+                          ))}
 
-                  </tbody>
-                </table>
-                <div className="flex justify-end pr-[110px] font-semibold space-x-[155px] py-3 ">
-                  <p className='text-[18px]'>Tổng tiền sản phẩm</p>
-                  <p className=''>{formatPrice(TotalOrderDetail)} VNĐ</p>
-                </div>
+                        </tbody>
+                      </table>
+                      <div className="flex justify-end pr-[110px] font-semibold space-x-[155px] py-3 ">
+                        <p className='text-[18px]'>Tổng tiền sản phẩm</p>
+                        <p className=''>{formatPrice(TotalOrderDetail)} VNĐ</p>
+                      </div>
+                    </div>
+                  ) : ""}
+
                 {data?.orderType === typeOrder.Repair && (
                   <div>
                     <table className="w-full bg-white divide-y divide-gray-200 table-auto text-center">
                       <thead>
-                        <tr className="text-left text-xs uppercase tracking-wider bg-mainB text-center">
+                        <tr className="text-xs uppercase tracking-wider bg-mainB text-center">
                           <th scope="col" className="px-6 py-3 flex justify-center items-center space-x-2">
                             <p>Tên dịch vụ</p>
                           </th>
@@ -348,8 +399,8 @@ const DetailOrder = () => {
                 <p className='text-[19px] font-semibold'>Tổng cộng</p>
                 <p className='font-semibold text-[19px]'>{formatPrice(TotalOrderDetail + TotalService)} VNĐ</p>
               </div>
-              {data?.orderType === typeOrder.Purchase || (data?.orderType === typeOrder.Repair && data?.status === statusOrder.WaitForPay) 
-              ?
+              {data?.orderType === typeOrder.Purchase || (data?.orderType === typeOrder.Repair && data?.status === statusOrder.WaitForPay)
+                ?
                 data?.status !== statusOrder.Paid ? (
                   payment === "Tiền mặt" ? (
                     <div className='flex justify-end pr-[90px] pt-2'>
@@ -365,7 +416,7 @@ const DetailOrder = () => {
                     </div>
                   )
                 ) : ""
-              : ""
+                : ""
               }
 
             </div>
@@ -380,12 +431,22 @@ const DetailOrder = () => {
 
               licensePlate={data?.licensePlate}
             />
-            <RepairProduct
-              dataProduct={data?.inStoreOrderDetails}
-              idOrder={data?.id}
-              isVisible={showUpdateProduct}
-              onClose={() => setShowUpdateProduct(false)}
-            />
+            {data?.inStoreOrderDetails?.some((item) => item.motobikeProduct) ? (
+              <RepairProduct
+                dataProduct={data?.inStoreOrderDetails}
+                productOrdered={itemProductOrdered}
+                idOrder={data?.id}
+                isVisible={showUpdateProduct}
+                onClose={() => setShowUpdateProduct(false)}
+              />
+            ) : (
+              <RepairService
+                dataProduct={data?.inStoreOrderDetails}
+                idOrder={data?.id}
+                isVisible={showUpdateService}
+                onClose={() => setShowUpdateService(false)}
+              />
+            )}
           </div>
         )
       }

@@ -5,6 +5,10 @@ const linkRole =[
     name:"Tạo đơn hàng"
   },
   {
+    to:'/manage-order/order-service',
+    name:"Tạo đơn dịch vụ"
+  },
+  {
     to:'/manage-order/list-order',
     name:"Danh sách đơn hàng"
   },
