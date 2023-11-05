@@ -22,10 +22,11 @@ const UpdateProduct = ({ addProduct = [], removeProduct, onClose, setAddProduct,
     const [orderData, setOrderData] = useState<itemOrder<string, number>[]>([]);
     const [productQuantity, setProductQuantity] = useState<{ [key: string]: number }>({});
     //check tranfomDataProduct và addProduct trùng nhau không
-    const selectedItems = new Set<string>();
     const [showService, setShowService] = useState<boolean[]>(addProduct.map(() => false));
+    const selectedItems = new Set<string>();
     const [checkedService, setCheckedService] = useState<boolean[]>(addProduct.map((item) => {
-        if (item.repairService && !selectedItems.has(item.idProduct)) {
+        //dữ liệu từ detailOrder
+        if (item.repairService && item.checked === true && !selectedItems.has(item.idProduct)) {
             selectedItems.add(item.idProduct);
             return true;
         }
@@ -42,19 +43,21 @@ const UpdateProduct = ({ addProduct = [], removeProduct, onClose, setAddProduct,
             setProductQuantity(initialProductQuantity);
         }
     }, [addProduct]);
-
     useEffect(() => {
         if (addProduct.length > 0) {
-            // Tạo dữ liệu ban đầu và lưu vào localStorage khi addProduct thay đổi
+            
             const dataCart: itemOrder<string, number>[] = (addProduct || []).map((item) => {
-                const matchingItem: addProductOrder<string, number> | undefined = tranfomDataProduct.find((transformedItem) => transformedItem.idProduct === item.idProduct);
+                const matchingItem: addProductOrder<string, number> | undefined = tranfomDataProduct.find((transformedItem) => transformedItem.idProduct === item.idProduct && item.checked === true);
+                
                 if (matchingItem) {
+                    // Tạo dữ liệu ban đầu và lưu vào localStorage khi addProduct thay đổi
                     return {
-                        repairServiceId: matchingItem.repairService?.id ?? null,
+                        repairServiceId: item.repairService?.id ?? null,
                         motobikeProductId: item.idProduct,
                         productQuantity: item.productQuantity ?? 1,
                     };
                 } else {
+                    //dữ liệu thêm mới
                     return {
                         repairServiceId: null,
                         motobikeProductId: item.idProduct,
@@ -67,15 +70,12 @@ const UpdateProduct = ({ addProduct = [], removeProduct, onClose, setAddProduct,
             setOrderData(dataCart);
         }
     }, [addProduct]);
-
-    //chọn dịch vụ để lưu
     const handleCheckboxChange = (itemId: string, data: string | null, index: number) => {
         const savedData = JSON.parse(localStorage.getItem('updateOrderData') || '[]') as itemOrder<string, number>[];
-
         const updatedOrder: itemOrder<string, number>[] = savedData.map((item, i) => {
-            if (item.motobikeProductId === itemId) {
+            if (item?.motobikeProductId === itemId) {
                 // Nếu đã chọn checkbox, cập nhật repairServiceId
-                if (!checkedService[i]) {
+                if (!checkedService[i] ) {
                     selectedItems.add(itemId);
                     return {
                         ...item,
@@ -91,17 +91,23 @@ const UpdateProduct = ({ addProduct = [], removeProduct, onClose, setAddProduct,
             }
             return item;
         });
+    
+        // Cập nhật orderData trước
         setOrderData(updatedOrder);
-
+        
+    
+        // Cập nhật localStorage sau khi đã cập nhật cả hai State
+        localStorage.setItem('updateOrderData', JSON.stringify(updatedOrder));
+    
+        // Cập nhật checkedService sau khi đã cập nhật cả hai State
         setCheckedService((prevCheckedService) => {
             const newChecked = [...prevCheckedService];
             newChecked[index] = !prevCheckedService[index];
             return newChecked;
         });
-
-        // Cập nhật localStorage
-        localStorage.setItem('updateOrderData', JSON.stringify(updatedOrder));
     };
+
+    
     //Ẩn/hiện dịch vụ
     const toggleService = (index: number) => {
         setShowService((prevShowService) => {
@@ -141,8 +147,11 @@ const UpdateProduct = ({ addProduct = [], removeProduct, onClose, setAddProduct,
     const handleUpdateStaffProduct = () => {
         const data = {
             staffId: staffId,
-            orderDetailModel: orderData
-        }
+            orderDetailModel: orderData.map((item) => ({
+                ...item,
+                motobikeProductId: item.motobikeProductId || null,
+            })),
+        };
         if (idOrder) {
             dispatch(updateProductOrder(idOrder, data))
             showSuccessAlert("Cập nhật thành công")
@@ -207,7 +216,7 @@ const UpdateProduct = ({ addProduct = [], removeProduct, onClose, setAddProduct,
                                                 />
                                                 {item.repairService ? (
                                                     <button
-                                                        className='font-bold pl-2 text-blue-700 '
+                                                        className='font-bold pl-2 text-blue-700'
                                                         onClick={() => toggleService(index)}
                                                     >Chọn dịch vụ</button>
                                                 ) : ""}
@@ -248,7 +257,7 @@ const UpdateProduct = ({ addProduct = [], removeProduct, onClose, setAddProduct,
                     }
                 </div>
                 <div className='w-full bg-white h-[10vh] flex justify-around py-5'>
-                    <button className='w-[150px] bg-slate-200 hover:bg-red-700 hover:text-white font-semibold text-[18px] rounded-lg'
+                    <button className='w-[150px] bg-gray-200 hover:bg-red-700 hover:text-white font-semibold text-[18px] rounded-lg'
                         onClick={() => {
                             localStorage.removeItem('updateOrderData');
                             setOrderData([]);
@@ -256,20 +265,20 @@ const UpdateProduct = ({ addProduct = [], removeProduct, onClose, setAddProduct,
                             onClose();
                         }}
                     >Hủy</button>
-                    {addProduct.length >0
-                    ?orderData.some((item) => item.repairServiceId)
-                    
-                    ? (
-                        <button className='w-[200px] bg-slate-200 hover:bg-main hover:text-white font-semibold text-[18px] rounded-lg'
-                            onClick={() => setShowStaff(true)}
-                        >Tiếp theo</button>
-                    ) : (
-                        <button className='w-[200px] bg-slate-200 hover:bg-main hover:text-white font-semibold text-[18px] rounded-lg'
-                            onClick={handleUpdateStaffProduct}
-                        >Tạo đơn hàng</button>
-                    )
-                    :""}
-                    
+                    {addProduct.length > 0
+                        ? orderData?.some((item) => item?.repairServiceId)
+
+                            ? (
+                                <button className='w-[200px] bg-gray-200 hover:bg-green-700 hover:text-white font-semibold text-[18px] rounded-lg'
+                                    onClick={() => setShowStaff(true)}
+                                >Tiếp theo</button>
+                            ) : (
+                                <button className='w-[200px] bg-gray-200 hover:bg-green-700 hover:text-white font-semibold text-[18px] rounded-lg'
+                                    onClick={handleUpdateStaffProduct}
+                                >Tạo đơn hàng</button>
+                            )
+                        : ""}
+
                 </div>
             </div>
             <StaffSelect

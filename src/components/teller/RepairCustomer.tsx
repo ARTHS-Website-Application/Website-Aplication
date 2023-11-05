@@ -134,7 +134,7 @@ const RepairCustomer = ({ isVisible, onClose, idOrder, nameCustomer, phoneCustom
                         <div className="font-bold text-white flex flex-row-reverse py-2">
                             <button
                                 type="submit"
-                                className="hover:bg-blue-800 bg-slate-600 w-[100px] h-[40px]  rounded-md ml-3"
+                                className="hover:bg-blue-800 bg-gray-600 w-[100px] h-[40px]  rounded-md ml-3"
                             >
                                 Cập nhật
                             </button>

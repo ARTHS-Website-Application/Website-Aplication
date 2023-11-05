@@ -8,3 +8,12 @@ export interface itemFilter<T,N>{
     name?:T;
     category?:T;
 }
+
+export interface getFilterService<T,N>{
+    type:"list_services_filter";
+    data:serviceFilter<T,N>
+}
+export interface serviceFilter<T,N>{
+    paginationNumber?:N
+    name?:T;
+}
