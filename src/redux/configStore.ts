@@ -14,6 +14,8 @@ import serviceReducer from './reducer/serviceReducer';
 import warrantyReducer from './reducer/warrantyReducer';
 import discountReducer from './reducer/discountReducer';
 import bookingReducer from './reducer/bookingReducer';
+import onlineOrderReducer from './reducer/onlineOrderReducer';
+import onlineOrderDetailReducer from './reducer/onlineOrderDetailReducer';
 
 const middleSaga = createMiddleWareSaga();
 const allReducer = combineReducers({
@@ -38,6 +40,10 @@ const allReducer = combineReducers({
 
   //warranty
   warrantyReducer,
+
+  //onlineOrder
+  onlineOrderReducer,
+  onlineOrderDetailReducer,
 
   });
 

@@ -25,7 +25,13 @@ import ManageBooking from './pages/teller/manageBooking/ManageBooking'
 import ListBooking from './pages/teller/manageBooking/ListBooking';
 import WaitForConfirmBooking from './pages/teller/manageBooking/WaitForConfirmBooking';
 import HistoryBooking from './pages/teller/manageBooking/HistoryBooking';
+
+import ManageOnlineOrder from './pages/teller/manageOnlineOrder/ManageOnlineOrder'
+import ListOnlineOrder from './pages/teller/manageOnlineOrder/ListOnlineOrder';
+import DetailOnlineOrder from './pages/teller/manageOnlineOrder/DetailOnlineOrder'
+
 import CreateOrderService from './pages/teller/createOrderService/CreateOrderService';
+
 
 const ROLES = {
   Owner: "Owner",
@@ -70,6 +76,10 @@ function App() {
               <Route path="list-booking" index element={<ListBooking/>}/>
               <Route path="wait-for-confirm-booking" element={<WaitForConfirmBooking/>}/>
               <Route path="history-booking" element={<HistoryBooking/>}/>
+            </Route>
+            <Route path="manage-online-order" element={<ManageOnlineOrder/>}>
+              <Route path="list-order" index element={<ListOnlineOrder/>}/>
+              <Route path=":orderId" element={<DetailOnlineOrder/>} />
             </Route>
           </Route>
           {/* Page của Owner */}

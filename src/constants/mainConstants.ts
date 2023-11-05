@@ -87,3 +87,15 @@ export const payWithCash = {
     PAY_WITH_CASH_FAIL: "pay_with_cash_fail",
 }
 
+//online order
+export const listOnlineOrder = {
+    LIST_ONLINE_ORDER: "list_online_order",
+    LIST_ORDER_SUCCESS: "list_online_order_success",
+    LIST_ORDER_FAIL: "list_online_order_fail",
+}
+
+export const detailOnlineOrder = {
+    DETAIL_ONLINE_ORDER: "detail_online_order",
+    DETAIL_ONLINE_ORDER_SUCCESS: "detail_online_order_success",
+    DETAIL_ONLINE_ORDER_FAIL: "detail_online_order_fail",
+}
