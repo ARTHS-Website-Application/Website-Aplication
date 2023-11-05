@@ -43,6 +43,10 @@ const roleTeller = [
         to: '/manage-booking',
         name: 'Danh sách đặt lịch',
     },
+    {
+        to: '/manage-online-order',
+        name: 'Quản ký đơn đặt hàng'
+    }
 ]
 
 export {roleAdmin,roleOwner,roleTeller}
