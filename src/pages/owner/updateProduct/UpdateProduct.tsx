@@ -1,5 +1,5 @@
 import { Select, Option } from "@material-tailwind/react";
-import { CategoryProduct, WarrantyProduct, getDetailProduct, getVehicleProduct, getVehicleSearch, updateProduct } from '@/actions/product';
+import { CategoryProduct, WarrantyProduct, getDetailProduct, getVehicleProduct, updateProduct } from '@/actions/product';
 import { getServicesChoose } from '@/actions/service';
 import { itemCategoryProduct, selectorCategoryProduct } from '@/types/actions/categoryPr';
 import { dataService, selectorService } from '@/types/actions/listService';
@@ -18,6 +18,7 @@ import { images } from "@/types/images";
 import { itemWarrantyProduct, selectorWarrantyProduct } from "@/types/actions/listWarranty";
 import LoadingPage from "@/components/LoadingPage";
 import { showSuccessAlert } from "@/constants/chooseToastify";
+import { typeService } from "@/types/typeService";
 
 const UpdateProduct = () => {
     const { productId } = useParams();
@@ -45,7 +46,15 @@ const UpdateProduct = () => {
     const [imagesUrl, setImagesUrl] = useState<images[]>([]);
     const [addSearch, setAddSearch] = useState<string>("")
     const [searchTimeout, setSearchTimeout] = useState<number | null>(null);
-    console.log("first", addWarranty)
+    const [dataVehicle, setDataVehicle] = useState<itemVehicleProduct<string>[]>([]);
+    useEffect(() => {
+        if (vehicleProduct) {
+            setDataVehicle(vehicleProduct)
+        }
+    }, [vehicleProduct])
+    const itemSearch = dataVehicle.filter((item) => {
+        return item.vehicleName.toLowerCase().includes(addSearch.toLowerCase());
+    })
     const navigate = useNavigate()
     useEffect(() => {
         if (productId) {
@@ -54,7 +63,7 @@ const UpdateProduct = () => {
 
     }, [dispatch, productId]);
     useEffect(() => {
-        if (detailProduct) {
+        if (detailProduct.id === productId) {
             setNameProduct(detailProduct.name);
             setQuantityProduct(detailProduct.quantity);
             setPriceProduct(detailProduct.priceCurrent);
@@ -74,7 +83,7 @@ const UpdateProduct = () => {
             if (detailProduct.warrantyDuration) {
                 const idWarranty = warrantyChoose?.find(warranty => warranty.duration === detailProduct.warrantyDuration);
                 if (idWarranty) {
-                    setAddWarranty(idWarranty?.id)
+                    setAddWarranty(idWarranty.id)
                 }
             }
 
@@ -83,11 +92,11 @@ const UpdateProduct = () => {
             setAddVehicle(vehicleIds);
             setCheckedVehicles(detailProduct.vehicles);
             setImagesUrl(detailProduct.images);
-            setTimeout(() => {
-                setIsLoading(false);
-            }, 1000)
         }
-    }, [detailProduct, warrantyChoose]);
+        setTimeout(() => {
+            setIsLoading(false);
+        }, 1000)
+    }, [detailProduct, productId, warrantyChoose]);
     useEffect(() => {
         const matched = vehicleProduct?.filter((vehicle) => addVehicle?.includes(vehicle.id));
         setCheckedVehicles(matched);
@@ -96,15 +105,17 @@ const UpdateProduct = () => {
         dispatch(CategoryProduct());
         dispatch(WarrantyProduct());
         dispatch(getDiscountChoose());
-        dispatch(getServicesChoose(50));
-        if (addSearch !== "") {
-            dispatch(getVehicleSearch(addSearch))
-        } else {
-            dispatch(getVehicleProduct())
+        const dataService = {
+            pageSize: 50,
+            status: typeService.Active
         }
-        setIsLoading(true);
+        dispatch(getServicesChoose(dataService));
+        setIsLoading(true)
+    }, [dispatch])
 
-    }, [dispatch, addSearch])
+    useEffect(()=>{
+        dispatch(getVehicleProduct())
+    },[dispatch])
 
     const handleShowVehicle = () => {
         setShowVehicle(!showVehicle);
@@ -383,8 +394,8 @@ const UpdateProduct = () => {
                                             </div>
 
                                             <div className="overflow-y-scroll h-[30vh] px-3">
-                                                {vehicleProduct?.length > 0
-                                                    ? vehicleProduct?.map((item, index) => (
+                                                {itemSearch?.length > 0
+                                                    ? itemSearch?.map((item, index) => (
                                                         <div className='flex space-x-3 items-center' key={index}>
                                                             <input type="checkbox"
                                                                 className='w-5 h-5'

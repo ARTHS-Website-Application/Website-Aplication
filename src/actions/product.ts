@@ -1,10 +1,10 @@
 import { productInfor, productFilter, detailProduct, productCreate, productUpdate } from "@/constants/mainConstants";
 import { listVehicles, listWarranty, productCategory } from "@/constants/secondaryConstants";
 import { itemCategoryProduct } from "@/types/actions/categoryPr";
-import { itemFilter } from "@/types/actions/filterCreate";
+import { filterProductInService, filterProductNotService, itemFilter } from "@/types/actions/filterCreate";
 import { itemVehicleProduct } from "@/types/actions/listVehicle";
 import { itemWarrantyProduct } from "@/types/actions/listWarranty";
-import { item, itemProduct } from "@/types/actions/product";
+import { callProduct, callSortProduct, item, itemProduct } from "@/types/actions/product";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const postCreateProduct = (data:any) => {
@@ -23,10 +23,27 @@ export const updateProduct = (idProduct:string,data:any) => {
     };
 };
 
-export const ShowProduct = (number:number) => {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const updateStatusProduct = (idProduct:string,status:string,data:any) => {
+    return {
+        type: productUpdate.PRODUCT_UPDATE_STATUS,
+        status,
+        idProduct,
+        data
+    };
+};
+
+export const ShowProduct = (data:callProduct<string,number>) => {
     return {
         type: productInfor.GET_PRODUCT_INFO,
-        number:number
+        data
+    };
+};
+
+export const SortProduct = (data:callSortProduct<string,number>) => {
+    return {
+        type: productInfor.GET_SORT_PRODUCT_INFO,
+        data
     };
 };
 
@@ -99,13 +116,6 @@ export const getVehicleProduct = () => {
     };
 };
 
-export const getVehicleSearch = (vehicleName:string) => {
-    return {
-        type: listVehicles.GET_LIST_VEHICLES_SEARCH,
-        vehicleName
-    };
-};
-
 export const vehicleProductSuccess = (data:itemVehicleProduct<string>[]) => {
     return {
         type: listVehicles.GET_LIST_VEHICLES_SUCCESS,
@@ -126,6 +136,19 @@ export const vehicleProductFailed = (error:string) => {
 export const FilterProduct = (data:itemFilter<string,number>) => {
     return {
         type: productFilter.GET_PRODUCT_FILTER,
+        data
+    };
+};
+
+export const FilterProductService = (data:filterProductInService<string,number>) => {
+    return {
+        type: productFilter.GET_PRODUCT_FILTER_SERVICE,
+        data
+    };
+};
+export const FilterProductNotService = (data:filterProductNotService<number>) => {
+    return {
+        type: productFilter.GET_PRODUCT_FILTER_NOT_SERVICE,
         data
     };
 };

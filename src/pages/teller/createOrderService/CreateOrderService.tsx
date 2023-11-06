@@ -9,6 +9,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import ListService from '../listService/ListService';
 import { showWarningAlert } from '@/constants/chooseToastify';
 import InforUserService from '../inforUserService/InforUserService';
+import { typeService } from '@/types/typeService';
 
 const CreateOrderService = () => {
     const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -37,13 +38,18 @@ const CreateOrderService = () => {
             const data = {
                 paginationNumber: paginationNumber,
                 name: addSearch,
+                status:typeService.Active
             }
             setTimeout(() => {
                 dispatch(getFilterServices(data))
                 setIsLoading(true);
             }, 200)
         } else {
-            dispatch(getServices(paginationNumber));
+            const dataService= {
+                status:typeService.Active,
+                pageNumber:paginationNumber,
+            }
+            dispatch(getServices(dataService));
             setIsLoading(true);
         }
     }, [dispatch, addSearch, paginationNumber])

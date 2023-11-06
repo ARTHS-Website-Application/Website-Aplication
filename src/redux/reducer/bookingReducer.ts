@@ -13,7 +13,7 @@ const bookingReducer = (
 ) => {
     switch (type) {
         case listBooking.LIST_BOOKING_SUCCESS:
-            
+
             return {
                 ...state,
                 bookingInfo: payload.data,
@@ -30,10 +30,10 @@ const bookingReducer = (
             return {
                 ...state,
                 bookingInfo: {
-                  ...state.bookingInfo,
-                  data: payload.data,
+                    ...state.bookingInfo,
+                    data: payload.data,
                 }
-              };
+            };
 
         case updateBooking.UPDATE_BOOKING_FAIL:
             return {

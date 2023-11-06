@@ -100,9 +100,27 @@ export interface pagination<N> {
     totalRow: N;
 }
 
-export interface payloadSaga<N> {
+export interface payloadSaga<T,N> {
     type: 'get_product_info';
+    data:callProduct<T,N>
+}
+
+export interface callProduct<T,N> {
+    status:T
     number: N
+}
+
+export interface payloadSortProduct<T,N> {
+    type: 'get_sort_product_info';
+    data:callSortProduct<T,N>
+}
+
+export interface callSortProduct<T,N> {
+    value:T|null;
+    status:T;
+    pageNumber?:N;
+    sortByAsc?:boolean;
+    name:T
 }
 
 export interface payloadCreateProduct{
@@ -116,6 +134,14 @@ export interface payloadUpdateProduct{
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     data: any
     idProduct:string
+}
+
+export interface payloadUpdateStatusProduct{
+    type: 'product_update_status';
+    status:string
+    idProduct:string,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    data:any
 }
 
 export interface addProductOrder<T, N> {

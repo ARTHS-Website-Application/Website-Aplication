@@ -46,7 +46,9 @@ const CreateOrder = () => {
     useEffect(() => {
         if (productInfor.pagination?.totalRow) {
             setPaginationNumber(0);
-            setIsLoading(false);
+            setTimeout(()=>{
+                setIsLoading(false);
+            },500)
         }
     }, [productInfor.pagination?.totalRow]);
     useEffect(() => {
@@ -55,13 +57,18 @@ const CreateOrder = () => {
                 paginationNumber: paginationNumber,
                 name: addSearch,
                 category: addCategory,
+                status:typeActiveProduct.Active,
             }
             setTimeout(() => {
                 dispatch(FilterProduct(data))
                 setIsLoading(true);
             }, 200)
         } else {
-            dispatch(ShowProduct(paginationNumber));
+            const data={
+                status:typeActiveProduct.Active,
+                number:paginationNumber
+            }
+            dispatch(ShowProduct(data));
             setIsLoading(true);
         }
     }, [dispatch, addCategory, addSearch, paginationNumber])

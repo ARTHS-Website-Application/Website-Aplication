@@ -1,6 +1,6 @@
 import { listOrder, detailOrder, updateUserOrder, updateProductOrdered, payWithCash, listOrderPaid } from "@/constants/mainConstants";
 import { inStoreOrderDetails, itemDetailOrder } from "@/types/actions/detailOrder";
-import { itemOrder } from "@/types/actions/listOrder";
+import { callFilterOrder, callFilterOrderPaid, itemOrder } from "@/types/actions/listOrder";
 import { itemCustomer, itemStaffProduct } from "@/types/actions/updateCustomerOrder";
 
 
@@ -9,6 +9,13 @@ export const getOrder = (number: number,excludeOrderStatus:string) => {
         type: listOrder.LIST_ORDER,
         number,
         excludeOrderStatus,
+    };
+};
+
+export const getFilterOrder = (data:callFilterOrder<string,number>) => {
+    return {
+        type: listOrder.LIST_FILTER_ORDER,
+        data
     };
 };
 
@@ -34,6 +41,13 @@ export const getOrderPaid = (number: number,orderStatus:string) => {
         type: listOrderPaid.LIST_ORDER_PAID,
         number,
         orderStatus,
+    };
+};
+
+export const getFilterOrderPaid = (data:callFilterOrderPaid<string,number>) => {
+    return {
+        type: listOrderPaid.LIST_FILTER_ORDER_PAID,
+        data
     };
 };
 

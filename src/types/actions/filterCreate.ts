@@ -7,13 +7,23 @@ export interface itemFilter<T,N>{
     paginationNumber?:N
     name?:T;
     category?:T;
+    status:T
 }
 
-export interface getFilterService<T,N>{
-    type:"list_services_filter";
-    data:serviceFilter<T,N>
+export interface getFilterProductInService<T,N>{
+    type:"get_product_filter_service";
+    data:filterProductInService<T,N>
 }
-export interface serviceFilter<T,N>{
-    paginationNumber?:N
-    name?:T;
+export interface filterProductInService<T,N>{
+    pageSize?:N
+    repairService?:T;
+}
+
+export interface getFilterProductNotService<N>{
+    type:"get_product_filter_not_service";
+    data:filterProductNotService<N>
+}
+export interface filterProductNotService<N>{
+    pageSize?:N
+    noRepairService?:boolean;
 }

@@ -10,7 +10,7 @@ import { useState, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { Link, useNavigate } from 'react-router-dom'
 
-const ListProduct = () => {
+const ListNotProduct = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const productInfor: itemProduct<string, number> = useSelector((state: selectorProduct<string, number>) => state.productReducer.productInfor);
@@ -45,7 +45,7 @@ const ListProduct = () => {
                 sortByAsc: sortAsc,
                 name: addSearch,
                 pageNumber: paginationNumber,
-                status: typeActiveProduct.Active,
+                status: typeActiveProduct.InActive,
             }
             setSortAscPrice(undefined)
             dispatch(SortProduct(data));
@@ -56,7 +56,7 @@ const ListProduct = () => {
                 sortByAsc: sortAscPrice,
                 name: addSearch,
                 pageNumber: paginationNumber,
-                status: typeActiveProduct.Active,
+                status: typeActiveProduct.InActive,
             }
             setSortAsc(undefined)
             dispatch(SortProduct(data));
@@ -67,7 +67,7 @@ const ListProduct = () => {
                 sortByAsc: sortAscPrice,
                 name: addSearch,
                 pageNumber: paginationNumber,
-                status: typeActiveProduct.Active,
+                status: typeActiveProduct.InActive,
             }
             setSortAsc(undefined)
             dispatch(SortProduct(data));
@@ -80,12 +80,12 @@ const ListProduct = () => {
             sortByAsc: sortValue === 'price' ? sortAscPrice : sortAsc,
             name: addSearch,
             pageNumber: paginationNumber,
-            status: typeActiveProduct.Active,
+            status: typeActiveProduct.InActive,
         };
         if (item) {
-            const shouldDelete = window.confirm(`Bạn có chắc chắn muốn xóa sản phẩm: ${item.name} ?`);
+            const shouldDelete = window.confirm(`Bạn có chắc chắn muốn hoàng lại sản phẩm: ${item.name} ?`);
             if (shouldDelete) {
-                dispatch(updateStatusProduct(item.id, typeActiveProduct.InActive, data));
+                dispatch(updateStatusProduct(item.id, typeActiveProduct.Active, data));
             }
         }
 
@@ -139,4 +139,4 @@ const ListProduct = () => {
     )
 }
 
-export default ListProduct
+export default ListNotProduct

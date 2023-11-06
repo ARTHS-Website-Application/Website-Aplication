@@ -5,12 +5,12 @@ import { useDispatch, useSelector } from 'react-redux';
 import Pagination from '../Pagination';
 import Loading from '../LoadingPage';
 import { inStoreOrderDetails } from '@/types/actions/detailOrder';
-import { typeActiveProduct } from '@/types/typeProduct';
 import { dataService, itemService, selectorService } from '@/types/actions/listService';
 import { getFilterServices, getServices } from '@/actions/service';
 import ListService from '@/pages/teller/listService/ListService';
 import { addProductService } from '@/types/actions/product';
 import UpdateService from './UpdateService';
+import { typeService } from '@/types/typeService';
 
 type Props = {
     isVisible: boolean;
@@ -42,14 +42,17 @@ const RepairService = ({ isVisible, onClose, dataProduct, idOrder }: Props) => {
     const dispatch = useDispatch();
 
     useEffect(() => {
-        const activeProducts = dataService.data?.filter((product) => product.status === typeActiveProduct.Active);
-        setServiceData(activeProducts);
-        setIsLoading(false);
+        setServiceData(dataService?.data);
+        setTimeout(() => {
+            setIsLoading(false);
+        }, 500)
     }, [dataService?.data]);
     useEffect(() => {
         if (dataService.pagination?.totalRow) {
             setPaginationNumber(0);
-            setIsLoading(false);
+            setTimeout(() => {
+                setIsLoading(false);
+            }, 500)
         }
     }, [dataService.pagination?.totalRow]);
     useEffect(() => {
@@ -57,13 +60,18 @@ const RepairService = ({ isVisible, onClose, dataProduct, idOrder }: Props) => {
             const data = {
                 paginationNumber: paginationNumber,
                 name: addSearch,
+                status: typeService.Active
             }
             setTimeout(() => {
                 dispatch(getFilterServices(data))
                 setIsLoading(true);
             }, 200)
         } else {
-            dispatch(getServices(paginationNumber));
+            const dataService = {
+                pageNumber: paginationNumber,
+                status: typeService.Active
+            }
+            dispatch(getServices(dataService));
             setIsLoading(true);
         }
     }, [dispatch, addSearch, paginationNumber])

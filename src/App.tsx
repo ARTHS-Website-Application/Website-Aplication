@@ -26,6 +26,11 @@ import ListBooking from './pages/teller/manageBooking/ListBooking';
 import WaitForConfirmBooking from './pages/teller/manageBooking/WaitForConfirmBooking';
 import HistoryBooking from './pages/teller/manageBooking/HistoryBooking';
 import CreateOrderService from './pages/teller/createOrderService/CreateOrderService';
+import ListService from './pages/owner/listService/ListService';
+import CreateService from './pages/owner/createService/CreateService';
+import UpdateService from './pages/owner/updateService/UpdateService';
+import DetailService from './pages/owner/detailService/DetailService';
+import ListNotProduct from './pages/owner/listNotProduct/ListNotProduct';
 
 const ROLES = {
   Owner: "Owner",
@@ -58,18 +63,18 @@ function App() {
           {/* Page của Teller */}
           <Route element={<RequireAuth allowedRoles={ROLES.Teller} />}>
             <Route path="teller" element={<HomeTeller />} />
-            <Route path="manage-order" element={<ManageOrder />}>
+            <Route path="/manage-order" element={<ManageOrder />}>
 
-              <Route path="create-order" element={<CreateOrder />}/>
-                <Route path="order-service" element={<CreateOrderService/>}/>
+              <Route path="create-order" element={<CreateOrder />} />
+              <Route path="order-service" element={<CreateOrderService />} />
               <Route path="list-order" element={<ListOrder />} />
               <Route path=":orderId" element={<DetailOrder />} />
               <Route path="history-order" element={<HistoryOrder />} />
             </Route>
-            <Route path="manage-booking" element={<ManageBooking/>}>
-              <Route path="list-booking" index element={<ListBooking/>}/>
-              <Route path="wait-for-confirm-booking" element={<WaitForConfirmBooking/>}/>
-              <Route path="history-booking" element={<HistoryBooking/>}/>
+            <Route path="manage-booking" element={<ManageBooking />}>
+              <Route path="list-booking" index element={<ListBooking />} />
+              <Route path="wait-for-confirm-booking" element={<WaitForConfirmBooking />} />
+              <Route path="history-booking" element={<HistoryBooking />} />
             </Route>
           </Route>
           {/* Page của Owner */}
@@ -78,7 +83,8 @@ function App() {
             <Route path="manage-employees" element={<ManageEmployee />} />
 
             <Route path="manage-products" element={<ManageProduct />}>
-              <Route index element={<ListProduct />} />
+              <Route path="list-product" element={<ListProduct />} />
+              <Route path="list-not-product" element={<ListNotProduct />} />
               <Route path="create-product" element={<CreateProduct />} />
               <Route path=":productId" element={<ProductDetail />} />
               <Route path="update-product/:productId" element={<UpdateProduct />} />
@@ -86,7 +92,14 @@ function App() {
 
             <Route path="manage-orders-owner" element={<ManageOrderOwner />} />
             <Route path="manage-discounts" element={<ManageDiscount />} />
-            <Route path="manage-services" element={<ManageService />} />
+            <Route path="manage-services" element={<ManageService />}>
+              <Route index element={<ListService />} />
+              <Route path="create-service" element={<CreateService />} />
+              <Route path=":serviceId" element={<DetailService />} />
+              <Route path="update-service/:serviceId" element={<UpdateService />} />
+
+
+            </Route>
           </Route>
 
         </Route>

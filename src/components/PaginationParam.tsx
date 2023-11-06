@@ -1,4 +1,6 @@
 import { ChevronDoubleLeftIcon, ChevronDoubleRightIcon, ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/24/solid";
+import { useEffect, useMemo } from 'react'
+import { useSearchParams } from "react-router-dom";
 type props = {
     totalPosts: number,
     postsPerPage: number,
@@ -6,16 +8,19 @@ type props = {
     currentPage: number,
 }
 
-const Pagination = ({
+const PaginationParam = ({
     totalPosts,
     postsPerPage,
     setCurrentPage,
     currentPage,
 }: props) => {
-    const pageNumbers = [];
-    for (let i = 0; i < Math.ceil(totalPosts / postsPerPage); i++) {
-        pageNumbers.push(i);
-    }
+    const pageNumbers = useMemo(() => {
+        const numbers = [];
+        for (let i = 0; i < Math.ceil(totalPosts / postsPerPage); i++) {
+            numbers.push(i);
+        }
+        return numbers;
+    }, [totalPosts, postsPerPage]);
     // xử lí hiển thị pagination
     const maxVisiblePages = 3;
     const currentPageIndex = pageNumbers.findIndex((page) => page === currentPage);
@@ -30,6 +35,18 @@ const Pagination = ({
         startPage = Math.max(0, endPage - maxVisiblePages + 1);
     }
 
+    const [searchParams, setSearchParams] = useSearchParams();
+
+    // Xử lý thay đổi currentPage từ tham số truy vấn
+    useEffect(() => {
+        const pageQueryParam = searchParams.get('page');
+        if (pageQueryParam) {
+            const parsedPage = parseInt(pageQueryParam, 10);
+            if (!isNaN(parsedPage) && parsedPage >= 1 && parsedPage <= pageNumbers.length) {
+                setCurrentPage(parsedPage - 1);
+            }
+        }
+    }, [searchParams, pageNumbers, setCurrentPage]);
     return (
         <div>
             {pageNumbers.length > 1 ? (
@@ -37,12 +54,12 @@ const Pagination = ({
                     {currentPage > 0 && (
                         <div className="flex">
                             <button
-                                onClick={() => setCurrentPage(0)}
+                                onClick={() => setSearchParams({ page: '1' })}
                                 className={`w-9 h-9 mx-1 rounded-lg font-medium shadow-lg bg-[#4d4bb9] flex justify-center items-center`}>
                                 <ChevronDoubleLeftIcon className="w-5 h-5 stroke-white fill-white hover:stroke-black hover:fill-black" />
                             </button>
                             <button
-                                onClick={() => setCurrentPage(currentPage - 1)}
+                                onClick={() => setSearchParams({ page: `${currentPage}` })}
                                 className={`w-9 h-9 mx-1 rounded-lg font-medium shadow-lg bg-[#4d4bb9] flex justify-center items-center`}>
                                 <ChevronLeftIcon className="w-5 h-5 stroke-white fill-white hover:stroke-black hover:fill-black" />
                             </button>
@@ -55,12 +72,15 @@ const Pagination = ({
                         </li>
                     )}
 
-                    {pageNumbers.slice(startPage, endPage + 1).map((page: number, index) => (
+                    {pageNumbers.slice(startPage, endPage + 1).map((page: number, index: number) => (
                         <li key={index} className="mx-1 flex flex-row">
                             <button
-                                onClick={() => setCurrentPage(page)}
+                                onClick={() => {
+                                    // Cập nhật tham số truy vấn khi người dùng chuyển trang
+                                    setSearchParams({ page: (page + 1).toString() });
+                                }}
                                 className={`w-9 h-9 rounded-lg font-medium shadow-lg
-                ${currentPage === page ? "text-white bg-[#4d4bb9]" : "text-[#5C59E8] hover:text-black hover:underline"} `}
+        ${currentPage === page ? "text-white bg-[#4d4bb9]" : "text-[#5C59E8] hover:text-black hover:underline"} `}
                             >
                                 {page + 1}
                             </button>
@@ -76,12 +96,12 @@ const Pagination = ({
                     {currentPage !== pageNumbers.length - 1 && (
                         <div className="flex">
                             <button
-                                onClick={() => setCurrentPage(currentPage + 1)}
+                                onClick={() => setSearchParams({ page: (currentPage + 2).toString() })}
                                 className={`w-9 h-9 mx-1 rounded-lg font-medium shadow-lg bg-[#4d4bb9] flex justify-center items-center`}>
                                 <ChevronRightIcon className="w-5 h-5 stroke-white fill-white hover:stroke-black hover:fill-black" />
                             </button>
                             <button
-                                onClick={() => setCurrentPage(pageNumbers.length - 1)}
+                                onClick={() => setSearchParams({ page: pageNumbers.length.toString() })}
                                 className={`w-9 h-9 mx-1 rounded-lg font-medium shadow-lg bg-[#4d4bb9] flex justify-center items-center`}>
                                 <ChevronDoubleRightIcon className="w-5 h-5 stroke-white fill-white hover:stroke-black hover:fill-black" />
                             </button>
@@ -94,4 +114,4 @@ const Pagination = ({
     );
 };
 
-export default Pagination;
+export default PaginationParam;

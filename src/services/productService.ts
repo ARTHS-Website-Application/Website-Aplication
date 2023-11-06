@@ -1,5 +1,6 @@
 import userAxiosPrivate from "@/hooks/useAxiosPrivate"
 import { itemFilter } from "@/types/actions/filterCreate";
+import { callProduct, callSortProduct } from "@/types/actions/product";
 
 
 export class Private {
@@ -52,10 +53,34 @@ export class Private {
             },
         })
     }
-
-    getListProduct = async (numberPagination: number) => {
+    updateProductStatus = async (idProduct:string,status: string) => {
+        const formData = new FormData();
         const axiosPrivate = userAxiosPrivate();
-        return await axiosPrivate.get(`/motobike-products?pageNumber=${numberPagination}`)
+        formData.append('status', status);
+        return await axiosPrivate.put(`/motobike-products/${idProduct}`, formData, {
+            headers: {
+                'Content-type': 'multipart/form-data',
+            },
+        })
+    }
+
+    getListProduct = async (data: callProduct<string,number>) => {
+        const axiosPrivate = userAxiosPrivate();
+        const enCodeStatus = encodeURIComponent(data.status)
+        return await axiosPrivate.get(`/motobike-products?status=${enCodeStatus}&pageNumber=${data.number}`)
+    }
+
+    getSortListProduct = async (data: callSortProduct<string,number>) => {
+        const axiosPrivate = userAxiosPrivate();
+        const enCodeStatus = encodeURIComponent(data.status);
+        const encodeName = encodeURIComponent(data.name);
+        if (data.value === "name") {
+            return await axiosPrivate.get(`/motobike-products?name=${encodeName}&status=${enCodeStatus}&sortByNameAsc=${data.sortByAsc}&pageNumber=${data.pageNumber}`)
+        } else if (data.value === "price") {
+            return await axiosPrivate.get(`/motobike-products?name=${encodeName}&status=${enCodeStatus}&sortByPriceAsc=${data.sortByAsc}&pageNumber=${data.pageNumber}`)
+        } else {
+            return await axiosPrivate.get(`/motobike-products?name=${encodeName}&status=${enCodeStatus}&pageNumber=${data.pageNumber}`)
+        }
     }
     getCategoryProduct = async () => {
         const axiosPrivate = userAxiosPrivate();
@@ -75,23 +100,19 @@ export class Private {
         return await axiosPrivate.get(`/vehicles`)
     }
 
-    getVehicleSearchProduct = async (vehicleName: string) => {
-        const axiosPrivate = userAxiosPrivate();
-        const encodeName = encodeURIComponent(vehicleName);
-        return await axiosPrivate.get(`/vehicles?vehicleName=${encodeName}`)
-    }
     getFilterCreateProduct = async (data: itemFilter<string, number>) => {
         const axiosPrivate = userAxiosPrivate();
+        const enCodeStatus = encodeURIComponent(data.status)
         if (data.name && data.category) {
             const encodeName = encodeURIComponent(data.name);
             const encodeCategory = encodeURIComponent(data.category);
-            return await axiosPrivate.get(`/motobike-products?name=${encodeName}&category=${encodeCategory}&pageNumber=${data.paginationNumber}`)
+            return await axiosPrivate.get(`/motobike-products?status=${enCodeStatus}&name=${encodeName}&category=${encodeCategory}&pageNumber=${data.paginationNumber}`)
         } else if (data.name) {
             const encodeName = encodeURIComponent(data.name);
-            return await axiosPrivate.get(`/motobike-products?name=${encodeName}&pageNumber=${data.paginationNumber}`)
+            return await axiosPrivate.get(`/motobike-products?status=${enCodeStatus}&name=${encodeName}&pageNumber=${data.paginationNumber}`)
         } else if (data.category) {
             const encodeCategory = encodeURIComponent(data.category);
-            return await axiosPrivate.get(`/motobike-products?category=${encodeCategory}&pageNumber=${data.paginationNumber}`)
+            return await axiosPrivate.get(`/motobike-products?status=${enCodeStatus}&category=${encodeCategory}&pageNumber=${data.paginationNumber}`)
         }
     }
 
