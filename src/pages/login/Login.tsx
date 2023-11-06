@@ -58,7 +58,7 @@ const Login = () => {
                 const from = "/";
                 navigate(from, { replace: true });
             } else if (roles === "Teller") {
-                const from = "/teller";
+                const from = "/manage-order";
                 navigate(from, { replace: true });
             } else if (roles === "Owner") {
                 const from = "/owner";

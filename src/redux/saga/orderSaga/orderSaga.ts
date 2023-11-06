@@ -2,7 +2,7 @@ import { getDetailOrderFailed, getDetailOrderSuccess, getOrderFailed, getOrderPa
 import {listOrder, detailOrder, updateUserOrder, updateProductOrdered, payWithCash, listOrderPaid } from '@/constants/mainConstants';
 import { orderService } from '@/services/orderService';
 import { sagaDetailOrder } from '@/types/actions/detailOrder';
-import { payloadOrder, payloadOrderPaid } from '@/types/actions/listOrder';
+import { payloadFilterOrder, payloadFilterOrderPaid, payloadOrder, payloadOrderPaid } from '@/types/actions/listOrder';
 import { payByCash, payloadItemCustomer, payloadItemStaffProduct } from '@/types/actions/updateCustomerOrder';
 import { AxiosResponse } from 'axios';
 import { call, put, takeEvery } from 'redux-saga/effects';
@@ -24,9 +24,41 @@ function* getOrder(payload:payloadOrder<string,number>){
     }
 }
 
+function* getFilterOrder(payload:payloadFilterOrder<string,number>){
+    try {
+        const resp: AxiosResponse = yield call(orderService.getFilterOrder,payload.data);
+        const { status, data } = resp;
+        if (data && status === 200) {
+            yield put(getOrderSuccess(data));
+        } else {
+            yield put(getOrderFailed(data));
+        }
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
+        const msg: string = error.message;
+        yield put(getOrderFailed(msg));
+    }
+}
+
 function* getOrderPaid(payload:payloadOrderPaid<string,number>){
     try {
         const resp: AxiosResponse = yield call(orderService.getOrderPaid,payload.number,payload.orderStatus);
+        const { status, data } = resp;
+        if (data && status === 200) {
+            yield put(getOrderPaidSuccess(data));
+        } else {
+            yield put(getOrderPaidFailed(data));
+        }
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
+        const msg: string = error.message;
+        yield put(getOrderPaidFailed(msg));
+    }
+}
+
+function* getFilterOrderPaid(payload:payloadFilterOrderPaid<string,number>){
+    try {
+        const resp: AxiosResponse = yield call(orderService.getFilterOrderPaid,payload.data);
         const { status, data } = resp;
         if (data && status === 200) {
             yield put(getOrderPaidSuccess(data));
@@ -106,7 +138,9 @@ function* updateStatusOrder(payload:payByCash<string>){
 
 export function* lookupOrder() {
     yield takeEvery(listOrder.LIST_ORDER , getOrder);
+    yield takeEvery(listOrder.LIST_FILTER_ORDER , getFilterOrder);
     yield takeEvery(listOrderPaid.LIST_ORDER_PAID , getOrderPaid);
+    yield takeEvery(listOrderPaid.LIST_FILTER_ORDER_PAID , getFilterOrderPaid);
     yield takeEvery(detailOrder.DETAIL_ORDER , getDetailOrder);
     yield takeEvery(updateUserOrder.UPDATE_USER_ORDER , updateCustomer);
     yield takeEvery(updateProductOrdered.UPDATE_PRODUCT_ORDER , updateProductOrder);

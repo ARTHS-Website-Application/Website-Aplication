@@ -37,7 +37,7 @@ const ProductDetail = () => {
     const handleBoxVehicle = () => {
         setShowVehicle(!showVehicle);
     }
-    const handleChangeImage = (index:number) => {
+    const handleChangeImage = (index: number) => {
         setSelectedImage(index);
     }
     console.log(data)
@@ -84,17 +84,49 @@ const ProductDetail = () => {
                                 <div className='flex justify-between items-start'>
                                     <p className='font-semibold text-[20px] px-1'>{data?.name}</p>
                                     <div className='flex min-w-[150px] space-x-2 p-2 items-center border-2 border-gray-200 rounded-lg'>
-                                        <div className={`w-2 h-2 rounded-full ${data?.status === typeActiveProduct.Active ? "bg-green-600" : "bg-black"}`}></div>
+                                        <div className={`w-2 h-2 rounded-full ${data?.status === typeActiveProduct.Active ? "bg-green-600" : "bg-red-600"}`}></div>
                                         <p className='font-semibold text-[14px]'>
                                             {data?.status}
                                         </p>
                                     </div>
                                 </div>
                                 <p className='font-semibold text-[19px] py-5'> Chi tiết</p>
+                                <div className='text-[#6B7280] flex justify-between items-center pb-5'>
+                                    <p>Loại xe phù hợp</p>
+                                    <div className='flex justify-end space-x-1 relative'>
+                                        {data?.vehicles && data?.vehicles.slice(0, 3).map((vehicle, index) => (
+                                            <div key={index} className='px-1 py-2 border-2 border-gray-200 rounded-lg'>
+                                                <p>{vehicle.vehicleName}</p>
+
+                                            </div>
+                                        ))}
+                                        {data?.vehicles && data?.vehicles.length > 3 && (
+                                            <button className='p-1 border-2 border-gray-200 rounded-lg'
+                                                onClick={handleBoxVehicle}
+                                            >
+                                                <RxDotsHorizontal className='w-5 h-5' />
+                                            </button>
+
+                                        )}
+                                        {showVehicle ? (
+                                            <div
+                                                className='bg-white shadow-lg w-[500px] h-[240px] overflow-y-scroll absolute right-9 p-3 rounded-lg'>
+                                                <div className='grid grid-cols-3 gap-2'>
+                                                    {data?.vehicles && data?.vehicles.map((vehicle, index) => (
+                                                        <div key={index} className='px-1 py-2 border-2 border-gray-200 rounded-lg'>
+                                                            <p>{vehicle.vehicleName}</p>
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            </div>
+                                        ) : ""}
+
+                                    </div>
+                                </div>
                                 <div className='flex justify-between text-[#6B7280] items-center'>
                                     <div className='space-y-6'>
-                                        <p>Loại xe phù hợp</p>
                                         <p>Loại sản phẩm</p>
+                                        {data?.repairService && <p>Áp dụng được dịch vụ</p>}
                                         <p>Giá bán</p>
                                         {data?.warrantyDuration !== 0 && <p>Bảo hành</p>}
                                         <p>Trạng thái giảm giá</p>
@@ -102,38 +134,10 @@ const ProductDetail = () => {
                                         {data?.discount && <p>Giá sau khuyến mãi</p>}
                                     </div>
                                     <div className='space-y-5 flex flex-col text-end'>
-                                        <div className='flex justify-end space-x-1 relative'>
-                                            {data?.vehicles && data?.vehicles.slice(0, 3).map((vehicle, index) => (
-                                                <div key={index} className='px-1 py-2 border-2 border-gray-200 rounded-lg'>
-                                                    <p>{vehicle.vehicleName}</p>
-
-                                                </div>
-                                            ))}
-                                            {data?.vehicles && data?.vehicles.length > 3 && (
-                                                <button className='p-1 border-2 border-gray-200 rounded-lg'
-                                                    onClick={handleBoxVehicle}
-                                                >
-                                                    <RxDotsHorizontal className='w-5 h-5' />
-                                                </button>
-
-                                            )}
-                                            {showVehicle ? (
-                                                <div
-                                                    className='bg-white shadow-lg w-[500px] h-[240px] overflow-y-scroll absolute right-9 p-3 rounded-lg'>
-                                                    <div className='grid grid-cols-3 gap-2'>
-                                                        {data?.vehicles && data?.vehicles.map((vehicle, index) => (
-                                                            <div key={index} className='px-1 py-2 border-2 border-gray-200 rounded-lg'>
-                                                                <p>{vehicle.vehicleName}</p>
-                                                            </div>
-                                                        ))}
-                                                    </div>
-                                                </div>
-                                            ) : ""}
-
-                                        </div>
                                         <p>{data?.category?.categoryName}</p>
+                                        {data?.repairService && <p>{data?.repairService.name}</p>}
                                         <p>{formatPrice(data?.priceCurrent)}VNĐ</p>
-                                        {data?.warrantyDuration !== 0 && <p>{data?.warrantyDuration} tháng</p>}
+                                        {data?.warrantyDuration !== 0 && (<p>{data?.warrantyDuration} tháng</p>)}
                                         <p>{data?.discount ? "Có" : "Không"}</p>
                                         <p>{data?.discount ? data?.discount.discountAmount : "0"}%</p>
                                         {data?.discount && <p>{formatPrice(data?.priceCurrent * (1 - data?.discount.discountAmount / 100))}VNĐ</p>}
@@ -161,7 +165,7 @@ const ProductDetail = () => {
                             </div>
                         )}
                     </div>
-                    <FeedBackProduct data={data?.feedbackProducts}/>
+                    <FeedBackProduct data={data?.feedbackProducts} />
                 </div>
                 )
             }

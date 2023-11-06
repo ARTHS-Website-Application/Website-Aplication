@@ -64,14 +64,17 @@ const RepairProduct = ({ isVisible, onClose, dataProduct, idOrder,productOrdered
     }, [dispatch])
 
     useEffect(() => {
-        const activeProducts = productInfor.data?.filter((product) => product.status === typeActiveProduct.Active);
-        setProductData(activeProducts);
-        setIsLoading(false);
+        setProductData(productInfor.data);
+        setTimeout(()=>{
+            setIsLoading(false);
+        },500)
     }, [productInfor?.data]);
     useEffect(() => {
         if (productInfor.pagination?.totalRow) {
             setPaginationNumber(0);
-            setIsLoading(false);
+            setTimeout(()=>{
+                setIsLoading(false);
+            },500)
         }
     }, [productInfor.pagination?.totalRow]);
     useEffect(() => {
@@ -79,6 +82,7 @@ const RepairProduct = ({ isVisible, onClose, dataProduct, idOrder,productOrdered
             paginationNumber: paginationNumber,
             name: addSearch,
             category: addCategory,
+            status: typeActiveProduct.Active,
         }
         if (addCategory || addSearch) {
             setTimeout(() => {
@@ -87,7 +91,11 @@ const RepairProduct = ({ isVisible, onClose, dataProduct, idOrder,productOrdered
             }, 200)
 
         } else {
-            dispatch(ShowProduct(paginationNumber));
+            const data={
+                number:paginationNumber,
+                status:typeActiveProduct.Active,
+            }
+            dispatch(ShowProduct(data));
             setIsLoading(true);
         }
     }, [dispatch, addCategory, addSearch, paginationNumber])

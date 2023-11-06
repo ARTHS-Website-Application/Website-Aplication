@@ -23,6 +23,30 @@ export interface payloadOrderPaid<T,N>{
     orderStatus:T
 }
 
+export interface payloadFilterOrder<T,N>{
+    type:'list_filter_order';
+    data:callFilterOrder<T,N>
+}
+
+export interface callFilterOrder<T,N>{
+    customerName:T,
+    customerPhone:T,
+    number:N,
+    excludeOrderStatus:T,
+}
+
+export interface payloadFilterOrderPaid<T,N>{
+    type:'list_filter_order_paid';
+    data:callFilterOrderPaid<T,N>
+}
+
+export interface callFilterOrderPaid<T,N>{
+    customerName:T,
+    customerPhone:T,
+    number:N,
+    orderStatus:T,
+}
+
 export interface orderSaga<T,N> {
     data: listOrder<T,N>
 }

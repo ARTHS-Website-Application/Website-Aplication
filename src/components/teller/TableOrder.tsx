@@ -1,4 +1,4 @@
-import { ChevronDownIcon } from '@heroicons/react/24/solid'
+// import { ChevronDownIcon } from '@heroicons/react/24/solid'
 import { itemOrder } from '@/types/actions/listOrder'
 import { NavLink } from 'react-router-dom'
 import { formatDateSeven } from '@/utils/formatDate'
@@ -19,7 +19,7 @@ const TableOrder = ({ data }: Props) => {
                     <tr className="text-xs uppercase tracking-wider bg-yellow-400 text-center">
                         <th scope="col" className="px-6 py-3 flex justify-center items-center space-x-2">
                             <p>Mã đơn</p>
-                            <button><ChevronDownIcon className="w-5 h-5" /></button>
+                            {/* <button><ChevronDownIcon className="w-5 h-5" /></button> */}
                         </th>
                         <th scope="col" className="">
                             Tên khách hàng
@@ -47,7 +47,7 @@ const TableOrder = ({ data }: Props) => {
                 <tbody className="divide-y divide-gray-200">
                     {data && data.map((item: itemOrder<string, number>, index) => (
                         <tr key={index}>
-                            <td className="py-[13px] px-3">
+                            <td className="py-[12px] px-3">
                                 {item.id}
                             </td>
                             <td className="">

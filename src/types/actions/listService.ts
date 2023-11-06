@@ -16,14 +16,37 @@ export interface serviceSaga<T, N> {
     data: dataService<T, N>
 }
 
-export interface payloadServiceChoose<N> {
-    type:"list_services_choose",
-    pageSize:N
+export interface payloadCreateService {
+    type: 'service_create';
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    data: any
 }
 
-export interface payloadService<N> {
-    type:"list_services",
-    pageNumber:N
+export interface payloadUpdateService {
+    type: 'service_update';
+    serviceId:string;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    data: any
+}
+
+export interface payloadServiceChoose<T, N> {
+    type: "list_services_choose",
+    data: itemServiceChoose<T, N>
+}
+
+export interface itemServiceChoose<T, N> {
+    status: T,
+    pageSize: N
+}
+
+export interface payloadService<T, N> {
+    type: "list_services",
+    data: callService<T, N>
+}
+
+export interface callService<T, N> {
+    status: T
+    pageNumber: N
 }
 
 export interface dataService<T, N> {
@@ -44,5 +67,14 @@ export interface itemService<T, N> {
             thumbnail: boolean,
             imageUrl: T
         }
-    ]
+    ],
+    motobikeProducts:dataProduct<T, N>[]
+}
+
+export interface dataProduct<T, N> {
+    id: T,
+    name: T,
+    priceCurrent: N,
+    discountAmount: N,
+    image: T
 }

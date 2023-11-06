@@ -1,8 +1,11 @@
+import { Outlet } from "react-router-dom"
 
 
 const ManageService = () => {
   return (
-    <div>ManageService</div>
+    <div className="w-full">
+      <Outlet/>
+    </div>
   )
 }
 

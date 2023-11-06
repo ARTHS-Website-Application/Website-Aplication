@@ -9,7 +9,10 @@ type Props = {
 const Description = ({dataValue,handleDescription}: Props) => {
     return (
         <div className="bg-white p-3 space-y-3">
-            <p className="pl-1 text-[22px] font-semibold">Mô tả sản phẩm</p>
+            <div className="flex space-x-2">
+            <p className="pl-1 text-[22px] font-semibold">Mô tả</p>
+            <p className="text-red-800">*</p>
+            </div>
             <div className='w-full h-[320px]'>
                 <ReactQuill
                 value={dataValue} 

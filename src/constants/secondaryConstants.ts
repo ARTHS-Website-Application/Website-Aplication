@@ -3,18 +3,31 @@ export const productCategory = {
     GET_PRODUCT_CATEGORY_SUCCESS: "get_product_category_success",
     GET_PRODUCT_CATEGORY_FAIL: "get_product_category_fail",
 }
+export const serviceCreate = {
+    SERVICE_CREATE: "service_create",
+}
+
+export const serviceUpdate = {
+    SERVICE_UPDATE: "service_update",
+}
 
 export const listServices = {
     GET_LIST_SERVICES_CHOOSE: "list_services_choose",
+    GET_SORT_SERVICES: "get_sort_services",
     GET_LIST_SERVICES: "list_services",
     GET_LIST_SERVICES_FILTER: "list_services_filter",
     GET_LIST_SERVICES_SUCCESS: "list_services_success",
     GET_LIST_SERVICES_FAIL: "list_services_fail",
 }
 
+export const detailServices = {
+    DETAIL_SERVICES: "detail_services",
+    DETAIL_SERVICES_SUCCESS: "detail_services_success",
+    DETAIL_SERVICES_FAIL: "detail_services_fail",
+}
+
 export const listVehicles = {
     GET_LIST_VEHICLES: "list_vehicles",
-    GET_LIST_VEHICLES_SEARCH: "list_vehicles_search",
     GET_LIST_VEHICLES_SUCCESS: "list_vehicles_success",
     GET_LIST_VEHICLES_FAil: "list_vehicles_fail",
 

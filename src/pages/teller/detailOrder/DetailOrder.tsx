@@ -75,12 +75,15 @@ const DetailOrder = () => {
 
   }, [dispatch, orderId]);
   useEffect(() => {
-    setData(detailOrder);
+    if(detailOrder.id===orderId){
+      setData(detailOrder);
     setTimeout(() => {
       setIsLoading(false);
     }, 1000)
+    }
+    
 
-  }, [detailOrder])
+  }, [detailOrder, orderId])
 
   const TotalOrderProduct = () => {
     let total = 0;

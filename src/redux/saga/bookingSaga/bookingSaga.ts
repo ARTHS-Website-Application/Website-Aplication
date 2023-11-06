@@ -17,6 +17,7 @@ function* getBooking(payload: payloadBooking<number>) {
         } else {
             yield put(getBookingFailed(data));
         }
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
         const msg: string = error.message;
         yield put(getBookingFailed(msg));
@@ -39,6 +40,7 @@ function* putBooking(payload: payloadUpdateBooking<string>) {
             console.log('error', response);
             yield put(putUpdateFailed(response.data))
         }
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
         console.log('error', error);
         const axiosError = error as AxiosError<ErrorResponse>;

@@ -6,11 +6,6 @@ export interface selectorVehicleProduct<T> {
     }
 }
 
-export interface payloadVehicle<T> {
-    type: 'list_vehicles_search';
-    vehicleName: T
-}
-
 export interface storeVehicleProduct<T> {
     showError: T | null,
     vehicleProduct: vehicleProductSaga<T>[];

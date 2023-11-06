@@ -1,5 +1,5 @@
 import { Select, Option } from "@material-tailwind/react";
-import { CategoryProduct, WarrantyProduct, getVehicleProduct, getVehicleSearch, postCreateProduct } from '@/actions/product';
+import { CategoryProduct, WarrantyProduct, getVehicleProduct, postCreateProduct } from '@/actions/product';
 import { getServicesChoose } from '@/actions/service';
 import { itemCategoryProduct, selectorCategoryProduct } from '@/types/actions/categoryPr';
 import { dataService, selectorService } from '@/types/actions/listService';
@@ -12,12 +12,13 @@ import { getDiscountChoose } from "@/actions/discount";
 import { itemDiscount, selectorDiscount } from "@/types/actions/listDiscout";
 import Description from "@/components/Description";
 import { itemWarrantyProduct, selectorWarrantyProduct } from "@/types/actions/listWarranty";
+import { typeService } from "@/types/typeService";
 
 const CreateProduct = () => {
   const [showVehicle, setShowVehicle] = useState<boolean>(false);
   const dispatch = useDispatch();
   const categoryProduct: itemCategoryProduct<string>[] = useSelector((state: selectorCategoryProduct<string>) => state.categoryProductReducer.categoryProduct);
-  const warrantyChoose: itemWarrantyProduct<string,number>[] = useSelector((state: selectorWarrantyProduct<string,number>) => state.warrantyReducer.warrantyProduct);
+  const warrantyChoose: itemWarrantyProduct<string, number>[] = useSelector((state: selectorWarrantyProduct<string, number>) => state.warrantyReducer.warrantyProduct);
   const discountProduct: itemDiscount<string, number>[] = useSelector((state: selectorDiscount<string, number>) => state.discountReducer.discountInfor);
   const vehicleProduct: itemVehicleProduct<string>[] = useSelector((state: selectorVehicleProduct<string>) => state.vehicleProductReducer.vehicleProduct);
   const serviceChoose: dataService<string, number> = useSelector((state: selectorService<string, number>) => state.serviceReducer.serviceInfor);
@@ -35,7 +36,15 @@ const CreateProduct = () => {
   const [images, setImages] = useState<File[]>([]);
   const [addSearch, setAddSearch] = useState<string>("")
   const [searchTimeout, setSearchTimeout] = useState<number | null>(null);
-  console.log(addWarranty)
+  const [dataVehicle, setDataVehicle] = useState<itemVehicleProduct<string>[]>([]);
+  useEffect(() => {
+    if (vehicleProduct) {
+      setDataVehicle(vehicleProduct)
+    }
+  }, [vehicleProduct])
+  const itemSearch = dataVehicle.filter((item)=> {
+    return item.vehicleName.toLowerCase().includes(addSearch.toLowerCase());
+  })  
   useEffect(() => {
     const matched = vehicleProduct?.filter((vehicle) => addVehicle.includes(vehicle.id));
     setCheckedVehicles(matched);
@@ -44,37 +53,37 @@ const CreateProduct = () => {
     dispatch(CategoryProduct());
     dispatch(WarrantyProduct());
     dispatch(getDiscountChoose());
-    dispatch(getServicesChoose(50));
-    if (addSearch !== "") {
-      dispatch(getVehicleSearch(addSearch))
-    } else {
-      dispatch(getVehicleProduct())
-    }
 
+    const dataService = {
+      status: typeService.Active,
+      pageSize: 50
+    }
+    dispatch(getServicesChoose(dataService));
+      dispatch(getVehicleProduct())
   }, [dispatch, addSearch])
 
   const handleShowVehicle = () => {
     setShowVehicle(!showVehicle);
   }
-  const handleAddService = (e: string|undefined) => {
-    if(e){
+  const handleAddService = (e: string | undefined) => {
+    if (e) {
       setAddService(e)
     }
   }
-  const handleAddCategory = (e: string|undefined) => {
-    if(e){
+  const handleAddCategory = (e: string | undefined) => {
+    if (e) {
       setAddCategory(e)
     }
   }
 
-  const handleAddWarranty= (e: string|undefined) => {
-    if(e){
+  const handleAddWarranty = (e: string | undefined) => {
+    if (e) {
       setAddWarranty(e)
     }
   }
 
-  const handleAddDiscount = (e: string|undefined) => {
-    if(e){
+  const handleAddDiscount = (e: string | undefined) => {
+    if (e) {
       setAddDiscount(e)
     }
   }
@@ -126,7 +135,23 @@ const CreateProduct = () => {
       vehiclesId: addVehicle,
       images: images
     }
-    dispatch(postCreateProduct(dataCreate))
+    if(nameProduct && priceProduct && quantityProduct && descriptionProduct && addWarranty && addCategory && addVehicle && images){
+      dispatch(postCreateProduct(dataCreate))
+    }else{
+      alert('Hãy nhập đầy đủ các mục có dấu *')
+    }
+  }
+  const handleClear=()=>{
+    setNameProduct('');
+    setPriceProduct(0);
+    setQuantityProduct(1);
+    setDescriptionProduct('');
+    setAddService("");
+    setAddDiscount("");
+    setAddWarranty("");
+    setAddCategory("");
+    setAddVehicle([]);
+    setImages([])
   }
   return (
     <div>
@@ -136,7 +161,7 @@ const CreateProduct = () => {
           <p className="text-[21px] font-semibold">Thông tin chung</p>
           <div className="w-[97%] text-[#6B7280] text-[19px] py-5 ">
             <div className="space-y-3">
-              <p className="pl-1">Tên</p>
+              <p className="pl-1">Tên <p className="text-red-800 inline">*</p> </p>
               <input type="text"
                 value={nameProduct}
                 placeholder='Tên sản phẩm'
@@ -146,16 +171,17 @@ const CreateProduct = () => {
             </div>
             <div className="flex justify-between pt-7">
               <div className="flex items-center space-x-3">
-                <p>Số lượng</p>
+                <p>Số lượng <p className="text-red-800 inline">*</p></p>
                 <input type="number"
                   min={1}
+                  value={quantityProduct}
                   placeholder="Nhập số sản phẩm"
                   className='outline-none p-2 border-2 border-[#E5E7EB] bg-gray-50 rounded-xl'
                   onChange={(e) => setQuantityProduct(parseInt(e.target.value))}
                 />
               </div>
               <div className="flex items-center space-x-3">
-                <p>Giá tiền</p>
+                <p>Giá tiền <p className="text-red-800 inline">*</p></p>
                 <div className="flex items-center space-x-2">
                   <input type="number"
                     min={1}
@@ -170,24 +196,24 @@ const CreateProduct = () => {
             </div>
             <div className="flex justify-between pt-7">
               <div className="flex flex-col space-y-3">
-                <p className="pl-1">Thời gian bảo hành</p>
+                <p className="pl-1">Thời gian bảo hành <p className="text-red-800 inline">*</p></p>
                 <Select
-                className="text-[18px] h-[50px] bg-gray-50"
-                size="lg"
-                label="Lựa thời gian bảo hành"
-                onChange={handleAddWarranty}
-              >
-                {warrantyChoose
-                  ? warrantyChoose?.map((item, index) => (
-                    <Option
-                      value={item?.id}
-                      key={index}
-                      className="text-[18px]"
-                    >{item?.duration} tháng</Option>
-                  ))
-                  : ""
-                }
-              </Select>
+                  className="text-[18px] h-[50px] bg-gray-50"
+                  size="lg"
+                  label="Lựa thời gian bảo hành"
+                  onChange={handleAddWarranty}
+                >
+                  {warrantyChoose
+                    ? warrantyChoose?.map((item, index) => (
+                      <Option
+                        value={item?.id}
+                        key={index}
+                        className="text-[18px]"
+                      >{item?.duration} tháng</Option>
+                    ))
+                    : ""
+                  }
+                </Select>
               </div>
               <div className="flex flex-col space-y-3">
                 <p className="pl-1">Khuyến mãi</p>
@@ -237,7 +263,7 @@ const CreateProduct = () => {
               </Select>
             </div>
             <div className="flex flex-col space-y-3">
-              <p className="pl-1">Loại sản phẩm</p>
+              <p className="pl-1">Loại sản phẩm <p className="text-red-800 inline">*</p></p>
               <Select
                 size="lg"
                 label="Lựa chọn sản phẩm"
@@ -257,7 +283,7 @@ const CreateProduct = () => {
               </Select>
             </div>
             <div className="space-y-3">
-              <p className="pl-1">Thương hiệu xe</p>
+              <p className="pl-1">Thương hiệu xe <p className="text-red-800 inline">*</p></p>
               {checkedVehicles?.length > 0
                 ? (
                   <div className="flex w-full p-3 border-2 border-[#E5E7EB] bg-gray-50 rounded-xl focus:border-blue-500">
@@ -304,16 +330,14 @@ const CreateProduct = () => {
                       const newTimeSearch = window.setTimeout(() => {
                         setAddSearch(e.target.value);
                       }, 800);
-
-                      // Cập nhật trạng thái searchTimeout
                       setSearchTimeout(newTimeSearch);
                     }}
                   />
                 </div>
 
                 <div className="overflow-y-scroll h-[30vh] px-3">
-                  {vehicleProduct?.length > 0
-                    ? vehicleProduct?.map((item, index) => (
+                  {itemSearch?.length > 0
+                    ? itemSearch?.map((item, index) => (
                       <div className='flex space-x-3 items-center' key={index}>
                         <input type="checkbox"
                           className='w-5 h-5'
@@ -336,7 +360,7 @@ const CreateProduct = () => {
       {/* Ảnh */}
       <div className=" flex justify-center pt-7">
         <div className="bg-white w-[75%] min-h-[300px] rounded-md p-5 space-y-3">
-          <p className="text-[20px]">Hình ảnh</p>
+          <p className="text-[20px]">Hình ảnh <p className="text-red-800 inline">*</p></p>
           <div className="bg-[#F9F9FC] border-dashed border-2 border-[#E0E2E7] py-5 flex flex-col justify-center items-center">
             {images.length > 0
               ? (
@@ -382,6 +406,7 @@ const CreateProduct = () => {
           onClick={handleCreateProduct}
         >Thêm sản phẩm</button>
         <button className='w-[200px] h-[60px] text-center bg-slate-300 text-[20px] rounded-lg text-white font-semibold bg-gray-300 hover:bg-red-700'
+        onClick={handleClear}
         >Hủy</button>
       </div>
     </div>
