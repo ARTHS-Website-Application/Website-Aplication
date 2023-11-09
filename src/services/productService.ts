@@ -12,7 +12,7 @@ export class Private {
         formData.append('priceCurrent', data.priceCurrent);
         formData.append('quantity', data.quantity);
         formData.append('description', data.description);
-        formData.append('repairServiceId', data.repairServiceId);
+        formData.append('installationFee', data.installationFee);
         formData.append('discountId', data.discountId);
         formData.append('warrantyId', data.warrantyId);
         formData.append('categoryId', data.categoryId);

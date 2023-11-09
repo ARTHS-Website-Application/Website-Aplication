@@ -40,6 +40,7 @@ export interface item<T, N> {
     id: T;
     name: T;
     priceCurrent: N;
+    installationFee:N;
     quantity: N;
     warrantyDuration: N;
     description: T;
@@ -50,12 +51,6 @@ export interface item<T, N> {
     category: {
         id: T,
         categoryName: T
-    };
-    repairService: {
-        id: T;
-        name: T;
-        price: N;
-        image: T;
     };
     images: imageItem<T>[];
     feedbackProducts: feedbackProducts<T, N>[];
@@ -148,6 +143,7 @@ export interface addProductOrder<T, N> {
     idProduct: T;
     nameProduct: T;
     priceCurrent: N | null;
+    installationFee:N;
     priceProduct: N;
     discountAmount: N | null;
     image: string;

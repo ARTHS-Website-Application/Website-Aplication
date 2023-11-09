@@ -148,9 +148,9 @@ const DetailOrder = () => {
             <div className="font-semibold text-[20px] flex space-x-4 items-center pt-3">
               {data?.status !== statusOrder.Paid
                 ? (
-                  <Link to="/manage-order/list-order" className="hover:text-main">Danh sách đơn hàng</Link>
+                  <Link to="/manage-order/list-all-order/list-order" className="hover:text-main">Danh sách đơn hàng</Link>
                 ) : (
-                  <Link to="/manage-order/history-order" className="hover:text-main">Lịch sử đơn hàng</Link>
+                  <Link to="/manage-order/list-all-order/history-order" className="hover:text-main">Lịch sử đơn hàng</Link>
                 )}
               <ChevronRightIcon className="w-5 h-5" />
               <p>Chi tiết đơn hàng</p>

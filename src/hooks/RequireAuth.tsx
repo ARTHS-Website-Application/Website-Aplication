@@ -56,7 +56,7 @@ const RequireAuth = ({ allowedRoles }: Props) => {
                     Đăng xuất
                   </button>
                 </div>}
-              <div className="w-full min-h-full pt-5">
+              <div className="w-full min-h-full">
                 <Outlet />
               </div>
             </div>

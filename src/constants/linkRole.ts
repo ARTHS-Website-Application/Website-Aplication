@@ -2,6 +2,12 @@ const roleAdmin = [
     {
         to: '/',
         name: 'quan ly',
+        subMenu: [
+            {
+                name: "Submenu 3",
+                to: "/submenu-3",
+            },
+        ],
     },
 ];
 const roleOwner = [
@@ -14,8 +20,14 @@ const roleOwner = [
         name: 'Quản lý nhân viên',
     },
     {
-        to: '/manage-products',
+        to: '/',
         name: 'Quản lý sản phẩm',
+        subMenu: [
+            {
+                name: "Submenu 3",
+                to: "/manage-products",
+            },
+        ],
     },
     {
         to: '/manage-orders-owner',
@@ -36,12 +48,26 @@ const roleTeller = [
         name: 'Trang chủ',
     },
     {
-        to: '/manage-order',
         name: 'Quản lý đơn hàng',
+        subMenu: [
+            {
+                name: "Tạo đơn hàng",
+                to: "/manage-order/create-order",
+            },
+            {
+                name: "Danh sách đơn hàng",
+                to: "/manage-order/list-all-order",
+            },
+        ],
     },
     {
-        to: '/manage-booking',
         name: 'Danh sách đặt lịch',
+        subMenu: [
+            {
+                name: "Submenu 3",
+                to: "/manage-booking/list-booking",
+            },
+        ],
     },
     {
         to: '/manage-online-order',
@@ -49,4 +75,4 @@ const roleTeller = [
     }
 ]
 
-export {roleAdmin,roleOwner,roleTeller}
+export { roleAdmin, roleOwner, roleTeller }

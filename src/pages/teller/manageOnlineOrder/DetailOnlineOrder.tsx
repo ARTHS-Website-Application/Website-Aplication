@@ -1,7 +1,7 @@
 import { getDetailOnlineOrder } from "@/actions/onlineOrder";
 import Loading from '@/components/LoadingPage';
 import { itemDetails, itemOnlineOrder, selectorDetailOnlineOrder } from "@/types/actions/listOnlineOrder"
-import { statusOnlineOrder } from "@/types/typeOrder";
+import { statusOrder } from "@/types/typeOrder";
 import { ArrowPathRoundedSquareIcon, CalendarDaysIcon, ChevronRightIcon, DevicePhoneMobileIcon, UserIcon } from "@heroicons/react/24/solid";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux"
@@ -48,7 +48,7 @@ const DetailOnlineOrder = () => {
         : data && (
           <div className={`w-full bg-white rounded-md px-3`}>
             <div className="font-semibold text-[20px] flex space-x-4 items-center pt-3">
-              {data?.status !== statusOnlineOrder.Transport
+              {data?.status !== statusOrder.Transport
                 ? (
                   <Link to="/manage-online-order/list-order" className="hover:text-main">Danh sách đơn đặt hàng</Link>
                 ) : (
@@ -62,9 +62,9 @@ const DetailOnlineOrder = () => {
             <div className='flex space-x-5 py-3'>
               <div className='w-[50%] border-2 border-[#E0E2E7] px-5 pt-5 pb-2 space-y-3  rounded-lg'>
                 <p className={`rounded-2xl font-semibold py-1 w-[170px] text-center text-[19px]
-                    ${data?.status === statusOnlineOrder.Paid ? "bg-[#E7F4EE] text-[#0D894F]" :
-                    data?.status === statusOnlineOrder.Processing ? "bg-[#bac5e9] text-blue-500" :
-                      data?.status === statusOnlineOrder.Transport ? "bg-[#FBEABC] text-[#90530C]" :
+                    ${data?.status === statusOrder.Paid ? "bg-[#E7F4EE] text-[#0D894F]" :
+                    data?.status === statusOrder.Processing ? "bg-[#bac5e9] text-blue-500" :
+                      data?.status === statusOrder.Transport ? "bg-[#FBEABC] text-[#90530C]" :
                         ""}`}>
                   {data?.status}
                 </p>
@@ -131,7 +131,7 @@ const DetailOnlineOrder = () => {
             
             {/* thông tin sản phẩm */}
             <div className={`w-full border-[#E0E2E7] space-y-3  
-            ${data?.status === statusOnlineOrder.Finished || data?.status !== statusOnlineOrder.Processing   ? "border-2 rounded-md py-3" : "border-x-2 border-t-2 rounded-t-md pt-3"} `}>
+            ${data?.status === statusOrder.Finished || data?.status !== statusOrder.Processing   ? "border-2 rounded-md py-3" : "border-x-2 border-t-2 rounded-t-md pt-3"} `}>
               <div className='flex justify-between w-full px-3'>
                 <div className='font-semibold flex items-center space-x-3 '>
                   <h2 className='text-[20px]'>Danh sách sản phẩm</h2>
