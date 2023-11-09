@@ -8,7 +8,7 @@ export class Private {
         const encodeStatus = encodeURIComponent(excludeOrderStatus);
         //URLSearchParams  không dùng encodeURIComponent
         const queryParams = new URLSearchParams({pageNumber: pageNumber.toString() });
-        return await axiosPrivate.get(`/store-orders?${queryParams}&excludeOrderStatus=${encodeStatus}`)
+        return await axiosPrivate.get(`/orders?orderType=Offline&${queryParams}&excludeOrderStatus=${encodeStatus}`)
     }
 
     getFilterOrder = async (data:callFilterOrder<string,number>) => {
@@ -16,49 +16,49 @@ export class Private {
         const encodeStatus = encodeURIComponent(data.excludeOrderStatus);
         const encodeName = encodeURIComponent(data?.customerName);
         const queryParams = new URLSearchParams({customerPhone:data.customerPhone, pageNumber: data.number.toString() });
-        return await axiosPrivate.get(`/store-orders?${queryParams}&customerName=${encodeName}&excludeOrderStatus=${encodeStatus}`)
+        return await axiosPrivate.get(`/orders?orderType=Offline&${queryParams}&customerName=${encodeName}&excludeOrderStatus=${encodeStatus}`)
     }
 
     getOrderPaid = async (pageNumber: number,orderStatus:string) => {
         const axiosPrivate = userAxiosPrivate();
         const encodeStatusPaid = encodeURIComponent(orderStatus);
-        return await axiosPrivate.get(`/store-orders?orderStatus=${encodeStatusPaid}&pageNumber=${pageNumber}`)
+        return await axiosPrivate.get(`/orders?orderType=Offline&orderStatus=${encodeStatusPaid}&pageNumber=${pageNumber}`)
     }
     getFilterOrderPaid = async (data:callFilterOrderPaid<string,number>) => {
         const axiosPrivate = userAxiosPrivate();
         const encodeOrderStatus = encodeURIComponent(data?.orderStatus);
         const encodeUserName = encodeURIComponent(data.customerName);
         const queryParams = new URLSearchParams({customerPhone:data.customerPhone, pageNumber: data.number.toString()});
-        return await axiosPrivate.get(`/store-orders?${queryParams}&orderStatus=${encodeOrderStatus}&customerName=${encodeUserName}`)
+        return await axiosPrivate.get(`/orders?orderType=Offline&${queryParams}&orderStatus=${encodeOrderStatus}&customerName=${encodeUserName}`)
     }
 
     getDetailOrder = async (id: string) => {
         const axiosPrivate = userAxiosPrivate();
-        return await axiosPrivate.get(`/store-orders/${id}`)
+        return await axiosPrivate.get(`/orders/${id}`)
     }
 
     updateCustomerOrder = async (idOrder: string, data: itemCustomer<string>) => {
         const axiosPrivate = userAxiosPrivate();
         if (data.licensePlate) {
-            return await axiosPrivate.put(`/store-orders/${idOrder}`, data)
+            return await axiosPrivate.put(`/orders/${idOrder}`, data)
         } else {
             const dataBuy = {
                 customerName: data.customerName,
                 customerPhone: data.customerPhone,
             }
-            return await axiosPrivate.put(`/store-orders/${idOrder}`, dataBuy)
+            return await axiosPrivate.put(`/orders/${idOrder}`, dataBuy)
         }
     }
 
     updateProductOrder = async (idOrder: string, data: itemStaffProduct<string,number>) => {
         const axiosPrivate = userAxiosPrivate();
         if (data.staffId) {
-            return await axiosPrivate.put(`/store-orders/${idOrder}`, data)
+            return await axiosPrivate.put(`/orders/${idOrder}`, data)
         } else {
             const dataProduct={
                 orderDetailModel:data.orderDetailModel
             }
-            return await axiosPrivate.put(`/store-orders/${idOrder}`,dataProduct)
+            return await axiosPrivate.put(`/orders/${idOrder}`,dataProduct)
         }
     }
     updateStatusOrder= async (idOrder: string, data:string) => {
@@ -66,7 +66,7 @@ export class Private {
             const dataProduct={
                 status:data
             }
-            return await axiosPrivate.put(`/store-orders/${idOrder}`,dataProduct)
+            return await axiosPrivate.put(`/orders/${idOrder}`,dataProduct)
         }
 }
 

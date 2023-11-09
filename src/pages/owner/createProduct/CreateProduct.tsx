@@ -2,7 +2,6 @@ import { Select, Option } from "@material-tailwind/react";
 import { CategoryProduct, WarrantyProduct, getVehicleProduct, postCreateProduct } from '@/actions/product';
 import { getServicesChoose } from '@/actions/service';
 import { itemCategoryProduct, selectorCategoryProduct } from '@/types/actions/categoryPr';
-import { dataService, selectorService } from '@/types/actions/listService';
 import { ChevronDownIcon, MagnifyingGlassIcon, PhotoIcon } from '@heroicons/react/24/solid'
 import { useEffect, useState } from 'react';
 import * as React from 'react';
@@ -21,15 +20,14 @@ const CreateProduct = () => {
   const warrantyChoose: itemWarrantyProduct<string, number>[] = useSelector((state: selectorWarrantyProduct<string, number>) => state.warrantyReducer.warrantyProduct);
   const discountProduct: itemDiscount<string, number>[] = useSelector((state: selectorDiscount<string, number>) => state.discountReducer.discountInfor);
   const vehicleProduct: itemVehicleProduct<string>[] = useSelector((state: selectorVehicleProduct<string>) => state.vehicleProductReducer.vehicleProduct);
-  const serviceChoose: dataService<string, number> = useSelector((state: selectorService<string, number>) => state.serviceReducer.serviceInfor);
 
   const [nameProduct, setNameProduct] = useState<string>('');
   const [quantityProduct, setQuantityProduct] = useState<number>(1);
   const [priceProduct, setPriceProduct] = useState<number>(0);
+  const [priceInstallationFee,setPriceInstallationFee] = useState<number>(0)
   const [descriptionProduct, setDescriptionProduct] = useState<string>('');
   const [addCategory, setAddCategory] = useState<string>("");
   const [addDiscount, setAddDiscount] = useState<string>("");
-  const [addService, setAddService] = useState<string>("");
   const [addWarranty, setAddWarranty] = useState<string>("");
   const [checkedVehicles, setCheckedVehicles] = useState<itemVehicleProduct<string>[]>([]);
   const [addVehicle, setAddVehicle] = useState<string[]>([]);
@@ -42,9 +40,9 @@ const CreateProduct = () => {
       setDataVehicle(vehicleProduct)
     }
   }, [vehicleProduct])
-  const itemSearch = dataVehicle.filter((item)=> {
+  const itemSearch = dataVehicle.filter((item) => {
     return item.vehicleName.toLowerCase().includes(addSearch.toLowerCase());
-  })  
+  })
   useEffect(() => {
     const matched = vehicleProduct?.filter((vehicle) => addVehicle.includes(vehicle.id));
     setCheckedVehicles(matched);
@@ -59,16 +57,11 @@ const CreateProduct = () => {
       pageSize: 50
     }
     dispatch(getServicesChoose(dataService));
-      dispatch(getVehicleProduct())
+    dispatch(getVehicleProduct())
   }, [dispatch, addSearch])
 
   const handleShowVehicle = () => {
     setShowVehicle(!showVehicle);
-  }
-  const handleAddService = (e: string | undefined) => {
-    if (e) {
-      setAddService(e)
-    }
   }
   const handleAddCategory = (e: string | undefined) => {
     if (e) {
@@ -128,25 +121,25 @@ const CreateProduct = () => {
       priceCurrent: priceProduct,
       quantity: quantityProduct,
       description: descriptionProduct,
-      repairServiceId: addService,
+      installationFee: priceInstallationFee,
       discountId: addDiscount,
       warrantyId: addWarranty,
       categoryId: addCategory,
       vehiclesId: addVehicle,
       images: images
     }
-    if(nameProduct && priceProduct && quantityProduct && descriptionProduct && addWarranty && addCategory && addVehicle && images){
+    if (nameProduct && priceProduct && quantityProduct && priceInstallationFee && descriptionProduct && addWarranty && addCategory && addVehicle && images) {
       dispatch(postCreateProduct(dataCreate))
-    }else{
+    } else {
       alert('Hãy nhập đầy đủ các mục có dấu *')
     }
   }
-  const handleClear=()=>{
+  const handleClear = () => {
     setNameProduct('');
     setPriceProduct(0);
     setQuantityProduct(1);
+    setPriceInstallationFee(0);
     setDescriptionProduct('');
-    setAddService("");
     setAddDiscount("");
     setAddWarranty("");
     setAddCategory("");
@@ -161,17 +154,23 @@ const CreateProduct = () => {
           <p className="text-[21px] font-semibold">Thông tin chung</p>
           <div className="w-[97%] text-[#6B7280] text-[19px] py-5 ">
             <div className="space-y-3">
-              <p className="pl-1">Tên <p className="text-red-800 inline">*</p> </p>
+              <div className="flex space-x-1">
+                <p>Tên sản phẩm </p>
+                <p className="text-red-800">*</p>
+              </div>
               <input type="text"
                 value={nameProduct}
-                placeholder='Tên sản phẩm'
+                placeholder='Nhập tên sản phẩm'
                 className='outline-none  w-full p-3 border-2 border-[#E5E7EB] bg-gray-50 rounded-xl '
                 onChange={(e) => setNameProduct(e.target.value)}
               />
             </div>
             <div className="flex justify-between pt-7">
               <div className="flex items-center space-x-3">
-                <p>Số lượng <p className="text-red-800 inline">*</p></p>
+                <div className="flex space-x-1">
+                  <p>Số lượng </p>
+                  <p className="text-red-800">*</p>
+                </div>
                 <input type="number"
                   min={1}
                   value={quantityProduct}
@@ -181,7 +180,10 @@ const CreateProduct = () => {
                 />
               </div>
               <div className="flex items-center space-x-3">
-                <p>Giá tiền <p className="text-red-800 inline">*</p></p>
+                <div className="flex space-x-1">
+                  <p>Giá tiền </p>
+                  <p className="text-red-800">*</p>
+                </div>
                 <div className="flex items-center space-x-2">
                   <input type="number"
                     min={1}
@@ -196,7 +198,10 @@ const CreateProduct = () => {
             </div>
             <div className="flex justify-between pt-7">
               <div className="flex flex-col space-y-3">
-                <p className="pl-1">Thời gian bảo hành <p className="text-red-800 inline">*</p></p>
+                <div className="flex space-x-1">
+                  <p>Thời gian bảo hành </p>
+                  <p className="text-red-800">*</p>
+                </div>
                 <Select
                   className="text-[18px] h-[50px] bg-gray-50"
                   size="lg"
@@ -242,28 +247,27 @@ const CreateProduct = () => {
         <div className="bg-white w-[40%] p-5 rounded-md ">
           <p className="text-[21px] font-semibold">Thể loại</p>
           <div className="w-[97%] text-[#6B7280] text-[19px] py-5 space-y-5 ">
-            <div className="flex flex-col space-y-3">
-              <p className="pl-1">Dịch vụ</p>
-              <Select
-                className="text-[18px] h-[50px] bg-gray-50"
-                size="lg"
-                label="Lựa chọn dịch vụ"
-                onChange={handleAddService}
-              >
-                {serviceChoose?.data
-                  ? serviceChoose?.data?.map((item, index) => (
-                    <Option
-                      value={item?.id}
-                      key={index}
-                      className="text-[18px]"
-                    >{item?.name}</Option>
-                  ))
-                  : ""
-                }
-              </Select>
+            <div className="flex items-center space-x-3">
+              <div className="flex space-x-1">
+                <p>Giá lắp đặt sản phẩm</p>
+                <p className="text-red-800">*</p>
+              </div>
+              <div className="flex items-center space-x-2">
+                <input type="number"
+                  min={1}
+                  value={priceInstallationFee === 0 ? "" : priceInstallationFee}
+                  placeholder="Nhập số tiền"
+                  className='outline-none p-2 border-2 border-[#E5E7EB] bg-gray-50 rounded-xl'
+                  onChange={(e) => setPriceInstallationFee(parseInt(e.target.value))}
+                />
+                <p>VNĐ</p>
+              </div>
             </div>
             <div className="flex flex-col space-y-3">
-              <p className="pl-1">Loại sản phẩm <p className="text-red-800 inline">*</p></p>
+              <div className="flex space-x-1">
+                <p>Loại sản phẩm </p>
+                <p className="text-red-800">*</p>
+              </div>
               <Select
                 size="lg"
                 label="Lựa chọn sản phẩm"
@@ -283,7 +287,10 @@ const CreateProduct = () => {
               </Select>
             </div>
             <div className="space-y-3">
-              <p className="pl-1">Thương hiệu xe <p className="text-red-800 inline">*</p></p>
+              <div className="flex space-x-1">
+                <p>Thương hiệu xe </p>
+                <p className="text-red-800">*</p>
+              </div>
               {checkedVehicles?.length > 0
                 ? (
                   <div className="flex w-full p-3 border-2 border-[#E5E7EB] bg-gray-50 rounded-xl focus:border-blue-500">
@@ -360,7 +367,10 @@ const CreateProduct = () => {
       {/* Ảnh */}
       <div className=" flex justify-center pt-7">
         <div className="bg-white w-[75%] min-h-[300px] rounded-md p-5 space-y-3">
-          <p className="text-[20px]">Hình ảnh <p className="text-red-800 inline">*</p></p>
+        <div className="flex space-x-1">
+                <p>Hình ảnh</p>
+                <p className="text-red-800">*</p>
+              </div>
           <div className="bg-[#F9F9FC] border-dashed border-2 border-[#E0E2E7] py-5 flex flex-col justify-center items-center">
             {images.length > 0
               ? (
@@ -406,7 +416,7 @@ const CreateProduct = () => {
           onClick={handleCreateProduct}
         >Thêm sản phẩm</button>
         <button className='w-[200px] h-[60px] text-center bg-slate-300 text-[20px] rounded-lg text-white font-semibold bg-gray-300 hover:bg-red-700'
-        onClick={handleClear}
+          onClick={handleClear}
         >Hủy</button>
       </div>
     </div>

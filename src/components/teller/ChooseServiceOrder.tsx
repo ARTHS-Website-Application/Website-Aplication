@@ -1,58 +1,35 @@
-import { getFilterServices, getServices } from '@/actions/service';
 import LoadingPage from '@/components/LoadingPage';
 import Pagination from '@/components/Pagination';
-import { dataService, itemService, selectorService } from '@/types/actions/listService';
-import { typeActiveProduct } from '@/types/typeProduct';
+import { dataService, itemService } from '@/types/actions/listService';
 import { MagnifyingGlassIcon } from '@heroicons/react/24/solid';
 import { useState,useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import ListService from '../listService/ListService';
 import { showWarningAlert } from '@/constants/chooseToastify';
-import InforUserService from '../inforUserService/InforUserService';
-import { typeService } from '@/types/typeService';
+import ListService from '@/pages/teller/listService/ListService';
 
-const CreateOrderService = () => {
-    const [isLoading, setIsLoading] = useState<boolean>(false);
-    const dispatch = useDispatch();
-    const dataService: dataService<string, number> = useSelector((state: selectorService<string, number>) => state.serviceReducer.serviceInfor);
+type Props={
+    dataService:dataService<string, number>,
+    setAddSearch:React.Dispatch<React.SetStateAction<string>>,
+    isLoading:boolean,
+    setIsLoading:React.Dispatch<React.SetStateAction<boolean>>
+
+}
+
+const ChooseServiceOrder = ({dataService,setAddSearch,isLoading,setIsLoading}:Props) => {
     const [serviceData, setServiceData] = useState([] as itemService<string, number>[]);
     const [addService, setAddService] = useState<itemService<string, number>[]>([]);
-    const [addSearch, setAddSearch] = useState<string>("")
     const [searchTimeout, setSearchTimeout] = useState<number | null>(null);
     const [paginationNumber, setPaginationNumber] = useState<number>(0);
     useEffect(() => {
-        const activeProducts = dataService.data?.filter((product) => product.status === typeActiveProduct.Active);
-        setServiceData(activeProducts);
+        setServiceData(dataService.data);
         setIsLoading(false);
-    }, [dataService.data]);
+    }, [dataService.data, setIsLoading]);
 
     useEffect(() => {
         if (dataService?.pagination?.totalRow) {
             setPaginationNumber(0);
             setIsLoading(false);
         }
-    }, [dataService.pagination?.totalRow]);
-
-    useEffect(() => {
-        if ( addSearch !== "") {
-            const data = {
-                paginationNumber: paginationNumber,
-                name: addSearch,
-                status:typeService.Active
-            }
-            setTimeout(() => {
-                dispatch(getFilterServices(data))
-                setIsLoading(true);
-            }, 200)
-        } else {
-            const dataService= {
-                status:typeService.Active,
-                pageNumber:paginationNumber,
-            }
-            dispatch(getServices(dataService));
-            setIsLoading(true);
-        }
-    }, [dispatch, addSearch, paginationNumber])
+    }, [dataService?.pagination?.totalRow, setIsLoading]);
 
     //thêm service
     const handleAddService = (data: itemService<string, number>) => {
@@ -70,22 +47,21 @@ const CreateOrderService = () => {
     }
 
     //xóa service
-    const handleRemoveProduct = (itemId: string) => {
-        const existingCartItems: itemService<string, number>[] = JSON.parse(localStorage.getItem('serviceItems') as string) || [];
-        const updatedItems = existingCartItems.filter((item: itemService<string, number>) => item.id !== itemId);
-        localStorage.setItem('serviceItems', JSON.stringify(updatedItems));
-        setAddService(updatedItems);
-    }
+    // const handleRemoveProduct = (itemId: string) => {
+    //     const existingCartItems: itemService<string, number>[] = JSON.parse(localStorage.getItem('serviceItems') as string) || [];
+    //     const updatedItems = existingCartItems.filter((item: itemService<string, number>) => item.id !== itemId);
+    //     localStorage.setItem('serviceItems', JSON.stringify(updatedItems));
+    //     setAddService(updatedItems);
+    // }
     return (
-        <div className=" w-full min-h-[83.4vh] flex">
-            <div className="w-[77%] px-3">
+            <div className="w-full">
                 <div className=" w-full flex justify-between space-x-5">
                     {/* search */}
                     <form className="w-[70%]">
                         <div className="w-full relative">
                             <input
                                 type="text"
-                                placeholder="Tìm kiếm sản phẩm"
+                                placeholder="Tìm kiếm dịch vụ"
                                 className="w-full py-3 pl-3 pr-4 text-gray-500 border rounded-md outline-none bg-gray-50 focus:bg-white focus:border-gray-20"
                                 onChange={(e) => {
                                     if (searchTimeout) {
@@ -109,10 +85,7 @@ const CreateOrderService = () => {
                 {isLoading ? (
                     <LoadingPage />
                 ) : dataService?.data?.length > 0 ? (
-                    <div className='flex flex-col space-y-3'>
-                        <div className='w-full py-3 '>
-                            <h1 className="text-[20px] w-full font-semibold">Tất cả sản phẩm</h1>
-                        </div>
+                    <div className='flex flex-col space-y-3 pt-5'>
                         <div className=' w-full flex flex-col space-y-3'>             
                             <ListService
                                 onClickAdd={handleAddService}
@@ -131,14 +104,7 @@ const CreateOrderService = () => {
                     </div>
                 )}
             </div>
-            <InforUserService
-                setAddService={setAddService}
-                addService={addService}
-                removeProduct={handleRemoveProduct}
-            />
-
-        </div>
     )
 }
 
-export default CreateOrderService
+export default ChooseServiceOrder

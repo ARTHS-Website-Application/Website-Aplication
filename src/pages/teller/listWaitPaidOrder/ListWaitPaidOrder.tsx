@@ -9,7 +9,7 @@ import { statusOrder } from '@/types/typeOrder'
 import LoadingPage from '@/components/LoadingPage'
 
 
-const HistoryOrder = () => {
+const ListWaitPaidOrder = () => {
     const dispatch = useDispatch()
     const orderPaidInfor: listOrder<string, number> = useSelector((state: selectorOrder<string, number>) => state.orderReducer.orderPaidInfor);
     const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -31,7 +31,7 @@ const HistoryOrder = () => {
                     customerName: addSearch,
                     customerPhone: "",
                     number: paginationNumber,
-                    orderStatus: statusOrder.Paid,
+                    orderStatus: statusOrder.WaitForPay,
                 }
                 dispatch(getFilterOrderPaid(data))
                 setTimeout(() => {
@@ -42,7 +42,7 @@ const HistoryOrder = () => {
                     customerName: "",
                     customerPhone: addSearch,
                     number: paginationNumber,
-                    orderStatus: statusOrder.Paid,
+                    orderStatus: statusOrder.WaitForPay,
                 }
                 dispatch(getFilterOrderPaid(data))
                 setTimeout(() => {
@@ -50,15 +50,14 @@ const HistoryOrder = () => {
                 }, 200)
             }
         } else {
-            dispatch(getOrderPaid(paginationNumber, statusOrder.Paid));
+            dispatch(getOrderPaid(paginationNumber, statusOrder.WaitForPay));
             setIsLoading(true);
         }
 
     }, [addSearch, chooseSelect, dispatch, paginationNumber])
 
     useEffect(() => {
-        
-            setOrderData(orderPaidInfor.data)
+        setOrderData(orderPaidInfor.data)
         setTimeout(() => {
             setIsLoading(false);
         }, 500)
@@ -108,4 +107,4 @@ const HistoryOrder = () => {
     )
 }
 
-export default HistoryOrder
+export default ListWaitPaidOrder

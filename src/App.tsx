@@ -30,12 +30,13 @@ import ManageOnlineOrder from './pages/teller/manageOnlineOrder/ManageOnlineOrde
 import ListOnlineOrder from './pages/teller/manageOnlineOrder/ListOnlineOrder';
 import DetailOnlineOrder from './pages/teller/manageOnlineOrder/DetailOnlineOrder'
 
-import CreateOrderService from './pages/teller/createOrderService/CreateOrderService';
 import ListService from './pages/owner/listService/ListService';
 import CreateService from './pages/owner/createService/CreateService';
 import UpdateService from './pages/owner/updateService/UpdateService';
 import DetailService from './pages/owner/detailService/DetailService';
 import ListNotProduct from './pages/owner/listNotProduct/ListNotProduct';
+import ListAllOrder from './pages/teller/listAllOrder/ListAllOrder';
+import ListWaitPaidOrder from './pages/teller/listWaitPaidOrder/ListWaitPaidOrder';
 
 
 const ROLES = {
@@ -70,12 +71,13 @@ function App() {
           <Route element={<RequireAuth allowedRoles={ROLES.Teller} />}>
             <Route path="teller" element={<HomeTeller />} />
             <Route path="/manage-order" element={<ManageOrder />}>
-
               <Route path="create-order" element={<CreateOrder />} />
-              <Route path="order-service" element={<CreateOrderService />} />
+              <Route path="list-all-order" element={<ListAllOrder />}>
               <Route path="list-order" element={<ListOrder />} />
+              <Route path="wait-paid-order" element={<ListWaitPaidOrder />} />
+              <Route path="history-order" element={<HistoryOrder />}/>
+              </Route>
               <Route path=":orderId" element={<DetailOrder />} />
-              <Route path="history-order" element={<HistoryOrder />} />
             </Route>
             <Route path="manage-booking" element={<ManageBooking />}>
               <Route path="list-booking" index element={<ListBooking />} />

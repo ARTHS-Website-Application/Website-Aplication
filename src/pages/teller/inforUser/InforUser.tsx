@@ -21,59 +21,47 @@ const InforUser = ({ addProduct = [], removeProduct, setAddProduct }: Props) => 
     const [staffId, setStaffId] = useState<string>('');
     const [licensePlate, setLicensePlate] = useState<string>('');
     const [showService, setShowService] = useState<boolean[]>(Array(addProduct.length).fill(false));
-    const [checkedService, setCheckedService] = useState<boolean[]>(Array(addProduct.length).fill(false));
     const [orderData, setOrderData] = useState<itemOrder<string, number>[]>([]);
     const [showStaff, setShowStaff] = useState<boolean>(false);
     const axiosPrivate = userAxiosPrivate();
-
+    console.log(orderData)
     useEffect(() => {
         // Tạo dữ liệu ban đầu và lưu vào localStorage khi addProduct thay đổi
         const dataCart: itemOrder<string, number>[] = addProduct.map((item) => ({
             repairServiceId: null,
             motobikeProductId: item.id,
             productQuantity: 1,
+            instUsed: false
         }));
         localStorage.setItem('orderData', JSON.stringify(dataCart));
         setOrderData(dataCart);
     }, [addProduct]);
 
-    const handleCheckboxChange = (itemId: string, data: string, index: number) => {
-        const savedData = JSON.parse(localStorage.getItem('orderData') || '[]') as itemOrder<string, number>[];
-
-        const updatedOrder: itemOrder<string, number>[] = savedData.map((item, i) => {
+    //Ẩn/hiện dịch vụ
+    const toggleService = (itemId: string, index: number) => {
+        const savedData = JSON.parse(localStorage.getItem('orderData') as string);
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const updatedData = savedData.map((item: any) => {
             if (item.motobikeProductId === itemId) {
-                // Nếu đã chọn checkbox, cập nhật repairServiceId
-                if (!checkedService[i]) {
-                    return {
-                        ...item,
-                        repairServiceId: data,
-                    };
-                } else {
-                    return {
-                        ...item,
-                        repairServiceId: null,
-                    };
-                }
+                return {
+                    ...item,
+                    instUsed: !item.instUsed
+                };
             }
             return item;
         });
-        setOrderData(updatedOrder);
 
-        const newChecked = [...checkedService];
-        newChecked[index] = !checkedService[index];
-        setCheckedService(newChecked);
+        // Lưu trạng thái vào localStorage
+        localStorage.setItem('orderData', JSON.stringify(updatedData));
+        setOrderData(updatedData);
 
-        // Cập nhật localStorage
-        localStorage.setItem('orderData', JSON.stringify(updatedOrder));
-    };
-    //Ẩn/hiện dịch vụ
-    const toggleService = (index: number) => {
         const updatedShowService = [...showService];
         updatedShowService[index] = !updatedShowService[index];
         setShowService(updatedShowService);
     };
 
     const handleQuantityChange = (itemId: string, value: number) => {
+        
         const savedData = JSON.parse(localStorage.getItem('orderData') as string);
 
         // Tìm sản phẩm trong savedData dựa trên itemId
@@ -129,26 +117,19 @@ const InforUser = ({ addProduct = [], removeProduct, setAddProduct }: Props) => 
         if (indexToRemove >= 0 && indexToRemove < showService.length) {
             setShowService((prevAddProduct) => {
                 const updatedAddProduct = [...prevAddProduct];
-                updatedAddProduct.splice(indexToRemove,1);
+                updatedAddProduct.splice(indexToRemove, 1);
                 return updatedAddProduct;
             });
         }
         console.log(indexToRemove)
-        if (indexToRemove >= 0 && indexToRemove < checkedService.length) {
-            setCheckedService((prevAddProduct) => {
-                const updatedAddProduct = [...prevAddProduct];
-                updatedAddProduct.splice(indexToRemove,1);
-                return updatedAddProduct;
-            });
-        }
     };
 
     return (
-        <div className="w-[33%] border-x-2 border-t-2 border-gray-400">
+        <div className="w-[45%] border-x-2 border-t-2 border-gray-400">
             <div className='bg-white w-full text-center py-[20px] border-b-2 border-gray-400'>
                 <h1 className="text-2xl font-semibold">Đơn hàng</h1>
             </div>
-            <div className=' w-full h-[75.6vh]  flex flex-col justify-between '>
+            <div className=' w-full h-[82.4vh]  flex flex-col justify-between '>
                 <div className='px-3 pt-3 bg-white'>
                     <div className=' flex items-center pb-3'>
                         <ClipboardDocumentListIcon className="w-9 h-9 stroke-gray-400 fill-white" />
@@ -184,86 +165,76 @@ const InforUser = ({ addProduct = [], removeProduct, setAddProduct }: Props) => 
                                         onChange={(e) => setLicensePlate(e.target.value)}
                                     />
                                 </div>
-
                             </div>
                         </div>
                     </div>
                 </div>
-                <div className=" w-full h-[35vh] px-3 pb-2 overflow-y-scroll space-y-2">
-                    {addProduct &&
-                        addProduct.map((item: item<string, number>, index: number) => (
-                            <div key={index} className="w-full">
-                                <div className='bg-white w-full rounded-lg flex justify-between pb-3'>
-                                    <div className='flex'>
-                                        <div className='pl-3 h-[13vh] py-2'>
-                                            <img src={item.images[0].imageUrl} className='w-auto h-full' alt="" />
-
-                                        </div>
-                                        <div className='h-full pl-3 flex flex-col justify-between'>
-                                            <div className='font-semibold pt-2'>
-                                                <p className='text-[16px]'>{item.name}</p>
-                                                {item.discount ? (
-                                                    <div>
-                                                        <p className='text-[#888888] text-[14px] line-through'>{item.priceCurrent}đ</p>
-                                                        <p className='text-[#FE3A30]'>{item.priceCurrent * (1 - item.discount.discountAmount / 100)}đ</p>
+                <div className=" w-full flex pt-3">
+                        <div className="w-[50%]  pl-2 space-y-3 border-r-2 border-y-2 border-gray-400">
+                        {addProduct?.length > 0 && (<p className="font-semibold pl-1 ">Các sản phẩm</p>)}
+                            <div className="w-full h-[50vh] overflow-auto space-y-3 pr-1">
+                                {addProduct &&
+                                    addProduct.map((item: item<string, number>, index: number) => (
+                                        <div key={index} className="w-full">
+                                            <div className='bg-white w-full rounded-lg flex justify-between pb-1'>
+                                                <div className='flex pl-2'>
+                                                    <div className='py-2 pr-1 w-[40%]'>
+                                                        <img src={item.images[0].imageUrl} className='w-full h-[70px] object-cover' alt="" />
                                                     </div>
-                                                ) : (
-                                                    <p className='text-[#FE3A30]'>{item.priceCurrent}đ</p>
-                                                )}
+                                                    <div className='pl-2 flex flex-col justify-between'>
+                                                        <div className='font-semibold pt-1'>
+                                                            <p className='text-[13px]'>{item.name}</p>
+                                                            {item.discount ? (
+                                                                <div>
+                                                                    <p className='text-[#888888] text-[13px] line-through'>{item.priceCurrent}đ</p>
+                                                                    <p className='text-[#FE3A30] text-[13px]'>{item.priceCurrent * (1 - item.discount.discountAmount / 100)}đ</p>
+                                                                </div>
+                                                            ) : (
+                                                                <p className='text-[#FE3A30] text-[13px]'>{item.priceCurrent}đ</p>
+                                                            )}
+
+                                                        </div>
+                                                        <div className='flex items-center space-x-1 pb-1'>
+                                                            <h3 className='font-semibold text-[10px]'>Số lượng:</h3>
+                                                            <input
+                                                                type="number"
+                                                                defaultValue={1}
+                                                                min={1}
+                                                                onChange={(e) => {
+                                                                    handleQuantityChange(item.id, parseInt(e.target.value))
+                                                                }}
+                                                                className='w-[30px] border-b-2 border-black text-center focus:outline-none focus:border-b-2 focus:border-main'
+                                                            />
+                                                            {item.installationFee > 0 && (
+                                                                <button
+                                                                    className='font-bold pl-2 text-blue-700 text-[10px]'
+                                                                    onClick={() => toggleService(item.id, index)}
+                                                                >{showService[index] ? "Đã chọn sửa chữa" : "Chọn sửa chữa"} </button>
+                                                            )}
+
+
+
+                                                        </div>
+                                                    </div>
+
+                                                </div>
+                                                <button className='text-red-700 h-[30px] font-semibold px-1 pt-1'
+                                                    onClick={() => {
+                                                        removeProduct(item.id)
+                                                        handleRemoveItemNotChange(index);
+                                                    }}>X</button>
 
                                             </div>
-                                            <div className='flex items-center space-x-1 pb-1'>
-                                                <h3 className='font-semibold'>Số lượng:</h3>
-                                                <input
-                                                    type="number"
-                                                    defaultValue={1}
-                                                    min={1}
-                                                    onChange={(e) => {
-                                                        handleQuantityChange(item.id, parseInt(e.target.value))
-                                                    }}
-                                                    className='w-[60px] border-b-2 border-black text-center focus:outline-none focus:border-b-2 focus:border-main'
-                                                />
-                                                {item.repairService ? (
-                                                    <button
-                                                        className='font-bold pl-2 text-blue-700 '
-                                                        onClick={() => toggleService(index)}
-                                                    >Chọn dịch vụ</button>
-                                                ) : ""}
-
-                                            </div>
                                         </div>
-
-                                    </div>
-                                    <button className='text-red-700 h-[30px] font-semibold pr-4 pl-1 pt-2'
-                                        onClick={() => {
-                                            removeProduct(item.id)
-                                            handleRemoveItemNotChange(index);
-                                        }}>Xóa</button>
-
-                                </div>
-                                {showService[index] && item?.repairService &&
-                                    (<label className='w-full h-[70px] bg-white mt-3 flex items-center'>
-                                        <input type="checkbox"
-                                            checked={checkedService[index]||false}
-                                            onChange={() =>
-                                                handleCheckboxChange(item.id, item.repairService?.id, index)
-                                            }
-                                            className='w-5 h-5 mx-4 border-2 border-mainB'
-                                        />
-                                        <div>
-                                            <img src={item.repairService?.image}
-                                                alt="" className='w-[50px] h-[50px]' />
-                                        </div>
-                                        <div className='pl-3 flex flex-col justify-center'>
-                                            <h3 className='text-[14px]'>{item?.repairService?.name}</h3>
-                                            <p className='text-[#888888] text-[12px] line-through'>{item?.repairService?.price}đ</p>
-                                            <p className='text-red-600 text-[14px]'>{item?.repairService?.price}đ</p>
-                                        </div>
-                                    </label>)
+                                    ))
                                 }
                             </div>
-                        ))
-                    }
+
+                        </div>
+                    <div className='w-[50%] h-[50vh] overflow-y-scroll space-y-2'>
+                        <p>Các dịch vụ</p>
+                    </div>
+
                 </div>
                 {phoneCustomer.length === 10 && nameCustomer && orderData.length > 0
                     ?
