@@ -5,11 +5,12 @@ type Props = {
     _name: string,
     _priceCurrent: number,
     _imageUrl: string,
+    _discount:number,
     profileItem: itemService<string, number>,
     onClickAdd: () => void,
 }
 
-const ItemService = ({ _name, _priceCurrent, _imageUrl, onClickAdd }: Props) => {
+const ItemService = ({ _name, _priceCurrent, _imageUrl, onClickAdd,_discount }: Props) => {
     const [isHovered, setIsHovered] = useState<boolean>(false);
 
     const handleMouseEnter = () => {
@@ -24,15 +25,27 @@ const ItemService = ({ _name, _priceCurrent, _imageUrl, onClickAdd }: Props) => 
             onMouseEnter={handleMouseEnter}
             onMouseLeave={handleMouseLeave}
         >
-            <div className='w-full h-[200px] bg-cover flex items-end' style={{ backgroundImage: `url(${_imageUrl})` }}>
+            <div className='w-full h-[200px] bg-cover relative' style={{ backgroundImage: `url(${_imageUrl})` }}>
+            {_discount>0 &&(
+                    <div className="absolute top-0 right-0 ">
+                        <p className="p-1 text-center bg-red-600 text-white">-{_discount}%</p>
+                    </div>
+                )}
                 {isHovered &&
-                    <button className='w-full h-[30px] bg-main text-white'
+                    <button className='w-full absolute bottom-0 h-[30px] bg-main text-white'
                         onClick={onClickAdd}
                     >Thêm</button>}
             </div>
             <div className='w-full flex flex-col justify-center items-center space-y-1 pt-1'>
                 <p className='text-[14px] text-center'>{_name}</p>
-                <p className='text-[#FE3A30]'>{_priceCurrent} đ</p>
+                {_discount>0 ?(
+                <div>
+                    <p className='line-through text-[#888888]'>{_priceCurrent} đ</p>
+                <p className='text-[#FE3A30]'>{_priceCurrent * (1 - _discount/100)} đ</p>
+                </div>
+                ):(
+                    <p className='text-[#FE3A30]'>{_priceCurrent} đ</p>
+                )}
             </div>
         </div>
     )

@@ -9,9 +9,10 @@ type Props = {
     staffId: string;
     setStaffId: React.Dispatch<React.SetStateAction<string>>;
     handleCreateOrder: () => void;
+    setIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const StaffSelect = ({ isVisible, onClose, staffId, setStaffId, handleCreateOrder }: Props) => {
+const StaffSelect = ({ isVisible, onClose, staffId, setStaffId, handleCreateOrder,setIsLoading }: Props) => {
     const dispatch = useDispatch();
     const listStaff: itemStaff<string>[] = useSelector((state: selectorListStaff<string>) => state.listStaffReducer.listStaff);
     const [showError,setShowError] =useState<string>('');
@@ -23,6 +24,7 @@ const handleBoxCreateOrder = ()=>{
     if(staffId){
         handleCreateOrder();
         setShowError('');
+        setIsLoading(true);
     }else{
         setShowError('Chưa chọn nhân viên sửa chữa');
     }

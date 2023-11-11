@@ -52,7 +52,6 @@ const RepairCustomer = ({ isVisible, onClose, idOrder, nameCustomer, phoneCustom
                 onClose();
                 showSuccessAlert('Cập nhật thành công');
             }
-            console.log("va1")
         }
         if (idOrder && licensePlate) {
             if (!namUser || !phoneUser || !phoneUser) {
@@ -65,7 +64,6 @@ const RepairCustomer = ({ isVisible, onClose, idOrder, nameCustomer, phoneCustom
                 onClose();
                 showSuccessAlert('Cập nhật thành công');
             }
-            console.log("va2")
         }
     }
 
@@ -89,9 +87,8 @@ const RepairCustomer = ({ isVisible, onClose, idOrder, nameCustomer, phoneCustom
                             <div className="w-[500px] flex flex-col space-y-5">
                                 <p className="">Tên khách hàng:</p>
                                 <p className="">Số điện thoại:</p>
-                                {licensePlate && (
-                                    <p className="">Biển số xe:</p>
-                                )}
+
+                                <p className="">Biển số xe:</p>
                             </div>
                             <div className=" space-y-5">
                                 <input
@@ -108,17 +105,16 @@ const RepairCustomer = ({ isVisible, onClose, idOrder, nameCustomer, phoneCustom
                                     placeholder="Số điện thoại(10 số)"
                                     onChange={handlePhoneChange}
                                 />
-                                {licensePlate && (
-                                    <input
-                                        type="text"
-                                        value={license || ''}
-                                        className="focus:outline-none focus:border-b-2 focus:border-main  border-b-2 border-black pl-2"
-                                        placeholder="Biển số xe"
-                                        onChange={(e) => {
-                                            setLicense(e.target.value)
-                                        }}
-                                    />
-                                )}
+
+                                <input
+                                    type="text"
+                                    value={license || ''}
+                                    className="focus:outline-none focus:border-b-2 focus:border-main  border-b-2 border-black pl-2"
+                                    placeholder="Nhập biển số xe"
+                                    onChange={(e) => {
+                                        setLicense(e.target.value)
+                                    }}
+                                />
 
                             </div>
 

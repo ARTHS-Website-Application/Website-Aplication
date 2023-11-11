@@ -8,9 +8,9 @@ type Props = {
 
 const TableOrder = ({ data }: Props) => {
     const formatPrice = (price: number) => {
-        const formattedPrice = (price / 1000).toLocaleString();
+        const formattedPrice = (price / 1000).toLocaleString(undefined, { minimumFractionDigits: 3 });
 
-        return `${formattedPrice}.000`;
+        return formattedPrice.replace(",", ".");
     }
     return (
         <div className="pt-3">

@@ -13,59 +13,56 @@ import { useDispatch, useSelector } from 'react-redux'
 import { getDetailOrder, updateStatusOrder } from '@/actions/order'
 import { inStoreOrderDetails, itemDetailOrder, selectorDetailOrder } from '@/types/actions/detailOrder'
 import userAxiosPrivate from '@/hooks/useAxiosPrivate';
-import { statusOrder, typeOrder } from '@/types/typeOrder';
+import { statusOrder } from '@/types/typeOrder';
 import RepairCustomer from '@/components/teller/RepairCustomer';
 import Loading from '@/components/LoadingPage';
 import RepairProduct from '@/components/teller/RepairProduct';
 import { showSuccessAlert } from '@/constants/chooseToastify';
-import RepairService from '@/components/teller/RepairService';
-import { getDetailProduct } from '@/actions/product';
-import { item } from '@/types/actions/product';
-import { selectorDetailProduct } from '@/types/actions/detailProduct';
+// import { getDetailProduct } from '@/actions/product';
+// import { item } from '@/types/actions/product';
+// import { selectorDetailProduct } from '@/types/actions/detailProduct';
 
 const DetailOrder = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const { orderId } = useParams();
   const dispatch = useDispatch();
-  const detailOrder: itemDetailOrder<string, number> = useSelector((state: selectorDetailOrder<string, number>) => state.orderDetailReducer.orderDetail)
-  // console.log(detailOrder)
+  const detailOrder: itemDetailOrder<string, number> = useSelector((state: selectorDetailOrder<string, number>) => state.orderDetailReducer.orderDetail);
+  console.log("orderDetail", detailOrder)
   const [data, setData] = useState<itemDetailOrder<string, number>>();
   const axiosPrivate = userAxiosPrivate();
-  // const navigate = useNavigate();
   const [payment, setPayment] = useState<string>("Tiền mặt");
   const [showUpdate, setShowUpdate] = useState<boolean>(false)
   const [showUpdateProduct, setShowUpdateProduct] = useState<boolean>(false)
-  const [showUpdateService, setShowUpdateService] = useState<boolean>(false)
 
-  const [itemProductOrdered, setItemProductOrdered] = useState<item<string, number>[]>([])
-  useEffect(() => {
-    if (detailOrder?.inStoreOrderDetails?.some((item) => item.motobikeProduct)) {
-      const promises = detailOrder?.inStoreOrderDetails
-        .filter(product => product.motobikeProduct)
-        .map(product => {
-          const productId = product?.motobikeProduct?.id;
+  // const [itemProductOrdered, setItemProductOrdered] = useState<item<string, number>[]>([])
+  // useEffect(() => {
+  //   if (detailOrder?.orderDetails?.some((item) => item.motobikeProduct)) {
+  //     const promises = detailOrder?.orderDetails
+  //       .filter(product => product.motobikeProduct)
+  //       .map(product => {
+  //         const productId = product?.motobikeProduct?.id;
 
-          if (productId) {
-            // Gọi action để fetch dữ liệu và lưu vào Redux
-            dispatch(getDetailProduct(productId));
-          }
-        });
-      promises;
-    }
-  }, [detailOrder?.inStoreOrderDetails, dispatch]);
-  const detailProduct: item<string, number> = useSelector((state: selectorDetailProduct<string, number>) => state.productDetailReducer.productDetail);
-  useEffect(() => {
-    if (detailProduct && detailProduct.id) {
-      // Kiểm tra xem cùng id
-      const isProductInList = itemProductOrdered.some(product => product.id === detailProduct.id);
-      if (!isProductInList) {
-        setItemProductOrdered((prevItemProductOrdered) => [
-          ...prevItemProductOrdered,
-          detailProduct,
-        ]);
-      }
-    }
-  }, [detailProduct, itemProductOrdered]);
+  //         if (productId) {
+  //           // Gọi action để fetch dữ liệu và lưu vào Redux
+  //           dispatch(getDetailProduct(productId));
+  //         }
+  //       });
+  //     promises;
+  //   }
+  // }, [detailOrder?.orderDetails, dispatch]);
+  // const detailProduct: item<string, number> = useSelector((state: selectorDetailProduct<string, number>) => state.productDetailReducer.productDetail);
+  // useEffect(() => {
+  //   if (detailProduct && detailProduct.id) {
+  //     // Kiểm tra xem cùng id
+  //     const isProductInList = itemProductOrdered.some(product => product.id === detailProduct.id);
+  //     if (!isProductInList) {
+  //       setItemProductOrdered((prevItemProductOrdered) => [
+  //         ...prevItemProductOrdered,
+  //         detailProduct,
+  //       ]);
+  //     }
+  //   }
+  // }, [detailProduct, itemProductOrdered]);
 
   useEffect(() => {
     if (orderId) {
@@ -75,27 +72,27 @@ const DetailOrder = () => {
 
   }, [dispatch, orderId]);
   useEffect(() => {
-    if(detailOrder.id===orderId){
+    if (detailOrder.id === orderId) {
       setData(detailOrder);
-    setTimeout(() => {
-      setIsLoading(false);
-    }, 1000)
+      setTimeout(() => {
+        setIsLoading(false);
+      }, 1000)
     }
-    
+
 
   }, [detailOrder, orderId])
 
   const TotalOrderProduct = () => {
     let total = 0;
-    data?.inStoreOrderDetails?.forEach((item) => {
-      total += item.productQuantity * item?.productPrice;
+    data?.orderDetails?.forEach((item) => {
+      total += (item.quantity * item?.price) +(item?.instUsed===true?item?.motobikeProduct?.installationFee:0);
     });
     return total;
   };
 
   const TotalOrderService = () => {
     let total = 0;
-    data?.inStoreOrderDetails?.forEach((item) => {
+    data?.orderDetails?.forEach((item) => {
       if (item.repairService) {
 
         total += item.repairService.price;
@@ -105,9 +102,9 @@ const DetailOrder = () => {
   };
   //chỉnh format tiền
   const formatPrice = (price: number) => {
-    const formattedPrice = (price / 1000).toLocaleString();
+    const formattedPrice = (price / 1000).toLocaleString(undefined, { minimumFractionDigits: 3 });
 
-    return `${formattedPrice}.000`;
+    return formattedPrice.replace(",", ".");
   }
   const TotalOrderDetail = TotalOrderProduct();
   const TotalService = TotalOrderService();
@@ -144,7 +141,7 @@ const DetailOrder = () => {
         ? <Loading />
         : data && (
           <div className={`w-full bg-white rounded-md px-3 
-          ${data?.status === statusOrder.Paid || (data?.orderType === typeOrder.Repair && data?.status !== statusOrder.WaitForPay) ? "py-3" : ""}`}>
+          ${data?.status === statusOrder.Paid ||  data?.status !== statusOrder.WaitForPay ? "py-3" : ""}`}>
             <div className="font-semibold text-[20px] flex space-x-4 items-center pt-3">
               {data?.status !== statusOrder.Paid
                 ? (
@@ -160,7 +157,7 @@ const DetailOrder = () => {
               <div className='w-[50%] border-2 border-[#E0E2E7] px-5 pt-5 pb-2 space-y-3  rounded-lg'>
                 <p className={`rounded-2xl font-semibold py-1 w-[170px] text-center text-[19px]
                     ${data?.status === statusOrder.Paid ? "bg-[#E7F4EE] text-[#0D894F]" :
-                    data?.status === statusOrder.NewOrder ? "bg-[#bac5e9] text-blue-500" :
+                    data?.status === statusOrder.Processing ? "bg-[#bac5e9] text-blue-500" :
                       data?.status === statusOrder.WaitForPay ? "bg-[#FBEABC] text-[#90530C]" :
                         ""}`}>
                   {data?.status}
@@ -168,25 +165,25 @@ const DetailOrder = () => {
                 <div className='pt-3 text-[18px] flex justify-between'>
                   <div className='text-[#1A1C21] font-semibold flex flex-col space-y-7'>
                     <div className=' flex space-x-3'>
-                      <CalendarDaysIcon className='w-7 h-7 fill-slate-500' />
+                      <CalendarDaysIcon className='w-7 h-7 fill-gray-500' />
                       <p>Ngày đặt</p>
                     </div>
-                    {data?.orderType === typeOrder.Purchase || (data?.orderType === typeOrder.Repair && data?.status === statusOrder.WaitForPay) ? (
+                    {data?.orderDetails.every((item)=>item.instUsed===false && !item.repairService) || data?.status === statusOrder.WaitForPay ? (
                       <div className='flex space-x-3'>
-                        <CreditCardIcon className='w-7 h-7  fill-slate-500 ' />
+                        <CreditCardIcon className='w-7 h-7  fill-gray-500 ' />
                         <p>Phương thức thanh toán</p>
                       </div>
                     ) : ""}
 
-                    {data.orderType === typeOrder.Repair && data?.staffName && (
+                    {data?.staffName && (
                       <div className='flex space-x-3'>
-                        <UserIcon className='w-7 h-7 fill-slate-500' />
+                        <UserIcon className='w-7 h-7 fill-gray-500' />
                         <p>Nhân viên sửa chữa</p>
                       </div>
                     )}
 
                     <div className='flex space-x-3'>
-                      <ArrowPathRoundedSquareIcon className='w-7 h-7 fill-slate-500' />
+                      <ArrowPathRoundedSquareIcon className='w-7 h-7 fill-gray-500' />
                       <p>Loại đơn</p>
                     </div>
                   </div>
@@ -200,7 +197,7 @@ const DetailOrder = () => {
                         )}
                       </p>
                     </div>
-                    {data?.orderType === typeOrder.Purchase || (data?.orderType === typeOrder.Repair && data?.status === statusOrder.WaitForPay)
+                    {data?.orderDetails.every((item)=>item.instUsed===false && item.repairService===null) ||  data?.status === statusOrder.WaitForPay
                       ? data?.paymentMethod ? (
                         <p>{data?.paymentMethod}</p>
                       ) : (
@@ -216,20 +213,16 @@ const DetailOrder = () => {
                           </option>
                         </select>
                       ) : ""}
-                    {data?.orderType !== "Đơn mua hàng" && (
-                      data?.staffName && (
-                        <div>
-                          <p>{data?.staffName}</p>
-                        </div>
-                      )
-                    )}
+                    {data.staffName ? (
+                      <div>
+                        <p>{data?.staffName}</p>
+                      </div>
+                    ):""}
 
                     <div>
                       {data?.orderType}
                     </div>
                   </div>
-
-
                 </div>
               </div>
               <div className='w-[50%] border-2 border-[#E0E2E7] px-5 py-5 rounded-lg'>
@@ -246,16 +239,16 @@ const DetailOrder = () => {
                 <div className={`text-[18px] flex justify-between pt-3`}>
                   <div className='text-[#1A1C21] font-semibold flex flex-col space-y-7 '>
                     <div className='flex space-x-3'>
-                      <UserIcon className='w-7 h-7 fill-slate-500' />
+                      <UserIcon className='w-7 h-7 fill-gray-500' />
                       <p>Khách hàng</p>
                     </div>
                     <div className='flex space-x-3'>
-                      <DevicePhoneMobileIcon className='w-7 h-7 fill-slate-500' />
+                      <DevicePhoneMobileIcon className='w-7 h-7 fill-gray-500' />
                       <p>Số điện thoại</p>
                     </div>
                     {data?.licensePlate && (
                       <div className='flex space-x-3'>
-                        <FaMotorcycle className='w-7 h-7 fill-slate-500' />
+                        <FaMotorcycle className='w-7 h-7 fill-gray-500' />
                         <p>Biển số xe</p>
                       </div>
                     )}
@@ -265,7 +258,7 @@ const DetailOrder = () => {
                       <p>{data?.customerName}</p>
                     </div>
                     <div >
-                      <p>{data?.customerPhone}</p>
+                      <p>{data?.customerPhoneNumber}</p>
                     </div>
                     <div>
                       <p>{data?.licensePlate}</p>
@@ -278,29 +271,23 @@ const DetailOrder = () => {
 
             {/* thông tin sản phẩm */}
             <div className={`w-full border-[#E0E2E7] space-y-3  
-            ${data?.status === statusOrder.Paid || (data?.orderType === typeOrder.Repair && data?.status !== statusOrder.WaitForPay) ? "border-2 rounded-md py-3" : "border-x-2 border-t-2 rounded-t-md pt-3"} `}>
+            ${data?.status === statusOrder.Paid ||  data?.status !== statusOrder.WaitForPay ? "border-2 rounded-md py-3" : "border-x-2 border-t-2 rounded-t-md pt-3"} `}>
               <div className='flex justify-between w-full px-3'>
                 <div className='font-semibold flex items-center space-x-3 '>
                   <h2 className='text-[20px]'>Danh sách sản phẩm</h2>
-                  <h3 className='bg-[#E7F4EE] text-[#0D894F] w-[100px] py-1 text-center rounded-lg'>{data?.inStoreOrderDetails?.length} sản phẩm</h3>
+                  <h3 className='bg-[#E7F4EE] text-[#0D894F] w-[100px] py-1 text-center rounded-lg'>{data?.orderDetails?.length} sản phẩm</h3>
                 </div>
                 {data?.status !== statusOrder.Paid && data?.status !== statusOrder.WaitForPay && (
                   <button className='bg-main w-[200px] text-center py-3 rounded-lg font-semibold text-white hover:bg-[#ec504b]'
                     onClick={() => {
-                      if (data?.inStoreOrderDetails?.some((item) => item.motobikeProduct)) {
-                        setShowUpdateProduct(true);
-                        setShowUpdateService(false); // Ẩn modal RepairService nếu có
-                      } else {
-                        setShowUpdateService(true);
-                        setShowUpdateProduct(false); // Ẩn modal RepairProduct nếu có
-                      }
+                      setShowUpdateProduct(true);
                     }}
                   >Thêm / Sửa sản phẩm</button>
                 )}
               </div>
 
-              <div className={`overflow-y-scroll ${data?.orderType === typeOrder.Repair ? "h-[27vh]" : "h-[30vh]"}  flex flex-col`}>
-                {data?.inStoreOrderDetails?.some((item) => item.motobikeProduct)
+              <div className={`overflow-y-scroll ${data?.orderDetails.every((item)=>item.instUsed===false && item.repairService===null) ||data?.status === statusOrder.WaitForPay ? "h-[30vh]" : "h-[40vh]"}`}>
+                {data?.orderDetails?.some((item) => item.motobikeProduct)
                   ? (
                     <div>
                       <table className="w-full bg-white divide-y divide-gray-200 table-fixed text-center">
@@ -319,32 +306,38 @@ const DetailOrder = () => {
                               <p>Đơn giá</p>
                             </th>
                             <th scope="col" className="">
+                              <p>Giá thay phụ kiện</p>
+                            </th>
+                            <th scope="col" className="">
                               <p>Tổng tiền(VND)</p>
                             </th>
                           </tr>
                         </thead>
                         <tbody className="divide-y divide-gray-200">
-                          {data?.inStoreOrderDetails?.map((item: inStoreOrderDetails<string, number>, index) => (
+                          {data?.orderDetails?.filter((item) => item.motobikeProduct).map((item: inStoreOrderDetails<string, number>, index) => (
                             <tr key={index}>
                               <td className="py-3 px-3 flex items-center">
-                                <img src={item?.motobikeProduct.image} alt="" className="h-11 mr-5" />
-                                <p>{item?.motobikeProduct.name}</p>
+                                <img src={item?.motobikeProduct?.image} alt="" className="h-11 mr-5" />
+                                <p className='text-start'>{item?.motobikeProduct?.name}</p>
                               </td>
                               <td className="">
-                                {item && item.warrantyPeriod && (
+                                {item && item.warrantyEndDate && (
                                   new Intl.DateTimeFormat('en-GB', {
                                     timeZone: 'UTC'
-                                  }).format(new Date(Date.parse(item.warrantyPeriod.toString()) + 7 * 60 * 60 * 1000))
+                                  }).format(new Date(Date.parse(item.warrantyEndDate.toString()) + 7 * 60 * 60 * 1000))
                                 )}
                               </td>
                               <td className="">
-                                {item?.productQuantity}
+                                {item?.quantity}
                               </td>
                               <td className="">
-                                {formatPrice(item?.productPrice)}
+                                {formatPrice(item?.price)}
                               </td>
                               <td className="">
-                                {formatPrice(item?.productQuantity * item?.productPrice)}
+                                {formatPrice(item?.instUsed===true?item?.motobikeProduct?.installationFee:0)}
+                              </td>
+                              <td className="">
+                                {formatPrice((item?.quantity * item?.price) + ( item?.instUsed===true?item?.motobikeProduct?.installationFee:0))}
                               </td>
                             </tr>
                           ))}
@@ -358,7 +351,7 @@ const DetailOrder = () => {
                     </div>
                   ) : ""}
 
-                {data?.orderType === typeOrder.Repair && (
+                {data?.orderDetails?.some((item) => item.repairService) && (
                   <div>
                     <table className="w-full bg-white divide-y divide-gray-200 table-auto text-center">
                       <thead>
@@ -373,7 +366,7 @@ const DetailOrder = () => {
                         </tr>
                       </thead>
                       <tbody className="divide-y divide-gray-200">
-                        {data?.inStoreOrderDetails?.map((item: inStoreOrderDetails<string, number>, index) => (
+                        {data?.orderDetails?.filter((item) => item.repairService).map((item: inStoreOrderDetails<string, number>, index) => (
                           item.repairService ? (
                             <tr key={index}>
                               <td className="py-5 px-3 flex items-center">
@@ -390,7 +383,7 @@ const DetailOrder = () => {
 
                       </tbody>
                     </table>
-                    <div className="flex justify-end pr-[110px] space-x-[180px] font-semibold pb-3">
+                    <div className="flex justify-end pr-[120px] space-x-[160px] font-semibold pb-3">
                       <p className='text-[18px]'>Tổng tiền dịch vụ</p>
                       <p className='font-semibold'>{formatPrice(TotalService)} VNĐ</p>
                     </div>
@@ -402,7 +395,7 @@ const DetailOrder = () => {
                 <p className='text-[19px] font-semibold'>Tổng cộng</p>
                 <p className='font-semibold text-[19px]'>{formatPrice(TotalOrderDetail + TotalService)} VNĐ</p>
               </div>
-              {data?.orderType === typeOrder.Purchase || (data?.orderType === typeOrder.Repair && data?.status === statusOrder.WaitForPay)
+              {data?.orderDetails.every((item)=>item.instUsed===false && item.repairService===null) ||  data?.status === statusOrder.WaitForPay
                 ?
                 data?.status !== statusOrder.Paid ? (
                   payment === "Tiền mặt" ? (
@@ -429,27 +422,16 @@ const DetailOrder = () => {
               onClose={() => setShowUpdate(false)}
               idOrder={data?.id}
               nameCustomer={data?.customerName}
-
-              phoneCustomer={data?.customerPhone}
-
+              phoneCustomer={data?.customerPhoneNumber}
               licensePlate={data?.licensePlate}
             />
-            {data?.inStoreOrderDetails?.some((item) => item.motobikeProduct) ? (
-              <RepairProduct
-                dataProduct={data?.inStoreOrderDetails}
-                productOrdered={itemProductOrdered}
-                idOrder={data?.id}
-                isVisible={showUpdateProduct}
-                onClose={() => setShowUpdateProduct(false)}
-              />
-            ) : (
-              <RepairService
-                dataProduct={data?.inStoreOrderDetails}
-                idOrder={data?.id}
-                isVisible={showUpdateService}
-                onClose={() => setShowUpdateService(false)}
-              />
-            )}
+
+            <RepairProduct
+              dataProduct={data?.orderDetails}
+              idOrder={data?.id}
+              isVisible={showUpdateProduct}
+              onClose={() => setShowUpdateProduct(false)}
+            />
           </div>
         )
       }

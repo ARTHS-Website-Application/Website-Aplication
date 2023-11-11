@@ -68,7 +68,7 @@ export interface itemService<T, N> {
             imageUrl: T
         }
     ],
-    motobikeProducts:dataProduct<T, N>[]
+    discountAmount:N
 }
 
 export interface dataProduct<T, N> {

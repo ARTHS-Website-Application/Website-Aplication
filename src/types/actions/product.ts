@@ -142,26 +142,20 @@ export interface payloadUpdateStatusProduct{
 export interface addProductOrder<T, N> {
     idProduct: T;
     nameProduct: T;
-    priceCurrent: N | null;
     installationFee:N;
     priceProduct: N;
-    discountAmount: N | null;
+    discountAmount: N;
     image: string;
     productQuantity: N;
-    repairService: {
-        id: T;
-        name: T;
-        price: N;
-        image: T
-    } | null;
-    checked:boolean;
+    instUsed:boolean;
 }
 
 export interface addProductService<T,N>{
     id: T;
     name: T;
     price: N;
-    image: T
+    image: T;
+    discountAmount:N;
 }
 
 
