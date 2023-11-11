@@ -428,6 +428,7 @@ const DetailOrder = () => {
 
             <RepairProduct
               dataProduct={data?.orderDetails}
+              staffId={data?.staffId}
               idOrder={data?.id}
               isVisible={showUpdateProduct}
               onClose={() => setShowUpdateProduct(false)}

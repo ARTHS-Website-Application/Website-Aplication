@@ -10,9 +10,10 @@ type Props = {
     setStaffId: React.Dispatch<React.SetStateAction<string>>;
     handleCreateOrder: () => void;
     setIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
+    nameBox:string,
 }
 
-const StaffSelect = ({ isVisible, onClose, staffId, setStaffId, handleCreateOrder,setIsLoading }: Props) => {
+const StaffSelect = ({ isVisible, onClose, staffId, setStaffId, handleCreateOrder,setIsLoading,nameBox }: Props) => {
     const dispatch = useDispatch();
     const listStaff: itemStaff<string>[] = useSelector((state: selectorListStaff<string>) => state.listStaffReducer.listStaff);
     const [showError,setShowError] =useState<string>('');
@@ -38,7 +39,7 @@ const handleBoxCreateOrder = ()=>{
             <div className="w-[500px] bg-white rounded-lg">
                 <div className="bg-gray-600 py-2 rounded-t-lg">
                     <div className="w-full flex flex-row justify-between py-[5px] text-white ">
-                        <p className="ml-2 mt-1 font-bold">Tạo đơn hàng</p>
+                        <p className="ml-2 mt-1 font-bold">{nameBox==="create"?"Tạo đơn hàng":nameBox==="update"?"Cập nhật đơn hàng":""}</p>
                     </div>
                 </div>
                 <div className="w-full p-3">
@@ -68,7 +69,7 @@ const handleBoxCreateOrder = ()=>{
                         className="hover:bg-blue-800 bg-gray-400 px-5 h-[40px]  rounded-md"
                         onClick={handleBoxCreateOrder}
                     >
-                        Tạo đơn hàng
+                        {nameBox==="create"?"Tạo đơn hàng":nameBox==="update"?"Cập nhật đơn hàng":""}
                     </button>
                     <button
                         className=" bg-red-700 px-5 h-[40px]  rounded-md  "
