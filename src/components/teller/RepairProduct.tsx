@@ -21,12 +21,13 @@ type Props = {
     onClose: () => void;
     dataProduct?: inStoreOrderDetails<string, number>[];
     idOrder: string | null;
+    staffId:string|null;
 }
 enum createShow {
     showProduct = "show_product",
     showService = "show_service",
 }
-const RepairProduct = ({ isVisible, onClose, dataProduct, idOrder }: Props) => {
+const RepairProduct = ({ isVisible, onClose, dataProduct, idOrder,staffId }: Props) => {
     const dispatch = useDispatch();
     const [showCreate, setShowCreate] = useState<createShow>(createShow.showProduct);
 
@@ -65,8 +66,8 @@ const RepairProduct = ({ isVisible, onClose, dataProduct, idOrder }: Props) => {
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [productData, setProductData] = useState([] as item<string, number>[]);
 
-    const [addProduct, setAddProduct] = useState<addProductOrder<string, number>[]>(tranfomDataProduct);
-    const [addService, setAddService] = useState<addProductService<string, number>[]>(tranfomDataService);
+    const [addProduct, setAddProduct] = useState<addProductOrder<string, number>[]>([]);
+    const [addService, setAddService] = useState<addProductService<string, number>[]>([]);
     const [addCategory, setAddCategory] = useState<string>("");
     const [addSearch, setAddSearch] = useState<string>("");
     const [addSearchService, setAddSearchService] = useState<string>("")
@@ -153,7 +154,7 @@ const RepairProduct = ({ isVisible, onClose, dataProduct, idOrder }: Props) => {
             idProduct: data.id,
             nameProduct: data.name,
             installationFee: data?.installationFee,
-            priceProduct: data.priceCurrent,
+            priceProduct: data?.priceCurrent,
             discountAmount: data?.discount ? data.discount?.discountAmount : 0,
             image: data.images[0].imageUrl,
             productQuantity: 1,
@@ -315,6 +316,7 @@ const RepairProduct = ({ isVisible, onClose, dataProduct, idOrder }: Props) => {
                     </div>
 
                     <UpdateProduct
+                        staffIdDetail={staffId}
                         idOrder={idOrder}
                         tranfomDataProduct={tranfomDataProduct}
                         tranfomDataService={tranfomDataService}

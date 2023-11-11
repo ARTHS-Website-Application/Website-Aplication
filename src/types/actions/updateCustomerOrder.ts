@@ -30,11 +30,11 @@ export interface itemCustomer<T> {
 
 export interface itemStaffProduct<T, N> {
     staffId: T | null;
-    orderDetailModel: (itemProductOrder<T, N>[] | itemServiceOrder<T>)[];
+    orderDetailModel: (itemProductOrder<T, N> | itemServiceOrder<T>)[];
 }
 export interface itemProductOrder<T, N> {
     motobikeProductId: T,
-    productQuantity: N|undefined,
+    productQuantity: N,
     instUsed: boolean,
 }
 

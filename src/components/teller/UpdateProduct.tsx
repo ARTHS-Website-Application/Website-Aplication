@@ -6,57 +6,61 @@ import { updateProductOrder } from '@/actions/order';
 import { showSuccessAlert } from '@/constants/chooseToastify';
 import StaffSelect from './StaffSelect';
 import LoadingCreateUpdate from '../LoadingCreateUpdate';
+import { itemServiceOrder } from '@/types/actions/updateCustomerOrder';
 type Props = {
     addProduct?: addProductOrder<string, number>[];
-    addService?:addProductService<string, number>[];
+    addService?: addProductService<string, number>[];
     removeProduct: (itemId: string) => void;
-    removeService:(itemId: string) => void;
+    removeService: (itemId: string) => void;
     onClose: () => void;
     setAddProduct: React.Dispatch<React.SetStateAction<addProductOrder<string, number>[]>>;
     setAddService: React.Dispatch<React.SetStateAction<addProductService<string, number>[]>>;
     tranfomDataProduct: addProductOrder<string, number>[];
-    tranfomDataService:addProductService<string, number>[];
+    tranfomDataService: addProductService<string, number>[];
     idOrder: string | null;
+    staffIdDetail: string | null
 }
 
-const UpdateProduct = ({ addProduct = [],addService=[], removeProduct, onClose, setAddProduct, 
-    tranfomDataProduct,tranfomDataService,setAddService,removeService, idOrder }: Props) => {
+const UpdateProduct = ({ addProduct = [], addService = [], removeProduct, onClose, setAddProduct,
+    tranfomDataProduct, tranfomDataService, setAddService, removeService, idOrder, staffIdDetail }: Props) => {
 
     const dispatch = useDispatch();
     const [isLoading, setIsLoading] = useState(false);
     const [showStaff, setShowStaff] = useState<boolean>(false);
     const [staffId, setStaffId] = useState<string>('');
-    // const [checkedService, setCheckedService] = useState<boolean[]>(Array(addProduct.length).fill(false));
     const [orderData, setOrderData] = useState<itemOrder<string, number>[]>([]);
-    const [productQuantity, setProductQuantity] = useState<{[key: string]: number }>({});
-
-    //check tranfomDataProduct và addProduct trùng nhau không
+    console.log("orerrProduct", orderData);
+    console.log("addProduct", addProduct);
+    const [productQuantity, setProductQuantity] = useState<{ [key: string]: number }>({});
+    const [orderService, setOrderService] = useState<itemServiceOrder<string>[]>([]);
     const [showService, setShowService] = useState<boolean[]>(addProduct.map((item) => item.instUsed));
     useEffect(() => {
-        if (addProduct) {
-            const initialProductQuantity = addProduct.reduce((itemCurrent, item) => {
-                return {
-                    ...itemCurrent,
-                    [item.idProduct]: item.productQuantity
-                };
-            }, {});
-            setProductQuantity(initialProductQuantity);
+        if (staffIdDetail === null) {
+            setStaffId("")
+        } else {
+            setStaffId(staffIdDetail)
         }
-    }, [addProduct]);
+    }, [staffIdDetail]);
+
     useEffect(() => {
-        if (addProduct.length > 0) {
+        const dataCart: itemServiceOrder<string>[] = addService.map((item) => ({
+            repairServiceId: item.id,
+        }));
+        setOrderService(dataCart);
+    }, [addService])
+    useEffect(() => {
+        if (addProduct?.length > 0) {
             const dataCart: itemOrder<string, number>[] = (addProduct || []).map((item) => {
                 const matchingItem: addProductOrder<string, number> | undefined = tranfomDataProduct.find((transformedItem) => transformedItem.idProduct === item.idProduct);
-
                 if (matchingItem) {
-                    // Tạo dữ liệu ban đầu và lưu vào localStorage khi addProduct thay đổi
+                    // Sản phẩm đã tồn tại trong orderData, sử dụng giá trị từ addProduct
                     return {
                         motobikeProductId: item?.idProduct,
                         productQuantity: item?.productQuantity,
                         instUsed: item.instUsed
                     };
                 } else {
-                    //dữ liệu thêm mới
+                    // Dữ liệu thêm mới, chỉ set giá trị mặc định cho sản phẩm mới
                     return {
                         motobikeProductId: item.idProduct,
                         productQuantity: 1,
@@ -65,12 +69,40 @@ const UpdateProduct = ({ addProduct = [],addService=[], removeProduct, onClose, 
                 }
             });
 
-            localStorage.setItem('updateOrderData', JSON.stringify(dataCart));
-            setOrderData(dataCart);
-        }
-    }, [addProduct]);
+            // Kiểm tra xem orderData có dữ liệu không
+            if (orderData.length === 0) {
+                localStorage.setItem('updateOrderData', JSON.stringify(dataCart));
+                setOrderData(dataCart);
+                // Số lượng sản phẩm ở order
+                const initialProductQuantity = addProduct.reduce((itemCurrent, item) => {
+                    return {
+                        ...itemCurrent,
+                        [item.idProduct]: item.productQuantity
+                    };
+                }, {});
+                setProductQuantity(initialProductQuantity);
+            } else {
+                // Nếu orderData đã có dữ liệu, thêm mới sản phẩm chưa tồn tại
+                const newProducts = addProduct.filter((product) => !orderData.some((item) => item.motobikeProductId === product.idProduct));
+                if (newProducts.length > 0) {
+                    const newData = [
+                        ...orderData,
+                        ...newProducts.map((product) => ({
+                            motobikeProductId: product.idProduct,
+                            productQuantity: 1,
+                            instUsed: false
+                        }))
+                    ];
 
-    //Ẩn/hiện dịch vụ
+                    localStorage.setItem('updateOrderData', JSON.stringify(newData));
+                    setOrderData(newData);
+                }
+            }
+        }
+    }, [addProduct, tranfomDataProduct]);
+
+
+    //Ẩn/hiện sửa chữa
     const toggleService = (itemId: string, index: number) => {
         const savedData = JSON.parse(localStorage.getItem('updateOrderData') as string);
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -105,7 +137,7 @@ const UpdateProduct = ({ addProduct = [],addService=[], removeProduct, onClose, 
 
         // Tìm sản phẩm trong savedData dựa trên itemId
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const updatedData = savedData.map((item: any) => {
+        const updatedData = savedData?.map((item: any) => {
             if (item.motobikeProductId === itemId) {
                 return {
                     ...item,
@@ -123,14 +155,11 @@ const UpdateProduct = ({ addProduct = [],addService=[], removeProduct, onClose, 
     //gửi dispatch update
     const handleUpdateStaffProduct = () => {
         const data = {
-            staffId: staffId,
-            orderDetailModel: orderData.map((item) => ({
-                ...item,
-                motobikeProductId: item?.motobikeProductId,
-            })),
+            staffId: (orderData.some((item) => item.instUsed === true) || orderService?.length > 0)? staffId:null,
+            orderDetailModel: [...orderData, ...orderService]
         };
         if (idOrder) {
-            // dispatch(updateProductOrder(idOrder, data))
+            dispatch(updateProductOrder(idOrder, data))
             showSuccessAlert("Cập nhật thành công")
             onClose();
         }
@@ -143,6 +172,23 @@ const UpdateProduct = ({ addProduct = [],addService=[], removeProduct, onClose, 
                 updatedShowService.splice(indexToRemove, 1);
                 return updatedShowService;
             });
+        }
+        if (indexToRemove >= 0 && indexToRemove < orderData.length) {
+            const motobikeProductIdToRemove = orderData[indexToRemove].motobikeProductId;
+    
+            // Cập nhật orderData bằng cách loại bỏ mục
+            const updatedOrderData = orderData.filter((item) => item.motobikeProductId !== motobikeProductIdToRemove);
+            setOrderData(updatedOrderData);
+    
+            // Cập nhật productQuantity bằng cách loại bỏ motobikeProductId tương ứng
+            setProductQuantity((prevProductQuantity) => {
+                // eslint-disable-next-line @typescript-eslint/no-unused-vars
+                const { [motobikeProductIdToRemove]: removedItem, ...rest } = prevProductQuantity;
+                return rest;
+            });
+    
+            // Cập nhật localStorage
+            localStorage.setItem('updateOrderData', JSON.stringify(updatedOrderData));
         }
     };
 
@@ -224,7 +270,7 @@ const UpdateProduct = ({ addProduct = [],addService=[], removeProduct, onClose, 
                                                 <div className='pl-2 flex flex-col justify-between'>
                                                     <div className='font-semibold pt-1'>
                                                         <p className='text-[13px]'>{item.name}</p>
-                                                        {item.discountAmount>0 ? (
+                                                        {item.discountAmount > 0 ? (
                                                             <div>
                                                                 <p className='text-[#888888] text-[13px] line-through'>{item.price}đ</p>
                                                                 <p className='text-[#FE3A30] text-[13px]'>{item.price * (1 - item.discountAmount / 100)}đ</p>
@@ -257,27 +303,29 @@ const UpdateProduct = ({ addProduct = [],addService=[], removeProduct, onClose, 
                             localStorage.removeItem('updateOrderData');
                             setOrderData([]);
                             setAddProduct([...tranfomDataProduct]);
+                            setAddService([...tranfomDataService]);
                             onClose();
                         }}
                     >Hủy</button>
-                    {orderData.some((item) => item.instUsed === true)
-                        // || orderService?.length > 0
-                        ? (
-                            <button className='w-[200px] h-[50px] bg-gray-200 hover:bg-main hover:text-white font-semibold text-[18px] rounded-lg'
-                                onClick={() => setShowStaff(true)}
-                            >Tiếp theo</button>
-                        ) : (
-                            <button className='w-[200px] h-[50px] bg-gray-200 hover:bg-main hover:text-white font-semibold text-[18px] rounded-lg'
-                                onClick={() => {
-                                    setIsLoading(true)
-                                    // handleCreateOrder()
-                                }}
-                            >Cập nhật</button>
-                        )}
+                    {orderData?.length > 0 || orderService?.length > 0
+                        ? orderData.some((item) => item.instUsed === true) || orderService?.length > 0
+                            ? (
+                                <button className='w-[200px] h-[50px] bg-gray-200 hover:bg-main hover:text-white font-semibold text-[18px] rounded-lg'
+                                    onClick={() => setShowStaff(true)}
+                                >Tiếp theo</button>
+                            ) : (
+                                <button className='w-[200px] h-[50px] bg-gray-200 hover:bg-main hover:text-white font-semibold text-[18px] rounded-lg'
+                                    onClick={() => {
+                                        setIsLoading(true)
+                                        handleUpdateStaffProduct()
+                                    }}
+                                >Cập nhật</button>
+                            ) : ""}
                 </div>
             </div>
             {isLoading ? <LoadingCreateUpdate /> : ""}
             <StaffSelect
+                nameBox={"update"}
                 setIsLoading={setIsLoading}
                 handleCreateOrder={handleUpdateStaffProduct}
                 staffId={staffId}

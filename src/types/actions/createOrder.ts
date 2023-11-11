@@ -14,6 +14,6 @@ export interface itemCreateOrder<T, N> {
 
 export interface itemOrder<T,N>{
     motobikeProductId: T,
-    productQuantity?: N,
+    productQuantity: N,
     instUsed:boolean
 }

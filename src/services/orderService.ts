@@ -52,14 +52,16 @@ export class Private {
 
     updateProductOrder = async (idOrder: string, data: itemStaffProduct<string,number>) => {
         const axiosPrivate = userAxiosPrivate();
-        if (data.staffId) {
+        console.log("dataPut",data)
+        // if (data.staffId!=="") {
             return await axiosPrivate.put(`/orders/offline/${idOrder}`, data)
-        } else {
-            const dataProduct={
-                orderDetailModel:data.orderDetailModel
-            }
-            return await axiosPrivate.put(`/orders/offline/${idOrder}`,dataProduct)
-        }
+        // } else {
+        //     const dataProduct={
+
+        //         orderDetailModel:data.orderDetailModel
+        //     }
+        //     return await axiosPrivate.put(`/orders/offline/${idOrder}`,dataProduct)
+        // }
     }
     updateStatusOrder= async (idOrder: string, data:string) => {
         const axiosPrivate = userAxiosPrivate();

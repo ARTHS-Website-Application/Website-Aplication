@@ -352,6 +352,7 @@ const InforUser = ({ addProduct = [], addService = [], removeProduct, removeServ
             </div>
             {isLoading ? <LoadingCreateUpdate /> : ""}
             <StaffSelect
+                nameBox={"create"}
                 setIsLoading={setIsLoading}
                 handleCreateOrder={handleCreateOrder}
                 staffId={staffId}
