@@ -10,7 +10,7 @@ import { itemCategoryProduct, selectorCategoryProduct } from '@/types/actions/ca
 import { MagnifyingGlassIcon } from '@heroicons/react/24/solid'
 import Loading from '@/components/LoadingPage'
 import { typeActiveProduct } from '@/types/typeProduct'
-import { dataService, selectorService } from '@/types/actions/listService'
+import { dataService, itemService, selectorService } from '@/types/actions/listService'
 import ChooseServiceOrder from '@/components/teller/ChooseServiceOrder'
 import { typeService } from '@/types/typeService'
 import { getFilterServices, getServices } from '@/actions/service'
@@ -28,12 +28,13 @@ const CreateOrder = () => {
     const categoryProduct: itemCategoryProduct<string>[] = useSelector((state: selectorCategoryProduct<string>) => state.categoryProductReducer.categoryProduct);
     const [productData, setProductData] = useState([] as item<string, number>[]);
     const [addProduct, setAddProduct] = useState<item<string, number>[]>([]);
+    const [addService,setAddService] = useState<itemService<string, number>[]>([]);
     const [addCategory, setAddCategory] = useState<string>("");
     const [addSearch, setAddSearch] = useState<string>("");
     const [addSearchService,setAddSearchService] = useState<string>("")
     const [searchTimeout, setSearchTimeout] = useState<number | null>(null);
     const [paginationNumber, setPaginationNumber] = useState<number>(0);
-
+    const [paginationNumberService, setPaginationNumberService] = useState<number>(0);
     //dispatch loại product
     useEffect(() => {
         dispatch(CategoryProduct());
@@ -46,10 +47,12 @@ const CreateOrder = () => {
         setIsLoading(false);
     }, [productInfor.data]);
 
-    //thêm sản phẩm
+    //thêm sản phẩm và dịch vụ
     useEffect(() => {
         const existingCartItems = JSON.parse(localStorage.getItem('cartItems') as string) || [];
         setAddProduct(existingCartItems);
+        const existingCartServiceItems = JSON.parse(localStorage.getItem('serviceItems') as string) || [];
+        setAddService(existingCartServiceItems);
     }, []);
 
     //lọc sản phẩm
@@ -60,7 +63,13 @@ const CreateOrder = () => {
                 setIsLoading(false);
             }, 500)
         }
-    }, [productInfor.pagination?.totalRow]);
+        if (dataService.pagination?.totalRow) {
+            setPaginationNumberService(0);
+            setTimeout(() => {
+                setIsLoading(false);
+            }, 500)
+        }
+    }, [dataService.pagination?.totalRow, productInfor.pagination?.totalRow]);
     useEffect(() => {
         if(showCreate===createShow.showProduct){
             if (addCategory !== "" || addSearch !== "") {
@@ -89,7 +98,7 @@ const CreateOrder = () => {
         if(showCreate===createShow.showService){
             if ( addSearchService !== "") {
                 const data = {
-                    paginationNumber: 0,
+                    paginationNumber: paginationNumberService,
                     name: addSearchService,
                     status:typeService.Active
                 }
@@ -100,13 +109,13 @@ const CreateOrder = () => {
             } else {
                 const dataService= {
                     status:typeService.Active,
-                    pageNumber:0,
+                    pageNumber:paginationNumberService,
                 }
                 dispatch(getServices(dataService));
                 setIsLoading(true);
             }
         }
-    }, [addSearchService, dispatch, showCreate])
+    }, [addSearchService, dispatch, paginationNumberService, showCreate])
 
     //thêm product
     const handleAddProduct = (data: item<string, number>) => {
@@ -122,6 +131,19 @@ const CreateOrder = () => {
             localStorage.setItem('cartItems', JSON.stringify(updatedItems));
         }
     }
+    //thêm service
+    const handleAddService=(dataService:itemService<string, number>)=>{
+        const itemToAdd = dataService;
+        const existingCartItems = addService || [];
+        const isServiceInCart = existingCartItems.some((item) => item.id === itemToAdd.id);
+        if (isServiceInCart) {
+            showWarningAlert(`Dịch vụ đã được thêm, mời bạn kiểm tra lại`)
+        } else {
+            const updatedItems = [...existingCartItems, itemToAdd];
+            setAddService(updatedItems);
+            localStorage.setItem('serviceItems', JSON.stringify(updatedItems));
+        }
+    }
 
     //xóa product
     const handleRemoveProduct = (itemId: string) => {
@@ -129,6 +151,14 @@ const CreateOrder = () => {
         const updatedItems = existingCartItems.filter((item: item<string, number>) => item.id !== itemId);
         localStorage.setItem('cartItems', JSON.stringify(updatedItems));
         setAddProduct(updatedItems);
+    }
+
+    //xóa service
+    const handleRemoveService = (itemId: string) => {
+        const existingCartItems: itemService<string, number>[] = JSON.parse(localStorage.getItem('serviceItems') as string) || [];
+        const updatedItems = existingCartItems.filter((item: itemService<string, number>) => item.id !== itemId);
+        localStorage.setItem('serviceItems', JSON.stringify(updatedItems));
+        setAddService(updatedItems);
     }
 
     return (
@@ -224,7 +254,9 @@ const CreateOrder = () => {
                     </div>
                 ):(
                     <ChooseServiceOrder 
-                    
+                    paginationNumber={paginationNumberService}
+                    setPaginationNumber={setPaginationNumberService}
+                    onClickAdd={handleAddService}
                     isLoading={isLoading}
                     setIsLoading={setIsLoading}
                     dataService={dataService}  
@@ -235,7 +267,10 @@ const CreateOrder = () => {
             <InforUser
                 setAddProduct={setAddProduct}
                 addProduct={addProduct}
+                setAddService={setAddService}
+                addService={addService}
                 removeProduct={handleRemoveProduct}
+                removeService={handleRemoveService}
             // showStaff={setShowStaff}
             />
 

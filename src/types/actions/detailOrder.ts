@@ -3,59 +3,82 @@ export interface sagaDetailOrder {
     id: string
 }
 
-export interface selectorDetailOrder<T,N> {
+export interface selectorDetailOrder<T, N> {
     orderDetailReducer: {
-        orderDetail: itemDetailOrder<T,N>;
+        orderDetail: itemDetailOrder<T, N>;
         showError: T | null;
     }
 }
 
-export interface storeOrderDetail<T,N> {
+export interface storeOrderDetail<T, N> {
     showError: T | null,
-    orderDetail: itemDetailOrder<T,N>[];
+    orderDetail: itemDetailOrder<T, N>[];
 }
 
-export interface orderDetailPayloadReducer<T,N> {
+export interface orderDetailPayloadReducer<T, N> {
     showError: T | null,
-    data: itemDetailOrder<T,N>
+    data: itemDetailOrder<T, N>
 }
 
 export interface itemDetailOrder<T, N> {
     id: T,
+    tellerId: T,
+    staffId: T,
     tellerName: T,
     staffName: T,
     customerName: T,
-    customerPhone: T,
+    customerPhoneNumber: T,
+    address: T,
     licensePlate: T,
     status: T,
     paymentMethod: T,
     totalAmount: N,
     orderType: T,
     orderDate: Date,
-    inStoreOrderDetails: inStoreOrderDetails<T, N>[]
+    orderDetails: inStoreOrderDetails<T, N>[],
+    shippingCode: T,
+    shippingMoney: N,
+    cancellationReason: T,
+    cancellationDate: Date,
 
 }
 
 export interface inStoreOrderDetails<T, N> {
     id: T,
-    productQuantity: N,
-    productPrice: N,
-    servicePrice: N,
-    warrantyPeriod: Date,
-    repairCount: N,
+    quantity: N,
+    price: N,
+    instUsed: boolean,
+    subTotalAmount: N,
+    warrantyStartDate: Date,
+    warrantyEndDate: Date,
     createAt: T,
     motobikeProduct: {
         id: T,
         name: T,
         priceCurrent: N,
+        installationFee: N,
+        discountAmount: N,
         image: T
     },
     repairService: {
         id: T,
         name: T,
+        duration: N,
         price: N,
+        discountAmount: N,
         image: T
-    }
+    },
+    warrantyHistories: [
+        {
+            id: T,
+            repairDate: Date,
+            productQuantity: N,
+            repairDetails: T,
+            handledBy: T,
+            totalAmount: N,
+            status: T
+        }
+    ]
 }
 
 

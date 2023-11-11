@@ -6,10 +6,10 @@ export interface payloadItemCustomer<T> {
 
 }
 
-export interface payloadItemStaffProduct<T,N> {
+export interface payloadItemStaffProduct<T, N> {
     type: "update_product_order";
     idOrder: T;
-    data: itemStaffProduct<T,N>
+    data: itemStaffProduct<T, N>
 
 }
 
@@ -28,12 +28,16 @@ export interface itemCustomer<T> {
 
 }
 
-export interface itemStaffProduct<T,N> {
-    staffId: T|null,
-    orderDetailModel:itemProductOrder<T,N>[]
+export interface itemStaffProduct<T, N> {
+    staffId: T | null;
+    orderDetailModel: (itemProductOrder<T, N>[] | itemServiceOrder<T>)[];
 }
 export interface itemProductOrder<T, N> {
-    repairServiceId: T|null,
-    motobikeProductId: T|null,
-    productQuantity?: N,
+    motobikeProductId: T,
+    productQuantity: N|undefined,
+    instUsed: boolean,
+}
+
+export interface itemServiceOrder<T> {
+    repairServiceId: T,
 }

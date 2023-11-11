@@ -7,35 +7,64 @@ import { showSuccessAlert } from '@/constants/chooseToastify';
 import userAxiosPrivate from '@/hooks/useAxiosPrivate';
 import { formatPhoneNumber } from '@/utils/formatPhone';
 import StaffSelect from '@/components/teller/StaffSelect';
+import { itemService } from '@/types/actions/listService';
+import LoadingCreateUpdate from '@/components/LoadingCreateUpdate';
 type Props = {
     addProduct?: item<string, number>[];
+    addService?: itemService<string, number>[]
     removeProduct: (itemId: string) => void,
+    removeService: (itemId: string) => void,
     setAddProduct: React.Dispatch<React.SetStateAction<item<string, number>[]>>;
+    setAddService: React.Dispatch<React.SetStateAction<itemService<string, number>[]>>;
+
 }
 
-const InforUser = ({ addProduct = [], removeProduct, setAddProduct }: Props) => {
+const InforUser = ({ addProduct = [], addService = [], removeProduct, removeService, setAddProduct, setAddService }: Props) => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const navigate = useNavigate();
+    const [isLoading, setIsLoading] = useState(false);
     const [phoneCustomer, setPhoneCustomer] = useState<string>('');
     const [nameCustomer, setNameCustomer] = useState<string>('');
     const [staffId, setStaffId] = useState<string>('');
     const [licensePlate, setLicensePlate] = useState<string>('');
     const [showService, setShowService] = useState<boolean[]>(Array(addProduct.length).fill(false));
     const [orderData, setOrderData] = useState<itemOrder<string, number>[]>([]);
+    const [orderService, setOrderService] = useState<{ repairServiceId: string; }[]>([]);
     const [showStaff, setShowStaff] = useState<boolean>(false);
     const axiosPrivate = userAxiosPrivate();
-    console.log(orderData)
     useEffect(() => {
-        // Tạo dữ liệu ban đầu và lưu vào localStorage khi addProduct thay đổi
-        const dataCart: itemOrder<string, number>[] = addProduct.map((item) => ({
-            repairServiceId: null,
-            motobikeProductId: item.id,
-            productQuantity: 1,
-            instUsed: false
-        }));
-        localStorage.setItem('orderData', JSON.stringify(dataCart));
-        setOrderData(dataCart);
+        // Nếu orderData chưa được thiết lập,tạo dữ liệu ban đầu
+        if (!orderData.length) {
+            const dataCart: itemOrder<string, number>[] = addProduct.map((item) => ({
+                motobikeProductId: item.id,
+                productQuantity: 1,
+                instUsed: false
+            }));
+            localStorage.setItem('orderData', JSON.stringify(dataCart));
+            setOrderData(dataCart);
+        } else {
+            const newProducts = addProduct.filter((product) => !orderData.some((item) => item.motobikeProductId === product.id));
+            if (newProducts.length > 0) {
+                const newData = [
+                    ...orderData,
+                    ...newProducts.map((product) => ({
+                        motobikeProductId: product.id,
+                        productQuantity: 1,
+                        instUsed: false
+                    }))
+                ];
+
+                localStorage.setItem('orderData', JSON.stringify(newData));
+                setOrderData(newData);
+            }
+        }
     }, [addProduct]);
+    useEffect(() => {
+        const dataCart: { repairServiceId: string; }[] = addService.map((item) => ({
+            repairServiceId: item.id,
+        }));
+        setOrderService(dataCart);
+    }, [addService])
 
     //Ẩn/hiện dịch vụ
     const toggleService = (itemId: string, index: number) => {
@@ -61,7 +90,7 @@ const InforUser = ({ addProduct = [], removeProduct, setAddProduct }: Props) => 
     };
 
     const handleQuantityChange = (itemId: string, value: number) => {
-        
+
         const savedData = JSON.parse(localStorage.getItem('orderData') as string);
 
         // Tìm sản phẩm trong savedData dựa trên itemId
@@ -91,18 +120,20 @@ const InforUser = ({ addProduct = [], removeProduct, setAddProduct }: Props) => 
         const data = {
             staffId: staffId,
             customerName: nameCustomer,
-            customerPhone: phoneCustomer,
+            customerPhoneNumber: phoneCustomer,
             licensePlate: licensePlate,
-            orderDetailModel: orderData
+            orderDetailModel: [...orderData, ...orderService]
         };
+        console.log("date",data)
         try {
-            const response = await axiosPrivate.post('/store-orders', data);
+            const response = await axiosPrivate.post('/orders/offline', data);
 
             if (response.status === 201) {
                 const orderId = response.data.id;
                 navigate(`/manage-order/${orderId}`);
                 localStorage.removeItem('cartItems');
                 localStorage.removeItem('orderData');
+                localStorage.removeItem('serviceItems');
                 showSuccessAlert('Tạo đơn hàng thành công');
             } else {
                 console.log('Lỗi');
@@ -110,6 +141,7 @@ const InforUser = ({ addProduct = [], removeProduct, setAddProduct }: Props) => 
 
         } catch (error) {
             console.error('Lỗi:', error);
+            setIsLoading(false);
         }
     }
 
@@ -121,6 +153,15 @@ const InforUser = ({ addProduct = [], removeProduct, setAddProduct }: Props) => 
                 return updatedAddProduct;
             });
         }
+        const savedData = JSON.parse(localStorage.getItem('orderData') as string);
+
+        // Xóa item khỏi savedData dựa trên index
+        savedData?.splice(indexToRemove, 1);
+
+        localStorage.setItem('orderData', JSON.stringify(savedData));
+
+        // Cập nhật lại state
+        setOrderData(savedData);
         console.log(indexToRemove)
     };
 
@@ -169,70 +210,102 @@ const InforUser = ({ addProduct = [], removeProduct, setAddProduct }: Props) => 
                         </div>
                     </div>
                 </div>
-                <div className=" w-full flex pt-3">
-                        <div className="w-[50%]  pl-2 space-y-3 border-r-2 border-y-2 border-gray-400">
-                        {addProduct?.length > 0 && (<p className="font-semibold pl-1 ">Các sản phẩm</p>)}
-                            <div className="w-full h-[50vh] overflow-auto space-y-3 pr-1">
-                                {addProduct &&
-                                    addProduct.map((item: item<string, number>, index: number) => (
-                                        <div key={index} className="w-full">
-                                            <div className='bg-white w-full rounded-lg flex justify-between pb-1'>
-                                                <div className='flex pl-2'>
-                                                    <div className='py-2 pr-1 w-[40%]'>
-                                                        <img src={item.images[0].imageUrl} className='w-full h-[70px] object-cover' alt="" />
-                                                    </div>
-                                                    <div className='pl-2 flex flex-col justify-between'>
-                                                        <div className='font-semibold pt-1'>
-                                                            <p className='text-[13px]'>{item.name}</p>
-                                                            {item.discount ? (
-                                                                <div>
-                                                                    <p className='text-[#888888] text-[13px] line-through'>{item.priceCurrent}đ</p>
-                                                                    <p className='text-[#FE3A30] text-[13px]'>{item.priceCurrent * (1 - item.discount.discountAmount / 100)}đ</p>
-                                                                </div>
-                                                            ) : (
-                                                                <p className='text-[#FE3A30] text-[13px]'>{item.priceCurrent}đ</p>
-                                                            )}
-
-                                                        </div>
-                                                        <div className='flex items-center space-x-1 pb-1'>
-                                                            <h3 className='font-semibold text-[10px]'>Số lượng:</h3>
-                                                            <input
-                                                                type="number"
-                                                                defaultValue={1}
-                                                                min={1}
-                                                                onChange={(e) => {
-                                                                    handleQuantityChange(item.id, parseInt(e.target.value))
-                                                                }}
-                                                                className='w-[30px] border-b-2 border-black text-center focus:outline-none focus:border-b-2 focus:border-main'
-                                                            />
-                                                            {item.installationFee > 0 && (
-                                                                <button
-                                                                    className='font-bold pl-2 text-blue-700 text-[10px]'
-                                                                    onClick={() => toggleService(item.id, index)}
-                                                                >{showService[index] ? "Đã chọn sửa chữa" : "Chọn sửa chữa"} </button>
-                                                            )}
-
-
-
-                                                        </div>
-                                                    </div>
-
+                <div className=" w-full flex">
+                    <div className="w-[50%] space-y-3 border-r-2 border-y-2 border-gray-400">
+                        {addProduct?.length > 0 && (<p className="font-semibold bg-white py-2 text-center ">Các sản phẩm</p>)}
+                        <div className="w-full h-[50vh] pl-2 overflow-auto space-y-3 pr-1">
+                            {addProduct &&
+                                addProduct.map((item: item<string, number>, index: number) => (
+                                    <div key={index} className='bg-white w-full rounded-lg flex items-center pb-1'>
+                                        <div className='p-1 '>
+                                            <img src={item.images[0].imageUrl} className='min-w-[95px] h-[70px] object-cover' alt="" />
+                                        </div>
+                                        <div className='pl-2 w-full'>
+                                            <div className='font-semibold pt-1'>
+                                                <div className='flex justify-between items-start'>
+                                                    <p className='text-[13px]'>{item.name}</p>
+                                                    <button className='text-red-700 font-semibold px-2'
+                                                        onClick={() => {
+                                                            removeProduct(item.id)
+                                                            handleRemoveItemNotChange(index);
+                                                        }}>X</button>
                                                 </div>
-                                                <button className='text-red-700 h-[30px] font-semibold px-1 pt-1'
-                                                    onClick={() => {
-                                                        removeProduct(item.id)
-                                                        handleRemoveItemNotChange(index);
-                                                    }}>X</button>
+                                                {item.discount ? (
+                                                    <div>
+                                                        <p className='text-[#888888] text-[13px] line-through'>{item.priceCurrent}đ</p>
+                                                        <p className='text-[#FE3A30] text-[13px]'>{item.priceCurrent * (1 - item.discount.discountAmount / 100)}đ</p>
+                                                    </div>
+                                                ) : (
+                                                    <p className='text-[#FE3A30] text-[13px]'>{item.priceCurrent}đ</p>
+                                                )}
+
 
                                             </div>
+                                            <div className='flex items-center space-x-1 pb-1'>
+                                                <h3 className='font-semibold text-[10px]'>Số lượng:</h3>
+                                                <input
+                                                    type="number"
+                                                    defaultValue={1}
+                                                    min={1}
+                                                    onChange={(e) => {
+                                                        handleQuantityChange(item.id, parseInt(e.target.value))
+                                                    }}
+                                                    className='w-[30px] border-b-2 border-black text-center focus:outline-none focus:border-b-2 focus:border-main'
+                                                />
+                                                {item.installationFee > 0 && (
+                                                    <button
+                                                        className='font-bold pl-2 text-blue-700 text-[10px]'
+                                                        onClick={() => toggleService(item.id, index)}
+                                                    >{showService[index] ? "Đã chọn sửa chữa" : "Chọn sửa chữa"} </button>
+                                                )}
+                                            </div>
                                         </div>
-                                    ))
-                                }
-                            </div>
 
+
+                                    </div>
+                                ))
+                            }
                         </div>
-                    <div className='w-[50%] h-[50vh] overflow-y-scroll space-y-2'>
-                        <p>Các dịch vụ</p>
+
+                    </div>
+                    <div className="w-[50%] space-y-3 border-y-2 border-gray-400">
+                        {addService?.length > 0 && (<p className="font-semibold pl-1 bg-white py-2 text-center">Các dịch vụ</p>)}
+                        <div className="w-full h-[50vh] overflow-auto space-y-3 pl-2 pr-1">
+                            {addService &&
+                                addService.map((item: itemService<string, number>, index: number) => (
+                                    <div key={index} className="w-full">
+                                        <div className='bg-white w-full rounded-lg flex justify-between pb-1'>
+                                            <div className='flex pl-2'>
+                                                <div className='py-2 pr-1'>
+                                                    <img src={item.images[0].imageUrl} className='min-w-[100px] h-[70px] object-cover' alt="" />
+                                                </div>
+                                                <div className='pl-2 flex flex-col justify-between'>
+                                                    <div className='font-semibold pt-1'>
+                                                        <p className='text-[13px]'>{item.name}</p>
+                                                        {item.discountAmount ? (
+                                                            <div>
+                                                                <p className='text-[#888888] text-[13px] line-through'>{item.price}đ</p>
+                                                                <p className='text-[#FE3A30] text-[13px]'>{item.price * (1 - item.discountAmount / 100)}đ</p>
+                                                            </div>
+                                                        ) : (
+                                                            <p className='text-[#FE3A30] text-[13px]'>{item.price}đ</p>
+                                                        )}
+
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                            <button className='text-red-700 h-[30px] font-semibold px-1'
+                                                onClick={() => {
+                                                    removeService(item.id)
+                                                }}>X</button>
+
+                                        </div>
+                                    </div>
+                                ))
+                            }
+                        </div>
+
                     </div>
 
                 </div>
@@ -240,40 +313,46 @@ const InforUser = ({ addProduct = [], removeProduct, setAddProduct }: Props) => 
                     ?
 
                     (
-                        <div className='w-full bg-white h-[10vh] flex justify-around py-5'>
-                            <button className='w-[150px] bg-slate-200 hover:bg-red-700 hover:text-white font-semibold text-[18px] rounded-lg'
+                        <div className='w-full bg-white h-[10vh] flex justify-around items-center'>
+                            <button className='w-[200px] h-[50px] bg-gray-200 hover:bg-red-900 hover:text-white font-semibold text-[18px] rounded-lg'
                                 onClick={() => {
                                     setPhoneCustomer('');
                                     setNameCustomer('');
                                     setLicensePlate('');
                                     localStorage.removeItem('cartItems');
                                     localStorage.removeItem('orderData');
+                                    localStorage.removeItem('orderData');
+                                    localStorage.removeItem('serviceItems');
                                     setOrderData([]);
+                                    setOrderService([]);
                                     setAddProduct([]);
-
+                                    setAddService([]);
                                 }}
                             >Hủy đơn</button>
-                            {orderData.some((item) => item.repairServiceId)
+                            {orderData.some((item) => item.instUsed === true) || orderService?.length > 0
                                 ? (
-                                    <button className='w-[200px] bg-slate-200 hover:bg-main hover:text-white font-semibold text-[18px] rounded-lg'
+                                    <button className='w-[200px] h-[50px] bg-gray-200 hover:bg-main hover:text-white font-semibold text-[18px] rounded-lg'
                                         onClick={() => setShowStaff(true)}
                                     >Tiếp theo</button>
                                 ) : (
-                                    <button className='w-[200px] bg-slate-200 hover:bg-main hover:text-white font-semibold text-[18px] rounded-lg'
-                                        onClick={handleCreateOrder}
+                                    <button className='w-[200px] h-[50px] bg-gray-200 hover:bg-main hover:text-white font-semibold text-[18px] rounded-lg'
+                                        onClick={() => {
+                                            setIsLoading(true)
+                                            handleCreateOrder()
+                                        }}
                                     >Tạo đơn hàng</button>
                                 )}
 
                         </div>
-                    )
-
-                    : (
+                    ):(
                         <div className='w-full h-[10vh] py-5'>
                         </div>
                     )}
 
             </div>
+            {isLoading ? <LoadingCreateUpdate /> : ""}
             <StaffSelect
+                setIsLoading={setIsLoading}
                 handleCreateOrder={handleCreateOrder}
                 staffId={staffId}
                 setStaffId={setStaffId}

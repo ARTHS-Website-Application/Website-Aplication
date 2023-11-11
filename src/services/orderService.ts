@@ -40,25 +40,25 @@ export class Private {
     updateCustomerOrder = async (idOrder: string, data: itemCustomer<string>) => {
         const axiosPrivate = userAxiosPrivate();
         if (data.licensePlate) {
-            return await axiosPrivate.put(`/orders/${idOrder}`, data)
+            return await axiosPrivate.put(`/orders/offline/${idOrder}`, data)
         } else {
             const dataBuy = {
                 customerName: data.customerName,
                 customerPhone: data.customerPhone,
             }
-            return await axiosPrivate.put(`/orders/${idOrder}`, dataBuy)
+            return await axiosPrivate.put(`/orders/offline/${idOrder}`, dataBuy)
         }
     }
 
     updateProductOrder = async (idOrder: string, data: itemStaffProduct<string,number>) => {
         const axiosPrivate = userAxiosPrivate();
         if (data.staffId) {
-            return await axiosPrivate.put(`/orders/${idOrder}`, data)
+            return await axiosPrivate.put(`/orders/offline/${idOrder}`, data)
         } else {
             const dataProduct={
                 orderDetailModel:data.orderDetailModel
             }
-            return await axiosPrivate.put(`/orders/${idOrder}`,dataProduct)
+            return await axiosPrivate.put(`/orders/offline/${idOrder}`,dataProduct)
         }
     }
     updateStatusOrder= async (idOrder: string, data:string) => {
@@ -66,7 +66,7 @@ export class Private {
             const dataProduct={
                 status:data
             }
-            return await axiosPrivate.put(`/orders/${idOrder}`,dataProduct)
+            return await axiosPrivate.put(`/orders/offline/${idOrder}`,dataProduct)
         }
 }
 

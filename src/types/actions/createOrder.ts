@@ -13,8 +13,7 @@ export interface itemCreateOrder<T, N> {
 }
 
 export interface itemOrder<T,N>{
-    repairServiceId: T|null,
-    motobikeProductId: T|null,
+    motobikeProductId: T,
     productQuantity?: N,
     instUsed:boolean
 }

@@ -1,12 +1,8 @@
 export const formatPrice = (price: number | undefined) => {
     if (price) {
-        if (price > 1000) {
-            const formattedPrice = (price / 1000).toLocaleString();
+        const formattedPrice = (price / 1000).toLocaleString(undefined, { minimumFractionDigits: 3 });
 
-            return `${formattedPrice}.000`;
-        }else{
-            return price
-        }
+        return formattedPrice.replace(",", ".");
 
     }
 

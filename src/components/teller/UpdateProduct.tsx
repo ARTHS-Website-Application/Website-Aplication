@@ -1,37 +1,37 @@
 import { useState, useEffect } from 'react'
-import { addProductOrder } from '@/types/actions/product'
+import { addProductOrder, addProductService } from '@/types/actions/product'
 import { itemOrder } from '@/types/actions/createOrder';
 import { useDispatch } from 'react-redux';
 import { updateProductOrder } from '@/actions/order';
 import { showSuccessAlert } from '@/constants/chooseToastify';
 import StaffSelect from './StaffSelect';
+import LoadingCreateUpdate from '../LoadingCreateUpdate';
 type Props = {
     addProduct?: addProductOrder<string, number>[];
-    removeProduct: (itemId: string) => void,
+    addService?:addProductService<string, number>[];
+    removeProduct: (itemId: string) => void;
+    removeService:(itemId: string) => void;
     onClose: () => void;
     setAddProduct: React.Dispatch<React.SetStateAction<addProductOrder<string, number>[]>>;
+    setAddService: React.Dispatch<React.SetStateAction<addProductService<string, number>[]>>;
     tranfomDataProduct: addProductOrder<string, number>[];
+    tranfomDataService:addProductService<string, number>[];
     idOrder: string | null;
 }
 
-const UpdateProduct = ({ addProduct = [], removeProduct, onClose, setAddProduct, tranfomDataProduct, idOrder }: Props) => {
+const UpdateProduct = ({ addProduct = [],addService=[], removeProduct, onClose, setAddProduct, 
+    tranfomDataProduct,tranfomDataService,setAddService,removeService, idOrder }: Props) => {
+
     const dispatch = useDispatch();
+    const [isLoading, setIsLoading] = useState(false);
     const [showStaff, setShowStaff] = useState<boolean>(false);
     const [staffId, setStaffId] = useState<string>('');
     // const [checkedService, setCheckedService] = useState<boolean[]>(Array(addProduct.length).fill(false));
     const [orderData, setOrderData] = useState<itemOrder<string, number>[]>([]);
-    const [productQuantity, setProductQuantity] = useState<{ [key: string]: number }>({});
+    const [productQuantity, setProductQuantity] = useState<{[key: string]: number }>({});
+
     //check tranfomDataProduct và addProduct trùng nhau không
-    const [showService, setShowService] = useState<boolean[]>(addProduct.map(() => false));
-    const selectedItems = new Set<string>();
-    const [checkedService, setCheckedService] = useState<boolean[]>(addProduct.map((item) => {
-        //dữ liệu từ detailOrder
-        if (item.repairService && item.checked === true && !selectedItems.has(item.idProduct)) {
-            selectedItems.add(item.idProduct);
-            return true;
-        }
-        return false;
-    }));
+    const [showService, setShowService] = useState<boolean[]>(addProduct.map((item) => item.instUsed));
     useEffect(() => {
         if (addProduct) {
             const initialProductQuantity = addProduct.reduce((itemCurrent, item) => {
@@ -45,23 +45,22 @@ const UpdateProduct = ({ addProduct = [], removeProduct, onClose, setAddProduct,
     }, [addProduct]);
     useEffect(() => {
         if (addProduct.length > 0) {
-            
             const dataCart: itemOrder<string, number>[] = (addProduct || []).map((item) => {
-                const matchingItem: addProductOrder<string, number> | undefined = tranfomDataProduct.find((transformedItem) => transformedItem.idProduct === item.idProduct && item.checked === true);
-                
+                const matchingItem: addProductOrder<string, number> | undefined = tranfomDataProduct.find((transformedItem) => transformedItem.idProduct === item.idProduct);
+
                 if (matchingItem) {
                     // Tạo dữ liệu ban đầu và lưu vào localStorage khi addProduct thay đổi
                     return {
-                        repairServiceId: item.repairService?.id ?? null,
-                        motobikeProductId: item.idProduct,
-                        productQuantity: item.productQuantity ?? 1,
+                        motobikeProductId: item?.idProduct,
+                        productQuantity: item?.productQuantity,
+                        instUsed: item.instUsed
                     };
                 } else {
                     //dữ liệu thêm mới
                     return {
-                        repairServiceId: null,
                         motobikeProductId: item.idProduct,
                         productQuantity: 1,
+                        instUsed: false
                     };
                 }
             });
@@ -70,46 +69,24 @@ const UpdateProduct = ({ addProduct = [], removeProduct, onClose, setAddProduct,
             setOrderData(dataCart);
         }
     }, [addProduct]);
-    const handleCheckboxChange = (itemId: string, data: string | null, index: number) => {
-        const savedData = JSON.parse(localStorage.getItem('updateOrderData') || '[]') as itemOrder<string, number>[];
-        const updatedOrder: itemOrder<string, number>[] = savedData.map((item, i) => {
-            if (item?.motobikeProductId === itemId) {
-                // Nếu đã chọn checkbox, cập nhật repairServiceId
-                if (!checkedService[i] ) {
-                    selectedItems.add(itemId);
-                    return {
-                        ...item,
-                        repairServiceId: data,
-                    };
-                } else {
-                    selectedItems.delete(itemId);
-                    return {
-                        ...item,
-                        repairServiceId: null,
-                    };
-                }
+
+    //Ẩn/hiện dịch vụ
+    const toggleService = (itemId: string, index: number) => {
+        const savedData = JSON.parse(localStorage.getItem('updateOrderData') as string);
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const updatedData = savedData.map((item: any) => {
+            if (item.motobikeProductId === itemId) {
+                return {
+                    ...item,
+                    instUsed: !item.instUsed
+                };
             }
             return item;
         });
-    
-        // Cập nhật orderData trước
-        setOrderData(updatedOrder);
-        
-    
-        // Cập nhật localStorage sau khi đã cập nhật cả hai State
-        localStorage.setItem('updateOrderData', JSON.stringify(updatedOrder));
-    
-        // Cập nhật checkedService sau khi đã cập nhật cả hai State
-        setCheckedService((prevCheckedService) => {
-            const newChecked = [...prevCheckedService];
-            newChecked[index] = !prevCheckedService[index];
-            return newChecked;
-        });
-    };
 
-    
-    //Ẩn/hiện dịch vụ
-    const toggleService = (index: number) => {
+        // Lưu trạng thái vào localStorage
+        localStorage.setItem('updateOrderData', JSON.stringify(updatedData));
+        setOrderData(updatedData);
         setShowService((prevShowService) => {
             const updatedShowService = [...prevShowService];
             updatedShowService[index] = !updatedShowService[index];
@@ -149,11 +126,11 @@ const UpdateProduct = ({ addProduct = [], removeProduct, onClose, setAddProduct,
             staffId: staffId,
             orderDetailModel: orderData.map((item) => ({
                 ...item,
-                motobikeProductId: item.motobikeProductId || null,
+                motobikeProductId: item?.motobikeProductId,
             })),
         };
         if (idOrder) {
-            dispatch(updateProductOrder(idOrder, data))
+            // dispatch(updateProductOrder(idOrder, data))
             showSuccessAlert("Cập nhật thành công")
             onClose();
         }
@@ -167,97 +144,115 @@ const UpdateProduct = ({ addProduct = [], removeProduct, onClose, setAddProduct,
                 return updatedShowService;
             });
         }
-
-        if (indexToRemove >= 0 && indexToRemove < checkedService.length) {
-            setCheckedService((prevCheckedService) => {
-                const updatedCheckedService = [...prevCheckedService];
-                updatedCheckedService.splice(indexToRemove, 1);
-                return updatedCheckedService;
-            });
-        }
     };
 
     return (
-        <div className="w-[33%] ">
-            <div className='bg-white w-full text-center py-[20px]'>
+        <div className="w-[45%] ">
+            <div className='bg-white w-full text-center pt-[10px] pb-[20px]'>
                 <h1 className="text-2xl font-semibold">Sản phẩm đơn hàng</h1>
             </div>
-            <div className=' w-full h-[75.6vh]  flex flex-col justify-between'>
-                <div className=" w-full px-3 py-2 overflow-y-scroll space-y-2">
-                    {addProduct &&
-                        addProduct.map((item: addProductOrder<string, number>, index: number) => (
-                            <div key={index} className="w-full">
-                                <div className='bg-white w-full rounded-lg flex justify-between pb-3'>
-                                    <div className='flex'>
-                                        <div className='pl-3 h-[13vh] py-2'>
-                                            <img src={item.image} className='w-auto h-full' alt="" />
+            <div className=' w-full flex flex-col justify-between'>
+                <div className=" w-full flex">
+                    <div className="w-[50%] space-y-3 border-x-2 border-y-2 border-gray-400">
+                        {addProduct?.length > 0 && (<p className="font-semibold bg-white py-2 text-center ">Các sản phẩm</p>)}
+                        <div className="w-full h-[65vh] pl-2 overflow-auto space-y-3 pr-1">
+                            {addProduct &&
+                                addProduct.map((item, index: number) => (
+                                    <div key={index} className='bg-white w-full rounded-lg flex items-center pb-1 drop-shadow-lg'>
+                                        <div className='p-1 '>
+                                            <img src={item.image} className='min-w-[95px] h-[70px] object-cover' alt="" />
                                         </div>
-                                        <div className='h-full pl-3 flex flex-col justify-between'>
-                                            <div className='font-semibold pt-2'>
-                                                <p className='text-[16px]'>{item.nameProduct}</p>
+                                        <div className='pl-2 w-full'>
+                                            <div className='font-semibold pt-1'>
+                                                <div className='flex justify-between items-start'>
+                                                    <p className='text-[13px]'>{item.nameProduct}</p>
+                                                    <button className='text-red-700 font-semibold px-2'
+                                                        onClick={() => {
+                                                            removeProduct(item.idProduct)
+                                                            handleRemoveItemNotChange(index);
+                                                        }}>X</button>
+                                                </div>
                                                 {item.discountAmount ? (
                                                     <div>
-                                                        <p className='text-[#888888] text-[14px] line-through'>{item.priceProduct}đ</p>
-                                                        <p className='text-[#FE3A30]'>{item.priceProduct * (1 - item.discountAmount / 100)}đ</p>
+                                                        <p className='text-[#888888] text-[13px] line-through'>{item.priceProduct}đ</p>
+                                                        <p className='text-[#FE3A30] text-[13px]'>{item.priceProduct * (1 - item.discountAmount / 100)}đ</p>
                                                     </div>
                                                 ) : (
-                                                    <p className='text-[#FE3A30]'>{item.priceProduct}đ</p>
+                                                    <p className='text-[#FE3A30] text-[13px]'>{item.priceProduct}đ</p>
                                                 )}
+
 
                                             </div>
                                             <div className='flex items-center space-x-1 pb-1'>
-                                                <h3 className='font-semibold'>Số lượng:</h3>
+                                                <h3 className='font-semibold text-[10px]'>Số lượng:</h3>
                                                 <input
                                                     type="number"
                                                     value={isNaN(productQuantity[item.idProduct]) ? 1 : productQuantity[item.idProduct]}
                                                     min={1}
-                                                    onChange={(e) => handleQuantityChange(item.idProduct, parseInt(e.target.value))}
-                                                    className='w-[60px] border-b-2 border-black text-center focus:outline-none focus:border-b-2 focus:border-main'
+                                                    onChange={(e) => {
+                                                        handleQuantityChange(item.idProduct, parseInt(e.target.value))
+                                                    }}
+                                                    className='w-[30px] border-b-2 border-black text-center focus:outline-none focus:border-b-2 focus:border-main'
                                                 />
-                                                {item.repairService ? (
+                                                {item.installationFee > 0 && (
                                                     <button
-                                                        className='font-bold pl-2 text-blue-700'
-                                                        onClick={() => toggleService(index)}
-                                                    >Chọn dịch vụ</button>
-                                                ) : ""}
-
+                                                        className='font-bold pl-2 text-blue-700 text-[10px]'
+                                                        onClick={() => toggleService(item.idProduct, index)}
+                                                    >{showService[index] ? "Đã chọn sửa chữa" : "Chọn sửa chữa"} </button>
+                                                )}
                                             </div>
                                         </div>
 
-                                    </div>
-                                    <button className='text-red-700 h-[30px] font-semibold pr-4 pl-1 pt-2'
-                                        onClick={() => {
-                                            removeProduct(item?.idProduct)
-                                            handleRemoveItemNotChange(index);
-                                        }}>Xóa</button>
 
-                                </div>
-                                {showService[index] && item?.repairService &&
-                                    (<label className='w-full h-[70px] bg-white mt-3 flex items-center'>
-                                        <input type="checkbox"
-                                            checked={checkedService[index] || false}
-                                            onChange={() =>
-                                                handleCheckboxChange(item.idProduct, item.repairService ? item.repairService?.id : null, index)
-                                            }
-                                            className='w-5 h-5 mx-4 border-2 border-mainB'
-                                        />
-                                        <div>
-                                            <img src={item.repairService?.image}
-                                                alt="" className='w-[50px] h-[50px]' />
+                                    </div>
+                                ))
+                            }
+                        </div>
+
+                    </div>
+                    <div className="w-[50%] space-y-3 border-y-2 border-r-2 border-gray-400">
+                        {addService?.length > 0 && (<p className="font-semibold pl-1 bg-white py-2 text-center">Các dịch vụ</p>)}
+                        <div className="w-full h-[65vh] overflow-auto space-y-3 pl-2 pr-1">
+                            {addService &&
+                                addService.map((item: addProductService<string, number>, index: number) => (
+                                    <div key={index} className="w-full">
+                                        <div className='bg-white w-full rounded-lg flex justify-between pb-1'>
+                                            <div className='flex pl-2'>
+                                                <div className='py-2 pr-1'>
+                                                    <img src={item?.image} className='min-w-[100px] h-[70px] object-cover' alt="" />
+                                                </div>
+                                                <div className='pl-2 flex flex-col justify-between'>
+                                                    <div className='font-semibold pt-1'>
+                                                        <p className='text-[13px]'>{item.name}</p>
+                                                        {item.discountAmount>0 ? (
+                                                            <div>
+                                                                <p className='text-[#888888] text-[13px] line-through'>{item.price}đ</p>
+                                                                <p className='text-[#FE3A30] text-[13px]'>{item.price * (1 - item.discountAmount / 100)}đ</p>
+                                                            </div>
+                                                        ) : (
+                                                            <p className='text-[#FE3A30] text-[13px]'>{item.price}đ</p>
+                                                        )}
+
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                            <button className='text-red-700 h-[30px] font-semibold px-1'
+                                                onClick={() => {
+                                                    removeService(item.id)
+                                                }}>X</button>
+
                                         </div>
-                                        <div className='pl-3 flex flex-col justify-center'>
-                                            <h3 className='text-[14px]'>{item?.repairService?.name}</h3>
-                                            <p className='text-[#888888] text-[12px] line-through'>{item?.repairService?.price}đ</p>
-                                            <p className='text-red-600 text-[14px]'>{item?.repairService?.price}đ</p>
-                                        </div>
-                                    </label>)
-                                }
-                            </div>
-                        ))
-                    }
+                                    </div>
+                                ))
+                            }
+                        </div>
+
+                    </div>
+
                 </div>
-                <div className='w-full bg-white h-[10vh] flex justify-around py-5'>
-                    <button className='w-[150px] bg-gray-200 hover:bg-red-700 hover:text-white font-semibold text-[18px] rounded-lg'
+                <div className='w-full h-full bg-white flex justify-around items-center py-3'>
+                    <button className='w-[200px] h-[50px] bg-gray-200 hover:bg-red-900 hover:text-white font-semibold text-[18px] rounded-lg'
                         onClick={() => {
                             localStorage.removeItem('updateOrderData');
                             setOrderData([]);
@@ -265,23 +260,25 @@ const UpdateProduct = ({ addProduct = [], removeProduct, onClose, setAddProduct,
                             onClose();
                         }}
                     >Hủy</button>
-                    {addProduct.length > 0
-                        ? orderData?.some((item) => item?.repairServiceId)
-
-                            ? (
-                                <button className='w-[200px] bg-gray-200 hover:bg-green-700 hover:text-white font-semibold text-[18px] rounded-lg'
-                                    onClick={() => setShowStaff(true)}
-                                >Tiếp theo</button>
-                            ) : (
-                                <button className='w-[200px] bg-gray-200 hover:bg-green-700 hover:text-white font-semibold text-[18px] rounded-lg'
-                                    onClick={handleUpdateStaffProduct}
-                                >Tạo đơn hàng</button>
-                            )
-                        : ""}
-
+                    {orderData.some((item) => item.instUsed === true)
+                        // || orderService?.length > 0
+                        ? (
+                            <button className='w-[200px] h-[50px] bg-gray-200 hover:bg-main hover:text-white font-semibold text-[18px] rounded-lg'
+                                onClick={() => setShowStaff(true)}
+                            >Tiếp theo</button>
+                        ) : (
+                            <button className='w-[200px] h-[50px] bg-gray-200 hover:bg-main hover:text-white font-semibold text-[18px] rounded-lg'
+                                onClick={() => {
+                                    setIsLoading(true)
+                                    // handleCreateOrder()
+                                }}
+                            >Cập nhật</button>
+                        )}
                 </div>
             </div>
+            {isLoading ? <LoadingCreateUpdate /> : ""}
             <StaffSelect
+                setIsLoading={setIsLoading}
                 handleCreateOrder={handleUpdateStaffProduct}
                 staffId={staffId}
                 setStaffId={setStaffId}

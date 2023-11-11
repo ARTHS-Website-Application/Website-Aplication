@@ -9,10 +9,10 @@ const ListProduct = ({ data, onClickAdd }: Props) => {
     
 
     return (
-        <div className={`grid grid-cols-3 gap-x-7 gap-y-3  ${data.length>4 ?"overflow-y-scroll h-[65vh]":"h-[65vh] pb-[20vh]" }  py-3`}>
+        <div className={`grid grid-cols-3 gap-x-7 gap-y-3  ${data.length>4 ?"overflow-y-scroll h-[65vh]":"h-[65vh] pb-[20vh]" }  py-3 pr-1`}>
             {data.map((item: item<string, number>, index: number) => (
                 <ItemProduct
-                    onClickAdd={() => onClickAdd(item)} // Pass the item as an argument
+                    onClickAdd={() => onClickAdd(item)}
                     key={index}
                     _name={item.name}
                     _priceCurrent={item.priceCurrent}
