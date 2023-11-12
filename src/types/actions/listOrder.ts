@@ -28,19 +28,13 @@ export interface payloadFilterOrder<T,N>{
     data:callFilterOrder<T,N>
 }
 
-export interface callFilterOrder<T,N>{
-    customerName:T,
-    customerPhone:T,
-    number:N,
-    excludeOrderStatus:T,
-}
 
 export interface payloadFilterOrderPaid<T,N>{
     type:'list_filter_order_paid';
-    data:callFilterOrderPaid<T,N>
+    data:callFilterOrder<T,N>
 }
 
-export interface callFilterOrderPaid<T,N>{
+export interface callFilterOrder<T,N>{
     customerName:T,
     customerPhone:T,
     number:N,
@@ -61,7 +55,7 @@ export interface itemOrder<T,N> {
         tellerName: T,
         staffName: T,
         customerName: T,
-        customerPhone: T,
+        customerPhoneNumber: T,
         licensePlate: T,
         status: T,
         totalAmount: N,

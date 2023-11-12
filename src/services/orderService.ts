@@ -1,5 +1,5 @@
 import userAxiosPrivate from "@/hooks/useAxiosPrivate";
-import { callFilterOrder, callFilterOrderPaid } from "@/types/actions/listOrder";
+import { callFilterOrder } from "@/types/actions/listOrder";
 import { itemCustomer, itemStaffProduct } from "@/types/actions/updateCustomerOrder";
 export class Private {
 
@@ -11,20 +11,12 @@ export class Private {
         return await axiosPrivate.get(`/orders?orderType=Offline&${queryParams}&excludeOrderStatus=${encodeStatus}`)
     }
 
-    getFilterOrder = async (data:callFilterOrder<string,number>) => {
-        const axiosPrivate = userAxiosPrivate();
-        const encodeStatus = encodeURIComponent(data.excludeOrderStatus);
-        const encodeName = encodeURIComponent(data?.customerName);
-        const queryParams = new URLSearchParams({customerPhone:data.customerPhone, pageNumber: data.number.toString() });
-        return await axiosPrivate.get(`/orders?orderType=Offline&${queryParams}&customerName=${encodeName}&excludeOrderStatus=${encodeStatus}`)
-    }
-
     getOrderPaid = async (pageNumber: number,orderStatus:string) => {
         const axiosPrivate = userAxiosPrivate();
         const encodeStatusPaid = encodeURIComponent(orderStatus);
         return await axiosPrivate.get(`/orders?orderType=Offline&orderStatus=${encodeStatusPaid}&pageNumber=${pageNumber}`)
     }
-    getFilterOrderPaid = async (data:callFilterOrderPaid<string,number>) => {
+    getFilterOrderPaid = async (data:callFilterOrder<string,number>) => {
         const axiosPrivate = userAxiosPrivate();
         const encodeOrderStatus = encodeURIComponent(data?.orderStatus);
         const encodeUserName = encodeURIComponent(data.customerName);
@@ -52,16 +44,8 @@ export class Private {
 
     updateProductOrder = async (idOrder: string, data: itemStaffProduct<string,number>) => {
         const axiosPrivate = userAxiosPrivate();
-        console.log("dataPut",data)
-        // if (data.staffId!=="") {
             return await axiosPrivate.put(`/orders/offline/${idOrder}`, data)
-        // } else {
-        //     const dataProduct={
 
-        //         orderDetailModel:data.orderDetailModel
-        //     }
-        //     return await axiosPrivate.put(`/orders/offline/${idOrder}`,dataProduct)
-        // }
     }
     updateStatusOrder= async (idOrder: string, data:string) => {
         const axiosPrivate = userAxiosPrivate();

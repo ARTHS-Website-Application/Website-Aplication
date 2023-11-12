@@ -6,15 +6,16 @@ import { payloadDetailOnlineOrder, payloadOnlineOrder } from "@/types/actions/li
 import { AxiosResponse } from "axios";
 import { call, put, takeEvery } from "redux-saga/effects";
 
-function* getOnlineOrder(payload: payloadOnlineOrder<number>) {
+function* getOnlineOrder(payload: payloadOnlineOrder<string,number>) {
     try {
-        const resp: AxiosResponse = yield call(onlineOrderService.getOnlineOrder, payload.number, payload.filter);
+        const resp: AxiosResponse = yield call(onlineOrderService.getOnlineOrder, payload.data);
         const { status, data } = resp;
         if (data && status === 200) {
             yield put(getOnlineOrderSuccess(data));
         } else {
             yield put(getOnlineOrderFailed(data));
         }
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
         const msg: string = error.message;
         yield put(getOnlineOrderFailed(msg));
@@ -29,6 +30,7 @@ function* getDetailOnlineOrder(payload: payloadDetailOnlineOrder<string>) {
         } else {
             yield put(getDetailOrderFailed(data));
         }
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
         const msg: string = error.message;
         yield put(getDetailOrderFailed(msg));

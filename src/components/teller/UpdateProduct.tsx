@@ -29,8 +29,6 @@ const UpdateProduct = ({ addProduct = [], addService = [], removeProduct, onClos
     const [showStaff, setShowStaff] = useState<boolean>(false);
     const [staffId, setStaffId] = useState<string>('');
     const [orderData, setOrderData] = useState<itemOrder<string, number>[]>([]);
-    console.log("orerrProduct", orderData);
-    console.log("addProduct", addProduct);
     const [productQuantity, setProductQuantity] = useState<{ [key: string]: number }>({});
     const [orderService, setOrderService] = useState<itemServiceOrder<string>[]>([]);
     const [showService, setShowService] = useState<boolean[]>(addProduct.map((item) => item.instUsed));

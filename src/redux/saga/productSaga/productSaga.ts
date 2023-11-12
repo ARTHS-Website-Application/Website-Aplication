@@ -235,6 +235,7 @@ export function* lookupProduct() {
     yield takeEvery(productCreate.PRODUCT_CREATE, createProduct);
     yield takeEvery(productUpdate.PRODUCT_UPDATE, updateProduct);
     yield takeLatest(productUpdate.PRODUCT_UPDATE_STATUS, updateProductStatus);
+    
     yield takeEvery(productInfor.GET_PRODUCT_INFO, getProduct);
     yield takeEvery(productInfor.GET_SORT_PRODUCT_INFO, getSortProduct);
     yield takeEvery(productCategory.GET_PRODUCT_CATEGORY, getCategoryProduct);

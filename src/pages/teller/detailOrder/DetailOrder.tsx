@@ -18,9 +18,6 @@ import RepairCustomer from '@/components/teller/RepairCustomer';
 import Loading from '@/components/LoadingPage';
 import RepairProduct from '@/components/teller/RepairProduct';
 import { showSuccessAlert } from '@/constants/chooseToastify';
-// import { getDetailProduct } from '@/actions/product';
-// import { item } from '@/types/actions/product';
-// import { selectorDetailProduct } from '@/types/actions/detailProduct';
 
 const DetailOrder = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -33,37 +30,6 @@ const DetailOrder = () => {
   const [payment, setPayment] = useState<string>("Tiền mặt");
   const [showUpdate, setShowUpdate] = useState<boolean>(false)
   const [showUpdateProduct, setShowUpdateProduct] = useState<boolean>(false)
-
-  // const [itemProductOrdered, setItemProductOrdered] = useState<item<string, number>[]>([])
-  // useEffect(() => {
-  //   if (detailOrder?.orderDetails?.some((item) => item.motobikeProduct)) {
-  //     const promises = detailOrder?.orderDetails
-  //       .filter(product => product.motobikeProduct)
-  //       .map(product => {
-  //         const productId = product?.motobikeProduct?.id;
-
-  //         if (productId) {
-  //           // Gọi action để fetch dữ liệu và lưu vào Redux
-  //           dispatch(getDetailProduct(productId));
-  //         }
-  //       });
-  //     promises;
-  //   }
-  // }, [detailOrder?.orderDetails, dispatch]);
-  // const detailProduct: item<string, number> = useSelector((state: selectorDetailProduct<string, number>) => state.productDetailReducer.productDetail);
-  // useEffect(() => {
-  //   if (detailProduct && detailProduct.id) {
-  //     // Kiểm tra xem cùng id
-  //     const isProductInList = itemProductOrdered.some(product => product.id === detailProduct.id);
-  //     if (!isProductInList) {
-  //       setItemProductOrdered((prevItemProductOrdered) => [
-  //         ...prevItemProductOrdered,
-  //         detailProduct,
-  //       ]);
-  //     }
-  //   }
-  // }, [detailProduct, itemProductOrdered]);
-
   useEffect(() => {
     if (orderId) {
       dispatch(getDetailOrder(orderId));
@@ -175,7 +141,7 @@ const DetailOrder = () => {
                       </div>
                     ) : ""}
 
-                    {data?.staffName && (
+                    {data?.staff && (
                       <div className='flex space-x-3'>
                         <UserIcon className='w-7 h-7 fill-gray-500' />
                         <p>Nhân viên sửa chữa</p>
@@ -213,9 +179,9 @@ const DetailOrder = () => {
                           </option>
                         </select>
                       ) : ""}
-                    {data.staffName ? (
+                    {data.staff ? (
                       <div>
-                        <p>{data?.staffName}</p>
+                        <p>{data?.staff.fullName}</p>
                       </div>
                     ):""}
 
@@ -428,7 +394,7 @@ const DetailOrder = () => {
 
             <RepairProduct
               dataProduct={data?.orderDetails}
-              staffId={data?.staffId}
+              staffId={data?.staff?.accountId}
               idOrder={data?.id}
               isVisible={showUpdateProduct}
               onClose={() => setShowUpdateProduct(false)}

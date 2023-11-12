@@ -57,11 +57,15 @@ const HistoryOrder = () => {
     }, [addSearch, chooseSelect, dispatch, paginationNumber])
 
     useEffect(() => {
-        
-            setOrderData(orderPaidInfor.data)
-        setTimeout(() => {
-            setIsLoading(false);
-        }, 500)
+        const isAnyPendingOrder = orderPaidInfor?.data?.every((item) => item.status === statusOrder.Paid);
+        if (isAnyPendingOrder && orderPaidInfor?.data) {
+            setOrderData(orderPaidInfor.data);
+            setTimeout(() => {
+                setIsLoading(false);
+            }, 500);
+        } else {
+            setOrderData([]);
+        }
     }, [orderPaidInfor])
 
     return (

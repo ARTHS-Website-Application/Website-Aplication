@@ -1,54 +1,44 @@
-import { ChevronRightIcon, MagnifyingGlassIcon, PhotoIcon, XCircleIcon } from '@heroicons/react/24/solid'
+import { ChevronRightIcon, PhotoIcon } from '@heroicons/react/24/solid'
 import { useEffect, useState } from 'react';
 import * as React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import Description from "@/components/Description";
-import { FilterProductNotService } from '@/actions/product';
-import { itemProduct, item, selectorProduct } from '@/types/actions/product';
 import { postCreateService } from '@/actions/service';
 import { Link } from 'react-router-dom';
+import { itemWarrantyProduct, selectorWarrantyProduct } from '@/types/actions/listWarranty';
+import { dataDiscount, itemDiscount, selectorDiscount } from '@/types/actions/listDiscout';
+import { WarrantyProduct } from '@/actions/product';
+import { getDiscountChoose } from '@/actions/discount';
+import { Select, Option } from '@material-tailwind/react';
+import LoadingPage from '@/components/LoadingPage';
 const CreateService = () => {
   const dispatch = useDispatch();
-  const productInfor: itemProduct<string, number> = useSelector((state: selectorProduct<string, number>) => state.productReducer.productInfor);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const warrantyChoose: itemWarrantyProduct<string, number>[] = useSelector((state: selectorWarrantyProduct<string, number>) => state.warrantyReducer.warrantyProduct);
+  const discountProduct: dataDiscount<string, number> = useSelector((state: selectorDiscount<string, number>) => state.discountReducer.discountInfor);
+  const [dataDiscount, setDataDiscount] = useState<itemDiscount<string, number>[]>([])
   const [nameProduct, setNameProduct] = useState<string>('');
   const [priceProduct, setPriceProduct] = useState<number>(0);
   const [descriptionProduct, setDescriptionProduct] = useState<string>('');
+  const [duration, setDuration] = useState<number>(0);
+  const [reminderInterval, setReminderInterval] = useState<number>(0);
+  const [addDiscount, setAddDiscount] = useState<string>("");
+  const [addWarranty, setAddWarranty] = useState<number>(0);
   const [images, setImages] = useState<File[]>([]);
-  const [addSearch, setAddSearch] = useState<string>("")
-  const [searchTimeout, setSearchTimeout] = useState<number | null>(null);
-  const [checkedProduct, setCheckedProduct] = useState<item<string,number>[]>([]);
-  const [addProduct, setAddProduct] = useState<string[]>([]);
-  const [dataProduct, setDataProduct] = useState<item<string, number>[]>([])
-  console.log(addProduct)
+
   useEffect(() => {
-    const data = {
-      pageSize: 50,
-      noRepairService: true,
-    }
-    dispatch(FilterProductNotService(data))
+    dispatch(WarrantyProduct());
+    dispatch(getDiscountChoose(50));
+    setIsLoading(true)
   }, [dispatch])
   useEffect(() => {
-    if (productInfor.data)
-      setDataProduct(productInfor.data)
-  }, [productInfor.data])
-
-  const itemSearch = dataProduct.filter((item)=> {
-    return item.name.toLowerCase().includes(addSearch.toLowerCase());
-  })  
-  useEffect(() => {
-    const matched = dataProduct?.filter((item) => addProduct.includes(item.id));
-    setCheckedProduct(matched);
-  }, [addProduct, dataProduct]);
-
-  const handleProductChange = (value: string) => {
-    if (addProduct.includes(value)) {
-      setAddProduct(addProduct.filter(item => item !== value));
-    } else {
-      setAddProduct([...addProduct, value]);
+    if (discountProduct?.data?.length > 0) {
+      setDataDiscount(discountProduct.data)
+      setTimeout(() => {
+        setIsLoading(false)
+      }, 500)
     }
-  };
-
-
+  }, [discountProduct])
   const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const fileList = event.target.files;
     if (fileList) {
@@ -72,177 +62,234 @@ const CreateService = () => {
   const handleDescription = (value: string) => {
     setDescriptionProduct(value);
   }
+  const handleAddWarranty = (e: string | undefined) => {
+    if (e) {
+      setAddWarranty(parseInt(e))
+    }
+  }
+
+  const handleAddDiscount = (e: string | undefined) => {
+    if (e) {
+      setAddDiscount(e)
+    }
+  }
+
+  const handleReminderInterval = (e: string | undefined) => {
+    if (e) {
+      setReminderInterval(parseInt(e))
+    }
+  }
 
 
   const handleCreateService = () => {
     const dataCreate = {
       name: nameProduct,
       price: priceProduct,
-      motobikeProductIds:addProduct,
       description: descriptionProduct,
+      duration: duration,
+      reminderInterval: reminderInterval,
+      discountId: addDiscount,
+      warrantyDuration: addWarranty,
       images: images
     }
-    if(nameProduct && priceProduct && addProduct && descriptionProduct && images){
+    if (nameProduct && priceProduct && descriptionProduct && images && addWarranty) {
       dispatch(postCreateService(dataCreate))
-    }else{
-      alert('Xin đừng bỏ trống')
+    } else {
+      alert('Xin đừng bỏ trống ở những ký hiệu *')
     }
   }
-  const handleClear=()=>{
+  const handleClear = () => {
     setNameProduct('');
     setPriceProduct(0);
     setDescriptionProduct('');
-    setAddProduct([])
     setImages([])
   }
   return (
     <div>
-      <div className="flex space-x-3 items-center text-[21px] font-semibold">
-      <Link to="/manage-services" className="hover:text-main">Danh sách dịch vụ</Link>
-      <ChevronRightIcon className="w-5 h-5" />
-      <h1 className=" text-main">Tạo mới dịch vụ</h1>
-      </div>
-      <div className="flex justify-center pt-5">
-        <div className="bg-white w-[75%] p-5 rounded-md">
-          <p className="text-[21px] font-semibold">Thông tin dịch vụ</p>
-          <div className="w-full flex justify-between items-center px-3 py-5 text-[#6B7280] text-[19px] ">
-            <div className="space-y-3">
-              <p className="pl-1">Tên</p>
-              <input type="text"
-                value={nameProduct}
-                placeholder='Tên dịch vụ'
-                className='outline-none  w-[700px] p-2 border-2 border-[#E5E7EB] bg-gray-50 rounded-xl '
-                onChange={(e) => setNameProduct(e.target.value)}
-              />
-            </div>
-            <div className=" space-y-3">
-              <p>Giá tiền</p>
-              <div className="flex items-center space-x-2">
-                <input type="number"
-                  min={1}
-                  value={priceProduct === 0 ? "" : priceProduct}
-                  placeholder="Nhập số tiền"
-                  className='outline-none p-2 border-2 border-[#E5E7EB] bg-gray-50 rounded-xl'
-                  onChange={(e) => setPriceProduct(parseInt(e.target.value))}
-                />
-                <p>VNĐ</p>
-              </div>
-            </div>
+      {isLoading ? (
+        <LoadingPage />
+      ) : (
+        <div>
+          <div className="flex space-x-3 items-center text-[21px] font-semibold">
+            <Link to="/manage-services" className="hover:text-main">Danh sách dịch vụ</Link>
+            <ChevronRightIcon className="w-5 h-5" />
+            <h1 className=" text-main">Tạo mới dịch vụ</h1>
           </div>
-        </div>
-      </div>
-            {/*add product */}
-            <div className='flex justify-center pt-5'>
-          <div className='bg-white w-[75%] p-5 rounded-md'>
-            <p className='text-[21px] font-semibold pb-3'>Thêm sản phẩm (các sản phẩm chưa có dịch vụ) </p>
-            {checkedProduct?.length>0 && (
-              <div className='overflow-y-scroll h-[10vh] px-3 py-4 space-y-3 mb-3'>
-                {checkedProduct?.map((item,index)=>(
-                <div key={index} className='flex justify-between items-center'>
-                  <div className='flex items-center space-x-2'>
-                    <img src={item?.images[0].imageUrl} className='w-11 h-11'/>
-                    <label className='text-[19px]'>{item?.name}</label>
+          <div className="flex justify-center pt-5">
+            <div className="bg-white w-[75%] p-5 rounded-md">
+              <p className="text-[21px] font-semibold">Thông tin dịch vụ</p>
+              <div className="w-full flex justify-between items-center px-3 py-5 text-[#6B7280] text-[19px] ">
+                <div className="space-y-3">
+                  <div className="flex space-x-1">
+                    <p>Tên dịch vụ</p>
+                    <p className="text-red-800">*</p>
                   </div>
-                  <XCircleIcon className='w-7 h-7 cursor-pointer fill-blue-gray-400 hover:fill-red-500' 
-                  onClick={() => handleProductChange(item.id)}
-                  />
-                </div>
-              ))}
-              </div>
-            )}
-            
-            <div className="flex px-3 space-x-3 items-center border-2 border-[#E0E2E7] bg-[#E0E2E7] rounded-xl">
-                  <MagnifyingGlassIcon className="w-5 h-5" />
                   <input type="text"
-                    placeholder='Tìm kiếm dòng xe'
-                    className='py-3 w-[80%] text-[16px] outline-none bg-[#E0E2E7]'
-                    onChange={(e) => {
-                      if (searchTimeout) {
-                        clearTimeout(searchTimeout);
-                      }
-                      const newTimeSearch = window.setTimeout(() => {
-                        setAddSearch(e.target.value);
-                      }, 800);
-                      setSearchTimeout(newTimeSearch);
-                    }}
+                    value={nameProduct}
+                    placeholder='Tên dịch vụ'
+                    className='outline-none  w-[700px] p-2 border-2 border-[#E5E7EB] bg-gray-50 rounded-xl '
+                    onChange={(e) => setNameProduct(e.target.value)}
                   />
                 </div>
-                <div className="overflow-y-scroll h-[30vh] px-3 py-1">
-                  {itemSearch?.length > 0
-                    ? itemSearch?.map((item, index) => (
-                      <div className='flex space-x-3 space-y-3 items-center' key={index}>
-                        <div className='pt-3'>
-                        <input type="checkbox"
-                          className='w-5 h-5'
-                          checked={addProduct.includes(item?.id)}
-                          onChange={() => handleProductChange(item?.id)}
-                        />
-                        </div>
-                        
-                        <img src={item?.images[0].imageUrl} className='w-14 h-14' />
-                        <label>{item?.name}</label>
-                      </div>
-                    )) : (
-                      <div className="flex justify-center items-center">
-                        <p>Không tìm thấy sản phẩm</p>
-                      </div>
-                    )}
-                </div>
-
-          </div>
-        </div>
-      {/* Ảnh */}
-      <div className=" flex justify-center pt-7">
-        <div className="bg-white w-[75%] min-h-[300px] rounded-md p-5 space-y-3">
-          <p className="text-[20px]">Hình ảnh</p>
-          <div className="bg-[#F9F9FC] border-dashed border-2 border-[#E0E2E7] py-5 flex flex-col justify-center items-center">
-            {images.length > 0
-              ? (
-                <div className="flex justify-center items-center space-x-7 pb-5">
-                  {images.map((image, index) => (
-                    <div key={index} className="relative">
-                      <img src={URL.createObjectURL(image)} alt="Uploaded" className="h-32 object-cover border-2 border-[#E0E2E7]" />
-                      <button onClick={() => handleRemoveImage(index)} className="absolute right-1 top-1 text-gray-400 w-5 h-5 bg-white rounded-full flex justify-center items-center">x</button>
-                    </div>
-                  ))}
-                </div>
-              )
-              : (
-                <div className="flex flex-col justify-center items-center py-4">
-                  <div className="rounded-full w-[50px] h-[50px] bg-[#DEDEFA] border-4 border-[#EFEFFD] flex justify-center items-center">
-                    <PhotoIcon className="w-7 h-9 fill-[#5C59E8]" />
+                <div className=" space-y-3">
+                  <div className="flex space-x-1">
+                    <p>Giá tiền(VNĐ)</p>
+                    <p className="text-red-800">*</p>
                   </div>
-                  <p className="text-[#858D9D]">Chưa có ảnh được thêm vào</p>
+                  <div className="flex items-center space-x-2">
+                    <input type="number"
+                      min={1}
+                      value={priceProduct === 0 ? "" : priceProduct}
+                      placeholder="Nhập số tiền"
+                      className='outline-none p-2 border-2 border-[#E5E7EB] bg-gray-50 rounded-xl'
+                      onChange={(e) => setPriceProduct(parseInt(e.target.value))}
+                    />
+                  </div>
                 </div>
-              )}
-            <label htmlFor="fileInput" className="relative cursor-pointer bg-[#DEDEFA] text-[#5C59E8] font-semibold px-4 py-2 rounded hover:bg-[#9b9ad7]">
-              <span className="absolute top-0 left-0 right-0 bottom-0 opacity-0 z-10 cursor-pointer"></span>
-              Thêm ảnh
-            </label>
-            <input
-              type="file"
-              multiple
-              accept="image/*"
-              className="hidden"
-              id="fileInput"
-              onChange={handleImageUpload}
-            />
+              </div>
+              <div className="flex justify-between py-5 text-[#6B7280] text-[19px] px-3">
+                <div className="flex flex-col space-y-3">
+                  <div className="flex space-x-1">
+                    <p>Thời gian làm dịch vụ</p>
+                    <p className="text-red-800">*</p>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <input type="number"
+                      min={1}
+                      value={duration === 0 ? "" : duration}
+                      placeholder="Nhập số phút"
+                      className='outline-none p-2 border-2 border-[#E5E7EB] bg-gray-50 rounded-xl'
+                      onChange={(e) => setDuration(parseInt(e.target.value))}
+                    />
+                  </div>
+
+                </div>
+                <div className="flex flex-col space-y-3">
+                  <p className="pl-1">Thời gian nhắc nhở</p>
+                  <Select
+                    size="lg"
+                    label="Lựa chọn tháng"
+                    className="text-[20px] w-[250px] h-[50px] bg-gray-50"
+                    onChange={handleReminderInterval}
+                  >
+                    {
+                      Array.from({ length: 12 }, (_, index) => index + 1).map((value, index) => (
+                        <Option
+                          value={value.toString()}
+                          key={index}
+                          className="text-[18px]"
+                        >{value} tháng</Option>
+                      ))
+                    }
+                  </Select>
+                </div>
+              </div>
+              <div className="flex justify-between py-5 text-[#6B7280] text-[19px] px-3">
+                <div className="flex flex-col space-y-3">
+                  <div className="flex space-x-1">
+                    <p>Thời gian bảo hành </p>
+                    <p className="text-red-800">*</p>
+                  </div>
+                  <div className="w-[250px] text-[18px]">
+                    <Select
+                      className="px-3 h-[50px] bg-gray-50"
+                      label="Chọn thời gian bảo hành"
+                      onChange={handleAddWarranty}
+                    >
+                      {warrantyChoose && warrantyChoose.length > 0
+                        ? warrantyChoose?.map((item, index) => (
+                          <Option
+                            value={item?.duration.toString()}
+                            key={index}
+                            className="text-[18px]"
+                          >{item?.duration} tháng</Option>
+                        ))
+                        : ""
+                      }
+                    </Select>
+                  </div>
+
+                </div>
+                <div className="flex flex-col space-y-3">
+                  <p className="pl-1">Khuyến mãi</p>
+                  <Select
+                    size="lg"
+                    label="Lựa chọn khuyến mãi"
+                    className="text-[20px] w-[250px] h-[50px] bg-gray-50"
+                    onChange={handleAddDiscount}
+                  >
+                    {dataDiscount?.length > 0
+                      ? dataDiscount?.map((item, index) => (
+                        <Option
+                          value={item.id}
+                          key={index}
+                          className="text-[18px]"
+                        >{item.title}</Option>
+                      ))
+                      : ""
+                    }
+                  </Select>
+                </div>
+              </div>
+            </div>
+          </div>
+          {/* Ảnh */}
+          <div className=" flex justify-center pt-7">
+            <div className="bg-white w-[75%] min-h-[300px] rounded-md p-5 space-y-3">
+            <div className="flex space-x-1">
+                    <p className='text-[20px]'>Hình ảnh</p>
+                    <p className="text-red-800">*</p>
+                  </div>
+              <div className="bg-[#F9F9FC] border-dashed border-2 border-[#E0E2E7] py-5 flex flex-col justify-center items-center">
+                {images.length > 0
+                  ? (
+                    <div className="flex justify-center items-center space-x-7 pb-5">
+                      {images.map((image, index) => (
+                        <div key={index} className="relative">
+                          <img src={URL.createObjectURL(image)} alt="Uploaded" className="h-32 object-cover border-2 border-[#E0E2E7]" />
+                          <button onClick={() => handleRemoveImage(index)} className="absolute right-1 top-1 text-gray-400 w-5 h-5 bg-white rounded-full flex justify-center items-center">x</button>
+                        </div>
+                      ))}
+                    </div>
+                  )
+                  : (
+                    <div className="flex flex-col justify-center items-center py-4">
+                      <div className="rounded-full w-[50px] h-[50px] bg-[#DEDEFA] border-4 border-[#EFEFFD] flex justify-center items-center">
+                        <PhotoIcon className="w-7 h-9 fill-[#5C59E8]" />
+                      </div>
+                      <p className="text-[#858D9D]">Chưa có ảnh được thêm vào</p>
+                    </div>
+                  )}
+                <label htmlFor="fileInput" className="relative cursor-pointer bg-[#DEDEFA] text-[#5C59E8] font-semibold px-4 py-2 rounded hover:bg-[#9b9ad7]">
+                  <span className="absolute top-0 left-0 right-0 bottom-0 opacity-0 z-10 cursor-pointer"></span>
+                  Thêm ảnh
+                </label>
+                <input
+                  type="file"
+                  multiple
+                  accept="image/*"
+                  className="hidden"
+                  id="fileInput"
+                  onChange={handleImageUpload}
+                />
+              </div>
+            </div>
+          </div>
+          <div className="pt-7">
+            <Description dataValue={descriptionProduct} handleDescription={handleDescription} />
+          </div>
+
+          {/* Tạo */}
+          <div className="py-5 flex flex-row-reverse space-x-reverse space-x-5">
+            <button className='w-[200px] h-[60px] text-center bg-slate-300 text-[20px] rounded-lg text-white font-semibold bg-gray-300 hover:bg-green-600'
+              onClick={handleCreateService}
+            >Tạo dịch vụ</button>
+            <button className='w-[200px] h-[60px] text-center bg-slate-300 text-[20px] rounded-lg text-white font-semibold bg-gray-300 hover:bg-red-700'
+              onClick={handleClear}
+            >Hủy</button>
           </div>
         </div>
-      </div>
-      <div className="pt-7">
-        <Description dataValue={descriptionProduct} handleDescription={handleDescription} />
-      </div>
-
-      {/* Tạo */}
-      <div className="py-5 flex flex-row-reverse space-x-reverse space-x-5">
-        <button className='w-[200px] h-[60px] text-center bg-slate-300 text-[20px] rounded-lg text-white font-semibold bg-gray-300 hover:bg-green-600'
-          onClick={handleCreateService}
-        >Tạo dịch vụ</button>
-        <button className='w-[200px] h-[60px] text-center bg-slate-300 text-[20px] rounded-lg text-white font-semibold bg-gray-300 hover:bg-red-700'
-        onClick={handleClear}
-        >Hủy</button>
-      </div>
+      )}
     </div>
   )
 }

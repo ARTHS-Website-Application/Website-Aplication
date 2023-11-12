@@ -1,8 +1,11 @@
 import { getOnlineOrder } from "@/actions/onlineOrder";
 import LoadingPage from "@/components/LoadingPage";
 import Pagination from "@/components/Pagination";
+import SearchFilter from "@/components/SearchFilter";
+import SelectFilterOrder from "@/components/SelectFilterOrder";
 import TableOnlineOrder from "@/components/teller/TableOnlineOrder";
 import { itemOnlineOrder, listOnlineOrder, selectorOnlineOrder } from "@/types/actions/listOnlineOrder";
+import { statusOrder } from "@/types/typeOrder";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
@@ -12,7 +15,8 @@ const ListOnlineOrder = () => {
     const onlineOrderInfo: listOnlineOrder<string, number> = useSelector((state: selectorOnlineOrder<string, number>) => state.onlineOrderReducer.onlineOrderInfo);
     const [onlineOrderData, setOnlineOrderData] = useState([] as itemOnlineOrder<string, number>[]);
     const [paginationNumber, setPaginationNumber] = useState<number>(0);
-
+    const [addSearch, setAddSearch] = useState<string>("");
+    const [chooseSelect, setChooseSelect] = useState<string>("name");
 
     useEffect(() => {
         if (onlineOrderInfo.pagination?.totalRow) {
@@ -21,36 +25,74 @@ const ListOnlineOrder = () => {
     }, [onlineOrderInfo.pagination?.totalRow]);
 
     useEffect(() => {
-        const filters = {
-            orderStatus: 'Chờ xử lý',
-        };
-        dispatch(getOnlineOrder(paginationNumber, filters));
-        setIsLoading(true);
-    }, [dispatch, paginationNumber])
+        if (addSearch !=="") {
+            if (chooseSelect === "name") {
+                const data = {
+                    customerName: addSearch,
+                    customerPhone: "",
+                    number: paginationNumber,
+                    orderStatus: statusOrder.Processing,
+                }
+                dispatch(getOnlineOrder(data))
+                setTimeout(() => {
+                    setIsLoading(true);
+                }, 200)
+            } else if (chooseSelect === "sdt") {
+                const data = {
+                    customerName: "",
+                    customerPhone: addSearch,
+                    number: paginationNumber,
+                    orderStatus: statusOrder.Processing,
+                }
+                dispatch(getOnlineOrder(data))
+                setTimeout(() => {
+                    setIsLoading(true);
+                }, 200)
+            }
+        } else {
+            const data = {
+                customerName: "",
+                customerPhone: "",
+                number: paginationNumber,
+                orderStatus: statusOrder.Processing,
+            }
+            dispatch(getOnlineOrder(data));
+            setTimeout(() => {
+                setIsLoading(true);
+            }, 200)
+        }
+    }, [addSearch, chooseSelect, dispatch, paginationNumber])
 
     useEffect(() => {
         setOnlineOrderData(onlineOrderInfo.data)
-        
         setTimeout(() => {
             setIsLoading(false);
         }, 1500)
     }, [onlineOrderInfo.data])
 
-    
+
 
     return (
         <div className="w-full min-h-full">
             <h1 className="font-semibold text-[24px]">Danh sách đơn hàng</h1>
-            <div className="pt-3"></div>
-    
+            <div className="py-3 flex space-x-1">
+                <SelectFilterOrder setChooseSelect={setChooseSelect} setAddSearch={setAddSearch} />
+                <SearchFilter place={'Tìm kiếm đơn hàng'} setAddSearch={setAddSearch} />
+            </div>
             {isLoading ? (
                 <LoadingPage />
             ) : (
                 <div>
-                    <div className={`${onlineOrderData?.length < 12 ? "h-[70vh]" : ""}`}>
-                        <TableOnlineOrder data={onlineOrderData} />
-                    </div>
-    
+                    {onlineOrderData?.length > 0
+                            ? (<div className={`${onlineOrderData?.length < 12 ? "h-[67vh]" : ""}`}>
+                                <TableOnlineOrder data={onlineOrderData} />
+                            </div>)
+                            : (
+                                <div className='flex justify-center items-center h-[67vh]'>
+                                    <p className='font-semibold text-[30px]'>Không tìm thấy đơn hàng</p>
+                                </div>
+                            )}
+
                     <div className="pt-3">
                         <Pagination
                             totalPosts={onlineOrderInfo.pagination?.totalRow}

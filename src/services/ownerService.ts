@@ -20,9 +20,9 @@ export class Private {
         const axiosPrivate = userAxiosPrivate();
         return await axiosPrivate.get(`/motobike-products?noRepairService=${data.noRepairService}&pageSize=${data.pageSize}`)
     }
-    getDiscountCreate = async () => {
+    getDiscountCreate = async (pageSize:number) => {
         const axiosPrivate = userAxiosPrivate();
-        return await axiosPrivate.get(`/discounts`)
+        return await axiosPrivate.get(`/discounts?pageSize=${pageSize}`)
     }
 
     

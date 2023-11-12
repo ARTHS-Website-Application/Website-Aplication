@@ -1,6 +1,5 @@
 import { Select, Option } from "@material-tailwind/react";
 import { CategoryProduct, WarrantyProduct, getVehicleProduct, postCreateProduct } from '@/actions/product';
-import { getServicesChoose } from '@/actions/service';
 import { itemCategoryProduct, selectorCategoryProduct } from '@/types/actions/categoryPr';
 import { ChevronDownIcon, MagnifyingGlassIcon, PhotoIcon } from '@heroicons/react/24/solid'
 import { useEffect, useState } from 'react';
@@ -8,19 +7,20 @@ import * as React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { itemVehicleProduct, selectorVehicleProduct } from "@/types/actions/listVehicle";
 import { getDiscountChoose } from "@/actions/discount";
-import { itemDiscount, selectorDiscount } from "@/types/actions/listDiscout";
+import { dataDiscount, itemDiscount, selectorDiscount } from "@/types/actions/listDiscout";
 import Description from "@/components/Description";
 import { itemWarrantyProduct, selectorWarrantyProduct } from "@/types/actions/listWarranty";
-import { typeService } from "@/types/typeService";
+import LoadingPage from "@/components/LoadingPage";
 
 const CreateProduct = () => {
   const [showVehicle, setShowVehicle] = useState<boolean>(false);
+  const [isLoading,setIsLoading] = useState<boolean>(false);
   const dispatch = useDispatch();
   const categoryProduct: itemCategoryProduct<string>[] = useSelector((state: selectorCategoryProduct<string>) => state.categoryProductReducer.categoryProduct);
   const warrantyChoose: itemWarrantyProduct<string, number>[] = useSelector((state: selectorWarrantyProduct<string, number>) => state.warrantyReducer.warrantyProduct);
-  const discountProduct: itemDiscount<string, number>[] = useSelector((state: selectorDiscount<string, number>) => state.discountReducer.discountInfor);
+  const discountProduct: dataDiscount<string, number> = useSelector((state: selectorDiscount<string, number>) => state.discountReducer.discountInfor);
+  const [dataDiscount,setDataDiscount] = useState<itemDiscount<string,number>[]>([])
   const vehicleProduct: itemVehicleProduct<string>[] = useSelector((state: selectorVehicleProduct<string>) => state.vehicleProductReducer.vehicleProduct);
-
   const [nameProduct, setNameProduct] = useState<string>('');
   const [quantityProduct, setQuantityProduct] = useState<number>(1);
   const [priceProduct, setPriceProduct] = useState<number>(0);
@@ -35,13 +35,22 @@ const CreateProduct = () => {
   const [addSearch, setAddSearch] = useState<string>("")
   const [searchTimeout, setSearchTimeout] = useState<number | null>(null);
   const [dataVehicle, setDataVehicle] = useState<itemVehicleProduct<string>[]>([]);
+  useEffect(()=>{
+    if(discountProduct?.data?.length>0){
+      setDataDiscount(discountProduct.data)
+      setTimeout(()=>{
+        setIsLoading(false)
+      },500)
+    }
+    
+  },[discountProduct])
   useEffect(() => {
-    if (vehicleProduct) {
+    if (vehicleProduct?.length>0) {
       setDataVehicle(vehicleProduct)
     }
   }, [vehicleProduct])
-  const itemSearch = dataVehicle.filter((item) => {
-    return item.vehicleName.toLowerCase().includes(addSearch.toLowerCase());
+  const itemSearch = dataVehicle?.filter((item) => {
+    return item?.vehicleName?.toLowerCase()?.includes(addSearch?.toLowerCase());
   })
   useEffect(() => {
     const matched = vehicleProduct?.filter((vehicle) => addVehicle.includes(vehicle.id));
@@ -50,14 +59,9 @@ const CreateProduct = () => {
   useEffect(() => {
     dispatch(CategoryProduct());
     dispatch(WarrantyProduct());
-    dispatch(getDiscountChoose());
-
-    const dataService = {
-      status: typeService.Active,
-      pageSize: 50
-    }
-    dispatch(getServicesChoose(dataService));
+    dispatch(getDiscountChoose(50));
     dispatch(getVehicleProduct())
+    setIsLoading(true);
   }, [dispatch, addSearch])
 
   const handleShowVehicle = () => {
@@ -148,6 +152,10 @@ const CreateProduct = () => {
   }
   return (
     <div>
+      {isLoading?(
+        <LoadingPage/>
+      ):(
+        <div>
       <h1 className="text-[25px] font-semibold text-main">Tạo mới sản phẩm</h1>
       <div className="flex space-x-[3%] pt-5">
         <div className="bg-white w-[60%] p-5 rounded-md">
@@ -208,7 +216,7 @@ const CreateProduct = () => {
                   label="Lựa thời gian bảo hành"
                   onChange={handleAddWarranty}
                 >
-                  {warrantyChoose
+                  {warrantyChoose && warrantyChoose.length > 0
                     ? warrantyChoose?.map((item, index) => (
                       <Option
                         value={item?.id}
@@ -228,8 +236,8 @@ const CreateProduct = () => {
                   className="text-[20px] w-[250px] h-[50px] bg-gray-50"
                   onChange={handleAddDiscount}
                 >
-                  {discountProduct
-                    ? discountProduct.map((item, index) => (
+                  {dataDiscount
+                    ? dataDiscount?.map((item, index) => (
                       <Option
                         value={item.id}
                         key={index}
@@ -419,6 +427,8 @@ const CreateProduct = () => {
           onClick={handleClear}
         >Hủy</button>
       </div>
+    </div>
+      )}
     </div>
   )
 }

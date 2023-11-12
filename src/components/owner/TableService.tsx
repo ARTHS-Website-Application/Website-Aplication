@@ -100,8 +100,8 @@ const TableService = ({ productData, setSortAsc, setSortValue,setSortAscPrice }:
 
                             {showDivIndex === index && (
                                 <div className="absolute flex flex-col items-center bg-white shadow-lg rounded-lg w-[140px] right-0 space-y-3 py-2 font-semibold text-[#667085]">
-                                    <Link to={item.id} className="hover:text-main">Chi tiết</Link>
-                                    <Link to={`update-service/${item.id}`} className='flex items-center space-x-1 hover:text-main hover:stroke-main'
+                                    <Link to={`/manage-services/${item.id}`} className="hover:text-main">Chi tiết</Link>
+                                    <Link to={`/manage-services/update-service/${item.id}`} className='flex items-center space-x-1 hover:text-main hover:stroke-main'
                                     >
                                         <PencilIcon className="w-5 h-5" />
                                         <p> Cập nhật</p>

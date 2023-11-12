@@ -37,6 +37,11 @@ import DetailService from './pages/owner/detailService/DetailService';
 import ListNotProduct from './pages/owner/listNotProduct/ListNotProduct';
 import ListAllOrder from './pages/teller/listAllOrder/ListAllOrder';
 import ListWaitPaidOrder from './pages/teller/listWaitPaidOrder/ListWaitPaidOrder';
+import ListNotService from './pages/owner/listNotService/ListNotService';
+import ListOrderConfirm from './pages/teller/manageOnlineOrder/ListOrderConfirm';
+import ListOrderTransport from './pages/teller/manageOnlineOrder/ListOrderTransport';
+import ListOrderFinished from './pages/teller/manageOnlineOrder/ListOrderFinished';
+import ListOrderCanceled from './pages/teller/manageOnlineOrder/ListOrderCanceled';
 
 
 const ROLES = {
@@ -77,17 +82,22 @@ function App() {
               <Route path="wait-paid-order" element={<ListWaitPaidOrder />} />
               <Route path="history-order" element={<HistoryOrder />}/>
               </Route>
-              <Route path=":orderId" element={<DetailOrder />} />
+              <Route path="online-order" element={<ManageOnlineOrder/>}>
+              <Route path="list-order" element={<ListOnlineOrder/>}/>
+              <Route path="list-order-confirm" element={<ListOrderConfirm/>}/>
+              <Route path="list-order-transport" element={<ListOrderTransport/>}/>
+              <Route path="list-order-finish" element={<ListOrderFinished/>}/>
+              <Route path="list-order-canceled" element={<ListOrderCanceled/>}/>
+            </Route>
+            <Route path="online/:orderId" element={<DetailOnlineOrder/>} />
+            <Route path=":orderId" element={<DetailOrder />} />
             </Route>
             <Route path="manage-booking" element={<ManageBooking />}>
               <Route path="list-booking" index element={<ListBooking />} />
               <Route path="wait-for-confirm-booking" element={<WaitForConfirmBooking />} />
               <Route path="history-booking" element={<HistoryBooking />} />
             </Route>
-            <Route path="manage-online-order" element={<ManageOnlineOrder/>}>
-              <Route path="list-order" index element={<ListOnlineOrder/>}/>
-              <Route path=":orderId" element={<DetailOnlineOrder/>} />
-            </Route>
+            
           </Route>
           {/* Page của Owner */}
           <Route element={<RequireAuth allowedRoles={ROLES.Owner} />}>
@@ -105,12 +115,11 @@ function App() {
             <Route path="manage-orders-owner" element={<ManageOrderOwner />} />
             <Route path="manage-discounts" element={<ManageDiscount />} />
             <Route path="manage-services" element={<ManageService />}>
-              <Route index element={<ListService />} />
+              <Route path='list-service' element={<ListService />} />
+              <Route path='list-not-service' element={<ListNotService />} />
               <Route path="create-service" element={<CreateService />} />
               <Route path=":serviceId" element={<DetailService />} />
               <Route path="update-service/:serviceId" element={<UpdateService />} />
-
-
             </Route>
           </Route>
 

@@ -2,7 +2,7 @@ import { getDetailOrderFailed, getDetailOrderSuccess, getOrderFailed, getOrderPa
 import {listOrder, detailOrder, updateUserOrder, updateProductOrdered, payWithCash, listOrderPaid } from '@/constants/mainConstants';
 import { orderService } from '@/services/orderService';
 import { sagaDetailOrder } from '@/types/actions/detailOrder';
-import { payloadFilterOrder, payloadFilterOrderPaid, payloadOrder, payloadOrderPaid } from '@/types/actions/listOrder';
+import {payloadFilterOrderPaid, payloadOrder, payloadOrderPaid } from '@/types/actions/listOrder';
 import { payByCash, payloadItemCustomer, payloadItemStaffProduct } from '@/types/actions/updateCustomerOrder';
 import { AxiosResponse } from 'axios';
 import { call, put, takeEvery } from 'redux-saga/effects';
@@ -11,22 +11,6 @@ import { call, put, takeEvery } from 'redux-saga/effects';
 function* getOrder(payload:payloadOrder<string,number>){
     try {
         const resp: AxiosResponse = yield call(orderService.getOrder,payload.number,payload.excludeOrderStatus);
-        const { status, data } = resp;
-        if (data && status === 200) {
-            yield put(getOrderSuccess(data));
-        } else {
-            yield put(getOrderFailed(data));
-        }
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    } catch (error: any) {
-        const msg: string = error.message;
-        yield put(getOrderFailed(msg));
-    }
-}
-
-function* getFilterOrder(payload:payloadFilterOrder<string,number>){
-    try {
-        const resp: AxiosResponse = yield call(orderService.getFilterOrder,payload.data);
         const { status, data } = resp;
         if (data && status === 200) {
             yield put(getOrderSuccess(data));
@@ -138,7 +122,6 @@ function* updateStatusOrder(payload:payByCash<string>){
 
 export function* lookupOrder() {
     yield takeEvery(listOrder.LIST_ORDER , getOrder);
-    yield takeEvery(listOrder.LIST_FILTER_ORDER , getFilterOrder);
     yield takeEvery(listOrderPaid.LIST_ORDER_PAID , getOrderPaid);
     yield takeEvery(listOrderPaid.LIST_FILTER_ORDER_PAID , getFilterOrderPaid);
     yield takeEvery(detailOrder.DETAIL_ORDER , getDetailOrder);

@@ -1,8 +1,9 @@
 import { getDetailOnlineOrder } from "@/actions/onlineOrder";
 import Loading from '@/components/LoadingPage';
-import { itemDetails, itemOnlineOrder, selectorDetailOnlineOrder } from "@/types/actions/listOnlineOrder"
+import { inStoreOrderDetails } from "@/types/actions/detailOrder";
+import { itemOnlineOrder, selectorDetailOnlineOrder } from "@/types/actions/listOnlineOrder"
 import { statusOrder } from "@/types/typeOrder";
-import { ArrowPathRoundedSquareIcon, CalendarDaysIcon, ChevronRightIcon, DevicePhoneMobileIcon, UserIcon } from "@heroicons/react/24/solid";
+import { ArrowPathRoundedSquareIcon, CalendarDaysIcon, ChevronRightIcon, DevicePhoneMobileIcon, MapPinIcon, UserIcon } from "@heroicons/react/24/solid";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux"
 import { Link, useParams } from "react-router-dom";
@@ -13,11 +14,6 @@ const DetailOnlineOrder = () => {
   const detailOnlineOrder: itemOnlineOrder<string, number> = useSelector((state: selectorDetailOnlineOrder<string, number>) => state.onlineOrderDetailReducer.onlineOrderDetail);
   const [data, setData] = useState<itemOnlineOrder<string, number>>();
   const [isLoading, setIsLoading] = useState<boolean>(false);
-
-  // const detailOnlineOrder = useSelector((state: selectorDetailOnlineOrder<string,number>) => {
-  //   console.log('Current state:', state);
-  //   return state.onlineOrderDetailReducer.onlineOrderDetail;
-  // });
 
   console.log('id', orderId);
   useEffect(() => {
@@ -37,9 +33,9 @@ const DetailOnlineOrder = () => {
   
   //chỉnh format tiền
   const formatPrice = (price: number) => {
-    const formattedPrice = (price / 1000).toLocaleString();
+    const formattedPrice = (price / 1000).toLocaleString(undefined, { minimumFractionDigits: 3 });
 
-    return `${formattedPrice}.000`;
+    return formattedPrice.replace(",", ".");
   }
   
   return (
@@ -50,7 +46,7 @@ const DetailOnlineOrder = () => {
             <div className="font-semibold text-[20px] flex space-x-4 items-center pt-3">
               {data?.status !== statusOrder.Transport
                 ? (
-                  <Link to="/manage-online-order/list-order" className="hover:text-main">Danh sách đơn đặt hàng</Link>
+                  <Link to="/manage-order/online-order/list-order" className="hover:text-main">Danh sách đơn đặt hàng</Link>
                 ) : (
                   <Link to="/manage-order/history-order" className="hover:text-main">Lịch sử đơn hàng</Link>
                 )}
@@ -65,17 +61,18 @@ const DetailOnlineOrder = () => {
                     ${data?.status === statusOrder.Paid ? "bg-[#E7F4EE] text-[#0D894F]" :
                     data?.status === statusOrder.Processing ? "bg-[#bac5e9] text-blue-500" :
                       data?.status === statusOrder.Transport ? "bg-[#FBEABC] text-[#90530C]" :
+                      data?.status === statusOrder.Confirm ? "bg-[#FBEABC] text-yellow-600" :
                         ""}`}>
                   {data?.status}
                 </p>
                 <div className='pt-3 text-[18px] flex justify-between'>
                   <div className='text-[#1A1C21] font-semibold flex flex-col space-y-7'>
                     <div className=' flex space-x-3'>
-                      <CalendarDaysIcon className='w-7 h-7 fill-slate-500' />
+                      <CalendarDaysIcon className='w-7 h-7 fill-gray-700' />
                       <p>Ngày đặt</p>
                     </div>
                     <div className='flex space-x-3'>
-                      <ArrowPathRoundedSquareIcon className='w-7 h-7 fill-slate-500' />
+                      <ArrowPathRoundedSquareIcon className='w-7 h-7 fill-gray-700' />
                       <p>Phương thức thanh toán</p>
                     </div>
                   </div>
@@ -102,24 +99,24 @@ const DetailOnlineOrder = () => {
                 <div className={`text-[18px] flex justify-between pt-3`}>
                   <div className='text-[#1A1C21] font-semibold flex flex-col space-y-7 '>
                     <div className='flex space-x-3'>
-                      <UserIcon className='w-7 h-7 fill-slate-500' />
+                      <UserIcon className='w-7 h-7 fill-gray-700' />
                       <p>Khách hàng</p>
                     </div>
                     <div className='flex space-x-3'>
-                      <DevicePhoneMobileIcon className='w-7 h-7 fill-slate-500' />
+                      <DevicePhoneMobileIcon className='w-7 h-7 fill-gray-700' />
                       <p>Số điện thoại</p>
                     </div>
                     <div className='flex space-x-3'>
-                      <DevicePhoneMobileIcon className='w-7 h-7 fill-slate-500' />
+                      <MapPinIcon className='w-7 h-7 fill-gray-700' />
                       <p>Địa chỉ</p>
                     </div>
                   </div>
                   <div className='text-[#1A1C21] font-semibold text-end space-y-7'>
                     <div>
-                      <p>{data?.customerName}</p>
+                      <p>{data?.customer.fullName}</p>
                     </div>
                     <div >
-                      <p>{data?.phoneNumber}</p>
+                      <p>{data?.customer.phoneNumber}</p>
                     </div>
                     <div >
                       <p>{data?.address}</p>
@@ -135,7 +132,7 @@ const DetailOnlineOrder = () => {
               <div className='flex justify-between w-full px-3'>
                 <div className='font-semibold flex items-center space-x-3 '>
                   <h2 className='text-[20px]'>Danh sách sản phẩm</h2>
-                  <h3 className='bg-[#E7F4EE] text-[#0D894F] w-[100px] py-1 text-center rounded-lg'>{data?.onlineOrderDetails?.length} sản phẩm</h3>
+                  <h3 className='bg-[#E7F4EE] text-[#0D894F] w-[100px] py-1 text-center rounded-lg'>{data?.orderDetails?.length} sản phẩm</h3>
                 </div>
               </div>
 
@@ -158,7 +155,7 @@ const DetailOnlineOrder = () => {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-200">
-                    {data?.onlineOrderDetails?.map((item: itemDetails<string, number>, index) => (
+                    {data?.orderDetails?.map((item: inStoreOrderDetails<string, number>, index) => (
                       <tr key={index}>
                         <td className="py-3 px-3 flex items-center">
                           <img src={item?.motobikeProduct.image} alt="" className="h-11 mr-5" />

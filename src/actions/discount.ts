@@ -1,10 +1,10 @@
 import { listDiscount } from "@/constants/secondaryConstants";
 import { itemDiscount } from "@/types/actions/listDiscout";
 
-export const getDiscountChoose = () => {
+export const getDiscountChoose = (pageSize:number) => {
     return {
         type: listDiscount.GET_LIST_DISCOUNT_CHOOSE,
-        // pageSize
+        pageSize
     };
 };
 

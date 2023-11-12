@@ -14,7 +14,7 @@ const ListProduct = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const productInfor: itemProduct<string, number> = useSelector((state: selectorProduct<string, number>) => state.productReducer.productInfor);
-    const [productData, setProductData] = useState([] as item<string, number>[]);
+    const [productData, setProductData] = useState<item<string, number>[]>([]);
     const [paginationNumber, setPaginationNumber] = useState<number>(0);
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [addSearch, setAddSearch] = useState<string>("");
@@ -22,12 +22,14 @@ const ListProduct = () => {
     const [sortAsc, setSortAsc] = useState<boolean | undefined>();
     const [sortAscPrice, setSortAscPrice] = useState<boolean | undefined>();
     useEffect(() => {
-        setTimeout(() => {
-            setIsLoading(false);
-        }, 1000)
-        setProductData(productInfor.data);
-
-    }, [productInfor.data]);
+        const checkStatus = productInfor?.data?.every((item) => item?.status === typeActiveProduct.Active);
+        if (checkStatus && productInfor) {
+            setProductData(productInfor.data);
+            setTimeout(() => {
+                setIsLoading(false);
+            }, 500);
+        }
+    }, [productInfor]);
     useEffect(() => {
         if (productInfor.pagination?.totalRow && addSearch) {
             setPaginationNumber(0);
@@ -86,6 +88,7 @@ const ListProduct = () => {
             const shouldDelete = window.confirm(`Bạn có chắc chắn muốn xóa sản phẩm: ${item.name} ?`);
             if (shouldDelete) {
                 dispatch(updateStatusProduct(item.id, typeActiveProduct.InActive, data));
+                setIsLoading(true)
             }
         }
 
@@ -93,7 +96,7 @@ const ListProduct = () => {
     }
     return (
         <div className="w-full">
-            <div className="flex justify-between items-center pb-2">
+            <div className="flex justify-between items-center pb-5">
                 <SearchFilter
                     place={'Tìm kiếm sản phẩm'} setAddSearch={setAddSearch}
                 />
