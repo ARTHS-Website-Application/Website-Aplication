@@ -116,13 +116,15 @@ const TableProductOwner = ({ productData, setSortAsc, setSortValue, setSortAscPr
                             {showDivIndex === index && (
                                 <div className="absolute flex flex-col items-center bg-white shadow-lg rounded-lg w-[140px] right-0 space-y-3 py-2 font-semibold text-[#667085]">
                                     <Link to={`/manage-products/${item.id}`} className="hover:text-main">Chi tiết</Link>
-                                    <Link to={`/manage-products/update-product/${item.id}`} className='flex items-center space-x-1 hover:text-main hover:stroke-main'
-                                    >
-                                        <PencilIcon className="w-5 h-5" />
-                                        <p> Cập nhật</p>
-                                    </Link>
-
-                                    {productData?.some((item) => item.status === typeActiveProduct.Active) && (
+                                    {productData?.some((item) => item.status === typeActiveProduct.Active) &&(
+                                        <Link to={`/manage-products/update-product/${item.id}`} className='flex items-center space-x-1 hover:text-main hover:stroke-main'
+                                        >
+                                            <PencilIcon className="w-5 h-5" />
+                                            <p> Cập nhật</p>
+                                        </Link>
+                                    )}
+                                    
+                                    {productData?.some((item) => item.status === typeActiveProduct.Active) ? (
                                         <button className='flex items-center space-x-1 hover:text-main hover:fill-main'
                                             onClick={() => {
                                                 handleRemove(item)
@@ -131,6 +133,16 @@ const TableProductOwner = ({ productData, setSortAsc, setSortValue, setSortAscPr
                                         >
                                             <TrashIcon className="w-5 h-5" />
                                             <p> Xóa</p>
+                                        </button>
+                                    ):(
+                                        <button className='flex items-center space-x-1 hover:text-main hover:fill-main'
+                                            onClick={() => {
+                                                handleRemove(item)
+                                                handleShowDiv(index)
+                                            }}
+                                        >
+                                            <PencilIcon className="w-5 h-5" />
+                                            <p> Cập nhật</p>
                                         </button>
                                     )}
                                 </div>

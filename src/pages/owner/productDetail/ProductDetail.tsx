@@ -126,7 +126,7 @@ const ProductDetail = () => {
                                 <div className='flex justify-between text-[#6B7280] items-center'>
                                     <div className='space-y-6'>
                                         <p>Loại sản phẩm</p>
-                                        {data?.repairService && <p>Áp dụng được dịch vụ</p>}
+                                        {data?.installationFee && <p>Giá thay phụ kiện</p>}
                                         <p>Giá bán</p>
                                         {data?.warrantyDuration !== 0 && <p>Bảo hành</p>}
                                         <p>Trạng thái giảm giá</p>
@@ -135,7 +135,7 @@ const ProductDetail = () => {
                                     </div>
                                     <div className='space-y-5 flex flex-col text-end'>
                                         <p>{data?.category?.categoryName}</p>
-                                        {data?.repairService && <p>{data?.repairService.name}</p>}
+                                        {data?.installationFee && <p>{data?.installationFee} VNĐ</p>}
                                         <p>{formatPrice(data?.priceCurrent)}VNĐ</p>
                                         {data?.warrantyDuration !== 0 && (<p>{data?.warrantyDuration} tháng</p>)}
                                         <p>{data?.discount ? "Có" : "Không"}</p>

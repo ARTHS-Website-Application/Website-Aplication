@@ -8,7 +8,6 @@ export enum statusOrder {
     Confirm = "Đã xác nhận",
     Transport = "Đang giao",
     Canceled = "Đã hủy",
-    NewOrder = "Đơn mới",
 }
 
 export enum typeOrder{

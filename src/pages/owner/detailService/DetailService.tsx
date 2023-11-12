@@ -24,11 +24,6 @@ const ProductDetail = () => {
   }, [dispatch, serviceId]);
   useEffect(() => {
     if (getDetailService?.id === serviceId) {
-      // const dataService = {
-      //   pageSize: 50,
-      //   repairService:getDetailService.name
-      // }
-      // dispatch(FilterProductService(dataService))
       setData(getDetailService);
       setTimeout(() => {
         setIsLoading(false);
@@ -90,32 +85,16 @@ const ProductDetail = () => {
                 </div>
                 <p className='font-semibold text-[19px] py-5'> Chi tiết</p>
                 <div className='flex justify-between text-[#6B7280] items-center'>
+                  <div>
                   <p>Giá dịch vụ</p>
+                  <p>Thời gian làm dịch vụ</p>
+                  <p>Thời gian nhắc nhở</p>
+                  <p>Bảo hành</p>
+                  </div>
                   <div className='space-y-5 flex flex-col text-end'>
                     <p>{formatPrice(data?.price)}VNĐ</p>
                   </div>
                 </div>
-              </div>
-              <div className='bg-white p-5 text-[17px] rounded-lg'>
-                <p className='font-semibold text-[20px] pb-5'>Sản phẩm áp dụng</p>
-                  {data?.motobikeProducts && data?.motobikeProducts?.length>0
-                  ?(
-                    <div className='overflow-y-scroll h-[300px]'>
-                    <div className='space-y-3'>
-                    {data?.motobikeProducts && data?.motobikeProducts?.map((item, index) => (
-                      <Link to={`/manage-products/${item.id}`} key={index} className='flex space-x-3 items-center hover:text-blue-400'>
-                        <img src={item.image} alt="" className="w-11 h-11"/>
-                        <p className='text-[21px]'>{item.name}</p>
-                      </Link>
-                    ))}
-                  </div>
-                </div>
-                  ):(
-                    <div className='h-[100px] flex justify-center items-center'>
-                      <p className='text-[20px]'>Chưa có sản phẩm</p>
-                    </div>
-                  )}
-                  
               </div>
             </div>
 

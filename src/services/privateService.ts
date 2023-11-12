@@ -24,9 +24,10 @@ export class Private {
         formData.append('name', data.name);
         formData.append('price', data.price);
         formData.append('description', data.description);
-        for (const id of data.motobikeProductIds) {
-            formData.append('motobikeProductIds', id);
-        }
+        formData.append('discountId', data.discountId);
+        formData.append('warrantyDuration', data.warrantyDuration);
+        formData.append('duration', data.duration);
+        formData.append('reminderInterval', data.reminderInterval);
         for (let i = 0; i < data.images.length; i++) {
             formData.append('images', data.images[i], data.images[i].name);
         }
@@ -44,9 +45,6 @@ export class Private {
         formData.append('name', data.name);
         formData.append('price', data.price);
         formData.append('description', data.description);
-        for (const id of data.motobikeProductIds) {
-            formData.append('motobikeProductIds', id);
-        }
         // for (let i = 0; i < data.images.length; i++) {
         //     formData.append('images', data.images[i], data.images[i].name);
         // }

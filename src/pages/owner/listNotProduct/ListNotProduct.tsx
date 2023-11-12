@@ -5,10 +5,9 @@ import SearchFilter from '@/components/SearchFilter'
 import TableProductOwner from '@/components/owner/TableProductOwner'
 import { item, itemProduct, selectorProduct } from '@/types/actions/product'
 import { typeActiveProduct } from '@/types/typeProduct'
-import { PlusIcon } from '@heroicons/react/24/solid'
 import { useState, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { Link, useNavigate } from 'react-router-dom'
+import {useNavigate } from 'react-router-dom'
 
 const ListNotProduct = () => {
     const dispatch = useDispatch();
@@ -22,12 +21,13 @@ const ListNotProduct = () => {
     const [sortAsc, setSortAsc] = useState<boolean | undefined>();
     const [sortAscPrice, setSortAscPrice] = useState<boolean | undefined>();
     useEffect(() => {
-        setTimeout(() => {
-            setIsLoading(false);
-        }, 1000)
-        setProductData(productInfor.data);
-
-    }, [productInfor.data]);
+        const checkStatus = productInfor?.data?.every((item) => item.status === typeActiveProduct.InActive);
+        if (checkStatus && productInfor?.data) {
+            setProductData(productInfor?.data);
+        } else {
+            setProductData([]);
+        }
+    }, [productInfor]);
     useEffect(() => {
         if (productInfor.pagination?.totalRow && addSearch) {
             setPaginationNumber(0);
@@ -80,12 +80,13 @@ const ListNotProduct = () => {
             sortByAsc: sortValue === 'price' ? sortAscPrice : sortAsc,
             name: addSearch,
             pageNumber: paginationNumber,
-            status: typeActiveProduct.InActive,
+            status: typeActiveProduct.Active,
         };
         if (item) {
             const shouldDelete = window.confirm(`Bạn có chắc chắn muốn hoàng lại sản phẩm: ${item.name} ?`);
             if (shouldDelete) {
                 dispatch(updateStatusProduct(item.id, typeActiveProduct.Active, data));
+                setIsLoading(true)
             }
         }
 
@@ -93,16 +94,10 @@ const ListNotProduct = () => {
     }
     return (
         <div className="w-full">
-            <div className="flex justify-between items-center pb-2">
+            <div className="flex justify-between items-center pb-5">
                 <SearchFilter
                     place={'Tìm kiếm sản phẩm'} setAddSearch={setAddSearch}
                 />
-                <Link to="/manage-products/create-product"
-                    className='flex font-semibold bg-main w-[150px]  hover:bg-red-500 py-3 rounded-lg items-center justify-center '
-                >
-                    <PlusIcon className="w-5 h-5" />
-                    <p>Tạo sản phẩm</p>
-                </Link>
             </div>
             <div className="">
                 {isLoading

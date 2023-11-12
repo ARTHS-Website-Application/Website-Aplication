@@ -5,12 +5,11 @@ import SearchFilter from '@/components/SearchFilter'
 import TableService from '@/components/owner/TableService'
 import { dataService, itemService, selectorService } from '@/types/actions/listService'
 import { typeService } from '@/types/typeService'
-import { PlusIcon } from '@heroicons/react/24/solid'
 import { useState, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { Link } from 'react-router-dom'
 
-const ListService = () => {
+
+const ListNotService = () => {
     const dispatch = useDispatch();
     const serviceInfor: dataService<string, number> = useSelector((state: selectorService<string, number>) => state.serviceReducer.serviceInfor);
     const [productData, setProductData] = useState([] as itemService<string, number>[]);
@@ -42,7 +41,7 @@ const ListService = () => {
                 sortByAsc: sortAsc,
                 name: addSearch,
                 pageNumber: paginationNumber,
-                status: typeService.Active,
+                status: typeService.Discontinued,
             }
             setSortAscPrice(undefined)
             dispatch(getSortServices(data));
@@ -53,7 +52,7 @@ const ListService = () => {
                 sortByAsc: sortAscPrice,
                 name: addSearch,
                 pageNumber: paginationNumber,
-                status: typeService.Active,
+                status: typeService.Discontinued,
             }
             setSortAsc(undefined)
             dispatch(getSortServices(data));
@@ -64,7 +63,7 @@ const ListService = () => {
                 sortByAsc: sortAscPrice,
                 name: addSearch,
                 pageNumber: paginationNumber,
-                status: typeService.Active,
+                status: typeService.Discontinued,
             }
             setSortAsc(undefined)
             dispatch(getSortServices(data));
@@ -77,14 +76,8 @@ const ListService = () => {
 
     return (
         <div className="w-full">
-            <div className="flex justify-between items-center pb-5">
-            <SearchFilter place={'Tìm kiếm dịch vụ'} setAddSearch={setAddSearch} />
-                <Link to="/manage-services/create-service"
-                    className='flex font-semibold bg-main w-[150px]  hover:bg-red-500 py-3 rounded-lg items-center justify-center '
-                >
-                    <PlusIcon className="w-5 h-5" />
-                    <p>Tạo dịch vụ</p>
-                </Link>
+            <div className="py-5">
+                <SearchFilter place={'Tìm kiếm dịch vụ'} setAddSearch={setAddSearch} />
             </div>
             <div className="">
                 {isLoading
@@ -106,11 +99,11 @@ const ListService = () => {
                                 currentPage={paginationNumber}
                             />
                         </div>
-                    ) : (
-                        <div className='h-[70vh] flex justify-center items-center'>
-                            <p className="text-[25px] font-semibold">Không tìm thấy dịch vụ</p>
-                        </div>
-                    ))
+                    ):(
+                            <div className='h-[70vh] flex justify-center items-center'>
+                                <p className="text-[25px] font-semibold">Không tìm thấy dịch vụ</p>
+                            </div>
+                        ))
                 }
             </div>
 
@@ -119,4 +112,4 @@ const ListService = () => {
     )
 }
 
-export default ListService
+export default ListNotService

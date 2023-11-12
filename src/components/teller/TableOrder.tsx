@@ -14,12 +14,11 @@ const TableOrder = ({ data }: Props) => {
     }
     return (
         <div className="pt-3">
-            <table className="min-w-full bg-white divide-y divide-gray-200 table-fixed text-center">
+            <table className="min-w-full bg-white divide-y divide-gray-200 table-fixed text-center ">
                 <thead>
-                    <tr className="text-xs uppercase tracking-wider bg-yellow-400 text-center">
-                        <th scope="col" className="px-6 py-3 flex justify-center items-center space-x-2">
-                            <p>Mã đơn</p>
-                            {/* <button><ChevronDownIcon className="w-5 h-5" /></button> */}
+                    <tr className="text-xs font-medium uppercase tracking-wider bg-yellow-400 text-center">
+                        <th scope="col" className="px-6 py-3">
+                            Mã đơn
                         </th>
                         <th scope="col" className="">
                             Tên khách hàng
@@ -44,7 +43,7 @@ const TableOrder = ({ data }: Props) => {
                         </th>
                     </tr>
                 </thead>
-                <tbody className="divide-y divide-gray-200">
+                <tbody className="divide-y divide-gray-200 ">
                     {data && data.map((item: itemOrder<string, number>, index) => (
                         <tr key={index}>
                             <td className="py-[12px] px-3">
@@ -57,7 +56,7 @@ const TableOrder = ({ data }: Props) => {
                                 {formatDateSeven(item.orderDate.toString())}
                             </td>
                             <td className="">
-                                {item.customerPhone}
+                                {item.customerPhoneNumber}
                             </td>
                             <td className="">
                                 {item.orderType}

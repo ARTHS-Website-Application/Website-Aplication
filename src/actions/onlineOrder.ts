@@ -1,11 +1,11 @@
 import { detailOnlineOrder, listOnlineOrder } from "@/constants/mainConstants"
 import { itemOnlineOrder } from "@/types/actions/listOnlineOrder";
+import { callFilterOrder } from "@/types/actions/listOrder";
 
-export const getOnlineOrder = (number: number, filter: any) => {
+export const getOnlineOrder = (data:callFilterOrder<string,number>) => {
     return{
         type: listOnlineOrder.LIST_ONLINE_ORDER,
-        number,
-        filter,
+        data
     }
 };
 

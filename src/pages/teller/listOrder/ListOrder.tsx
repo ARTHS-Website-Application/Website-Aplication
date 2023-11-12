@@ -7,6 +7,7 @@ import { getFilterOrderPaid, getOrderPaid } from '@/actions/order'
 import { itemOrder, listOrder, selectorOrder } from '@/types/actions/listOrder'
 import { statusOrder } from '@/types/typeOrder'
 import LoadingPage from '@/components/LoadingPage'
+import SelectFilterOrder from '@/components/SelectFilterOrder'
 
 
 const ListOrder = () => {
@@ -57,25 +58,23 @@ const ListOrder = () => {
     }, [addSearch, chooseSelect, dispatch, paginationNumber])
 
     useEffect(() => {
-        setOrderData(orderPaidInfor.data)
-        setTimeout(() => {
-            setIsLoading(false);
-        }, 500)
-    }, [orderPaidInfor])
+        const isAnyPendingOrder = orderPaidInfor?.data?.every((item) => item.status === statusOrder.Processing);
+        if (isAnyPendingOrder && orderPaidInfor?.data) {
+            setOrderData(orderPaidInfor.data);
+            setTimeout(() => {
+                setIsLoading(false);
+            }, 500);
+        } else {
+            setOrderData([]);
+        }
+        
+    }, [orderPaidInfor]);
 
     return (
         <div className="w-full min-h-full">
             <h1 className="font-semibold text-[24px]">Danh sách đơn hàng</h1>
             <div className="pt-2 flex space-x-1">
-                <select className='px-2 outline-none rounded-lg'
-                    onChange={(e) => {
-                        setChooseSelect(e.target.value)
-                        setAddSearch("");
-                    }}
-                >
-                    <option value="name">Tên khách hàng</option>
-                    <option value="sdt">Số điện thoại</option>
-                </select>
+                <SelectFilterOrder setChooseSelect={setChooseSelect} setAddSearch={setAddSearch} />
                 <SearchFilter place={'Tìm kiếm đơn hàng'} setAddSearch={setAddSearch} />
             </div>
             {isLoading
