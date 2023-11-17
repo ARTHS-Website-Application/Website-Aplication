@@ -9,6 +9,7 @@ export const serviceCreate = {
 
 export const serviceUpdate = {
     SERVICE_UPDATE: "service_update",
+    SERVICE_UPDATE_STATUS: "service_update_status",
 }
 
 export const listServices = {
@@ -50,4 +51,10 @@ export const listStaff = {
     LIST_STAFF: "list_staff",
     LIST_STAFF_SUCCESS: "list_staff_success",
     LIST_STAFF_FAIL: "list_staff_fail",
+}
+
+export const createWarranty = {
+    CREATE_WARRANTY: "create_warranty",
+    CREATE_WARRANTY_SUCCESS: "create_warranty_success",
+    CREATE_WARRANTY_FAIL: "create_warranty_fail",
 }

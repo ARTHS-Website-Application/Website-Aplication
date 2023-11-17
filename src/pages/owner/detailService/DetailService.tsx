@@ -3,6 +3,7 @@ import LoadingPage from '@/components/LoadingPage';
 import { selectorDetailService } from '@/types/actions/detailService';
 import { itemService } from '@/types/actions/listService';
 import { typeActiveProduct } from '@/types/typeProduct';
+import { typeService } from '@/types/typeService';
 import { formatPrice } from '@/utils/formatPrice';
 import { ChevronRightIcon } from '@heroicons/react/24/solid';
 import { useEffect, useState } from 'react'
@@ -37,7 +38,11 @@ const ProductDetail = () => {
   return (
     <div className="w-full">
       <div className="font-semibold text-[20px] flex space-x-4 items-center pt-3">
-        <Link to="/manage-services" className="hover:text-main">Danh sách dịch vụ</Link>
+        {data?.status===typeService.Active ?(
+          <Link to="/manage-services" className="hover:text-main">Danh sách dịch vụ</Link>
+        ):(
+          <Link to="/manage-services/list-not-service" className="hover:text-main">Danh sách dịch vụ đã hủy</Link>
+        )}
         <ChevronRightIcon className="w-5 h-5" />
         <p className="text-main">Chi tiết dịch vụ</p>
       </div>
@@ -85,14 +90,17 @@ const ProductDetail = () => {
                 </div>
                 <p className='font-semibold text-[19px] py-5'> Chi tiết</p>
                 <div className='flex justify-between text-[#6B7280] items-center'>
-                  <div>
+                  <div className=' space-y-5'>
                   <p>Giá dịch vụ</p>
-                  <p>Thời gian làm dịch vụ</p>
-                  <p>Thời gian nhắc nhở</p>
-                  <p>Bảo hành</p>
+                  {data?.duration && <p>Thời gian làm dịch vụ</p>}
+                  {data?.reminderInterval ? <p>Thời gian nhắc nhở</p>:""}
+                  {data?.warrantyDuration ? <p>Bảo hành</p>:""}
                   </div>
                   <div className='space-y-5 flex flex-col text-end'>
                     <p>{formatPrice(data?.price)}VNĐ</p>
+                    {data?.duration && <p>{data?.duration} phút</p>}
+                    {data?.reminderInterval ? <p>{data?.reminderInterval} tháng</p>:""}
+                    {data?.warrantyDuration ? <p>{data?.warrantyDuration} tháng</p>:""}
                   </div>
                 </div>
               </div>

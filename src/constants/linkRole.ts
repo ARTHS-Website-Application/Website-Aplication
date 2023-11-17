@@ -23,6 +23,10 @@ const roleOwner = [
         name: 'Quản lý sản phẩm',
         subMenu: [
             {
+                name:'Tạo sản phẩm',
+                to:'/create-product'
+            },
+            {
                 name: "Danh sách sản phẩm",
                 to: "/manage-products",
             },
@@ -36,12 +40,16 @@ const roleOwner = [
         to: '/manage-discounts',
         name: 'Quản lý khuyến mãi',
     },
-    {
+    {   
         name: 'Quản lý dịch vụ',
         subMenu: [
             {
+                name:'Tạo dịch vụ',
+                to:'/create-service'
+            },
+            {
                 name: "Danh sách dịch vụ",
-                to: "/manage-services",
+                to: '/manage-services',
             },
         ],
     },
@@ -69,11 +77,15 @@ const roleTeller = [
         ],
     },
     {
-        name: 'Danh sách đặt lịch',
+        name: 'Quản lý đặt lịch',
         subMenu: [
             {
-                name: "Submenu 3",
+                name: "Lịch đặt hôm nay",
                 to: "/manage-booking/list-booking",
+            },
+            {
+                name: "Duyệt lịch",
+                to: "/manage-booking/list",
             },
         ],
     },

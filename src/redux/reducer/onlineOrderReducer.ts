@@ -1,9 +1,11 @@
-import { listOnlineOrder } from "@/constants/mainConstants";
+import { listOnlineOrderConstant } from "@/constants/mainConstants";
 import { onlineOrderSaga, storeOrderOnline } from "@/types/actions/listOnlineOrder";
 
 
 const initialState: storeOrderOnline<string, number> = {
     onlineOrderInfo: [],
+    onlineOrderConfirm:[],
+    onlineOrderTransport:[],
     showError: null,
 };
 
@@ -13,13 +15,18 @@ const onlineOrderReducer = (
     { type, payload }: { type: string; payload: onlineOrderSaga<string, number> }
 ) => {
     switch (type) {
-        case listOnlineOrder.LIST_ORDER_SUCCESS:
+        case listOnlineOrderConstant.LIST_ORDER_SUCCESS:
             return {
                 ...state,
                 onlineOrderInfo: payload.data,
                 
             }
-        case listOnlineOrder.LIST_ORDER_FAIL:
+        case listOnlineOrderConstant.LIST_ORDER_CONFIRM_SUCCESS:
+            return {
+                ...state,
+                onlineOrderConfirm:payload.data,
+            }
+        case listOnlineOrderConstant.LIST_ORDER_FAIL:
             return {
                 ...state,
                 onlineOrderInfo: [],

@@ -1,9 +1,10 @@
-import { getDetailOnlineOrder } from "@/actions/onlineOrder";
+import { getDetailOnlineOrder, onlineOrderUpdate } from "@/actions/onlineOrder";
 import Loading from '@/components/LoadingPage';
+import CreateTransport from "@/components/owner/CreateTransport";
 import { inStoreOrderDetails } from "@/types/actions/detailOrder";
 import { itemOnlineOrder, selectorDetailOnlineOrder } from "@/types/actions/listOnlineOrder"
 import { statusOrder } from "@/types/typeOrder";
-import { ArrowPathRoundedSquareIcon, CalendarDaysIcon, ChevronRightIcon, DevicePhoneMobileIcon, MapPinIcon, UserIcon } from "@heroicons/react/24/solid";
+import { ArrowPathRoundedSquareIcon, CalendarDaysIcon, ChevronRightIcon, CreditCardIcon, DevicePhoneMobileIcon, MapPinIcon, UserIcon } from "@heroicons/react/24/solid";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux"
 import { Link, useParams } from "react-router-dom";
@@ -14,6 +15,7 @@ const DetailOnlineOrder = () => {
   const detailOnlineOrder: itemOnlineOrder<string, number> = useSelector((state: selectorDetailOnlineOrder<string, number>) => state.onlineOrderDetailReducer.onlineOrderDetail);
   const [data, setData] = useState<itemOnlineOrder<string, number>>();
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [showTransport, setShowTransport] = useState<boolean>(false);
 
   console.log('id', orderId);
   useEffect(() => {
@@ -24,32 +26,52 @@ const DetailOnlineOrder = () => {
   }, [dispatch, orderId]);
 
   useEffect(() => {
-    setData(detailOnlineOrder);
+    if(detailOnlineOrder?.id===orderId) {
+      setData(detailOnlineOrder);
     setTimeout(() => {
       setIsLoading(false);
-    }, 1000)
-  }, [detailOnlineOrder])
+    }, 1000)}
+    
+  }, [detailOnlineOrder, orderId])
   console.log('getwithId', data);
-  
+
   //chỉnh format tiền
   const formatPrice = (price: number) => {
     const formattedPrice = (price / 1000).toLocaleString(undefined, { minimumFractionDigits: 3 });
 
     return formattedPrice.replace(",", ".");
   }
-  
+  const handleUpdateStatus = () => {
+    const data = {
+      status: statusOrder.Confirm,
+      cancellationReason: "",
+    }
+    if (detailOnlineOrder) {
+      dispatch(onlineOrderUpdate(detailOnlineOrder.id, data))
+      setIsLoading(true)
+    }
+  }
+
   return (
     <div>
       {isLoading ? <Loading />
         : data && (
           <div className={`w-full bg-white rounded-md px-3`}>
             <div className="font-semibold text-[20px] flex space-x-4 items-center pt-3">
-              {data?.status !== statusOrder.Transport
+              {data?.status === statusOrder.Processing
                 ? (
                   <Link to="/manage-order/online-order/list-order" className="hover:text-main">Danh sách đơn đặt hàng</Link>
-                ) : (
-                  <Link to="/manage-order/history-order" className="hover:text-main">Lịch sử đơn hàng</Link>
-                )}
+                ) :data?.status === statusOrder.Confirm? (
+                  <Link to="/manage-order/online-order/list-order-confirm" className="hover:text-main"> Danh sách đơn hàng đã xác nhận</Link>
+                ):data?.status === statusOrder.Transport? (
+                  <Link to="/manage-order/online-order/list-order-transport" className="hover:text-main"> Danh sách đơn hàng đã xác nhận</Link>
+                ):data?.status === statusOrder.Finished? (
+                  <Link to="/manage-order/online-order/list-order-finish" className="hover:text-main"> Danh sách đơn hàng đã xác nhận</Link>
+                ):data?.status === statusOrder.Canceled? (
+                  <Link to="/manage-order/online-order/list-order-canceled" className="hover:text-main"> Danh sách đơn hàng đã xác nhận</Link>
+                ):data?.status === statusOrder.Paid? (
+                  <Link to="/manage-order/online-order/list-order-paid" className="hover:text-main"> Danh sách đơn hàng đã xác nhận</Link>
+                ):""}
               <ChevronRightIcon className="w-5 h-5" />
               <p>Chi tiết đơn hàng</p>
             </div>
@@ -58,11 +80,12 @@ const DetailOnlineOrder = () => {
             <div className='flex space-x-5 py-3'>
               <div className='w-[50%] border-2 border-[#E0E2E7] px-5 pt-5 pb-2 space-y-3  rounded-lg'>
                 <p className={`rounded-2xl font-semibold py-1 w-[170px] text-center text-[19px]
-                    ${data?.status === statusOrder.Paid ? "bg-[#E7F4EE] text-[#0D894F]" :
+                    ${data?.status === statusOrder.Paid ? "bg-[#E7F4EE] text-[#0d1389]" :
                     data?.status === statusOrder.Processing ? "bg-[#bac5e9] text-blue-500" :
-                      data?.status === statusOrder.Transport ? "bg-[#FBEABC] text-[#90530C]" :
-                      data?.status === statusOrder.Confirm ? "bg-[#FBEABC] text-yellow-600" :
-                        ""}`}>
+                      data?.status === statusOrder.Transport ? "bg-[#e1a157] text-[#90530C]" :
+                        data?.status === statusOrder.Confirm ? "bg-[#FBEABC] text-yellow-600" :
+                        data?.status === statusOrder.Finished ? "bg-[#cdcac4] text-[#38890d]" :
+                          ""}`}>
                   {data?.status}
                 </p>
                 <div className='pt-3 text-[18px] flex justify-between'>
@@ -72,8 +95,12 @@ const DetailOnlineOrder = () => {
                       <p>Ngày đặt</p>
                     </div>
                     <div className='flex space-x-3'>
-                      <ArrowPathRoundedSquareIcon className='w-7 h-7 fill-gray-700' />
+                      <CreditCardIcon className='w-7 h-7 fill-gray-700' />
                       <p>Phương thức thanh toán</p>
+                    </div>
+                    <div className='flex space-x-3'>
+                      <ArrowPathRoundedSquareIcon className='w-7 h-7 fill-gray-500' />
+                      <p>Loại đơn</p>
                     </div>
                   </div>
                   <div className='text-[#1A1C21] font-semibold flex flex-col space-y-6 text-end'>
@@ -88,6 +115,9 @@ const DetailOnlineOrder = () => {
                     </div>
                     <div>
                       {data?.paymentMethod}
+                    </div>
+                    <div>
+                      {data?.orderType}
                     </div>
                   </div>
                 </div>
@@ -125,10 +155,9 @@ const DetailOnlineOrder = () => {
                 </div>
               </div>
             </div>
-            
+
             {/* thông tin sản phẩm */}
-            <div className={`w-full border-[#E0E2E7] space-y-3  
-            ${data?.status === statusOrder.Finished || data?.status !== statusOrder.Processing   ? "border-2 rounded-md py-3" : "border-x-2 border-t-2 rounded-t-md pt-3"} `}>
+            <div className={`w-full border-[#E0E2E7] space-y-3 border-2 rounded-md py-3`}>
               <div className='flex justify-between w-full px-3'>
                 <div className='font-semibold flex items-center space-x-3 '>
                   <h2 className='text-[20px]'>Danh sách sản phẩm</h2>
@@ -175,20 +204,34 @@ const DetailOnlineOrder = () => {
 
                   </tbody>
                 </table>
-                
-                
+
+
               </div>
               {/*footer */}
-              <div className='flex justify-end pr-[115px] space-x-[220px]'>
-                <p className='text-[19px] font-semibold'>Tổng cộng</p>
+              <div className='flex justify-end pr-[115px] space-x-[20px] text-main'>
+                <p className='text-[19px] font-semibold'>Tổng cộng:</p>
                 <p className='font-semibold text-[19px]'>{formatPrice(data.totalAmount)} VNĐ</p>
               </div>
-              
-
+              {data?.status === statusOrder.Processing ? (
+                <div className='flex justify-end pr-[90px] pt-2'>
+                  <button className='bg-main hover:bg-red-800 w-[190px] py-5 text-white rounded-md'
+                    onClick={handleUpdateStatus}
+                  >Xác nhận đơn hàng</button>
+                </div>
+              ) : data?.status === statusOrder.Confirm ? (
+                <div className='flex justify-end pr-[90px] pt-2'>
+                  <button className='bg-main hover:bg-red-800 w-[190px] py-5 text-white rounded-md'
+                    onClick={() => setShowTransport(true)}
+                  >Nhập thông tin đơn hàng</button>
+                </div>
+              ) : ""}
             </div>
-
-
-
+            <CreateTransport
+            idOrder={data?.id}
+            isVisible={showTransport}
+            onClose={() => setShowTransport(false)}
+            
+            />
           </div>
         )
       }

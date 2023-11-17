@@ -1,17 +1,25 @@
-import { detailOnlineOrder, listOnlineOrder } from "@/constants/mainConstants"
-import { itemOnlineOrder } from "@/types/actions/listOnlineOrder";
+import { createOrderTransport, detailOnlineOrder, listOnlineOrderConstant, updateOnlineOrder } from "@/constants/mainConstants"
+import { callTranSport, callUpdateOnlineOrder, itemOnlineOrder, listOnlineOrder } from "@/types/actions/listOnlineOrder";
 import { callFilterOrder } from "@/types/actions/listOrder";
 
 export const getOnlineOrder = (data:callFilterOrder<string,number>) => {
     return{
-        type: listOnlineOrder.LIST_ONLINE_ORDER,
+        type: listOnlineOrderConstant.LIST_ONLINE_ORDER,
         data
     }
 };
 
-export const getOnlineOrderSuccess = (data: itemOnlineOrder<string, number>) => {
+export const getOnlineOrderSuccess = (data: listOnlineOrder<string, number>) => {
     return {
-        type: listOnlineOrder.LIST_ORDER_SUCCESS,
+        type: listOnlineOrderConstant.LIST_ORDER_SUCCESS,
+        payload: {
+            data,
+        },
+    };
+};
+export const getOnlineOrderConfirmSuccess = (data: listOnlineOrder<string, number>) => {
+    return {
+        type: listOnlineOrderConstant.LIST_ORDER_CONFIRM_SUCCESS,
         payload: {
             data,
         },
@@ -19,11 +27,26 @@ export const getOnlineOrderSuccess = (data: itemOnlineOrder<string, number>) => 
 };
 export const getOnlineOrderFailed = (error: string) => {
     return {
-        type: listOnlineOrder.LIST_ORDER_FAIL,
+        type: listOnlineOrderConstant.LIST_ORDER_FAIL,
         payload: {
             error,
         },
     };
+};
+
+export const onlineOrderUpdate = (idOrder:string,data:callUpdateOnlineOrder<string>) => {
+    return{
+        type: updateOnlineOrder.UPDATE_ONLINE_ORDER,
+        data,
+        idOrder
+    }
+};
+export const postTransport = (data:callTranSport<string,number>,statusOnline:callUpdateOnlineOrder<string>) => {
+    return{
+        type: createOrderTransport.CREATE_TRANSPORT,
+        data,
+        statusOnline,
+    }
 };
 
 export const getDetailOnlineOrder = (id: string) => {
@@ -49,3 +72,4 @@ export const getDetailOnlineOrderFailed = (error: string) => {
         },
     };
 };
+

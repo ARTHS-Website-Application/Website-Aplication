@@ -100,7 +100,7 @@ const TableProductOwner = ({ productData, setSortAsc, setSortValue, setSortAscPr
                             <td className="">
                                 <div className="flex items-center justify-center space-x-2">
                                     <div className={`w-2 h-2 rounded-full ${item.status === typeActiveProduct.Active ? "bg-green-600" : "bg-red-600"} `}></div>
-                                    <p className={`${item.status === typeActiveProduct.Active ? "text-green-600" : ""}  text-[14px]`}> {item.status}</p>
+                                    <p className={`${item.status === typeActiveProduct.Active ? "text-green-600" : "text-red-600"}  text-[14px]`}> {item.status}</p>
                                 </div>
 
                             </td>
@@ -124,7 +124,7 @@ const TableProductOwner = ({ productData, setSortAsc, setSortValue, setSortAscPr
                                         </Link>
                                     )}
                                     
-                                    {productData?.some((item) => item.status === typeActiveProduct.Active) ? (
+                                    {item.status === typeActiveProduct.Active ? (
                                         <button className='flex items-center space-x-1 hover:text-main hover:fill-main'
                                             onClick={() => {
                                                 handleRemove(item)
@@ -142,7 +142,7 @@ const TableProductOwner = ({ productData, setSortAsc, setSortValue, setSortAscPr
                                             }}
                                         >
                                             <PencilIcon className="w-5 h-5" />
-                                            <p> Cập nhật</p>
+                                            <p> Khôi phục</p>
                                         </button>
                                     )}
                                 </div>

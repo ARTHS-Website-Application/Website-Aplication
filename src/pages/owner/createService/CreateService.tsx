@@ -92,7 +92,7 @@ const CreateService = () => {
       warrantyDuration: addWarranty,
       images: images
     }
-    if (nameProduct && priceProduct && descriptionProduct && images && addWarranty) {
+    if (nameProduct && priceProduct && descriptionProduct && images && duration) {
       dispatch(postCreateService(dataCreate))
     } else {
       alert('Xin đừng bỏ trống ở những ký hiệu *')
@@ -186,10 +186,7 @@ const CreateService = () => {
               </div>
               <div className="flex justify-between py-5 text-[#6B7280] text-[19px] px-3">
                 <div className="flex flex-col space-y-3">
-                  <div className="flex space-x-1">
-                    <p>Thời gian bảo hành </p>
-                    <p className="text-red-800">*</p>
-                  </div>
+                  <p>Thời gian bảo hành </p>
                   <div className="w-[250px] text-[18px]">
                     <Select
                       className="px-3 h-[50px] bg-gray-50"
@@ -236,10 +233,10 @@ const CreateService = () => {
           {/* Ảnh */}
           <div className=" flex justify-center pt-7">
             <div className="bg-white w-[75%] min-h-[300px] rounded-md p-5 space-y-3">
-            <div className="flex space-x-1">
-                    <p className='text-[20px]'>Hình ảnh</p>
-                    <p className="text-red-800">*</p>
-                  </div>
+              <div className="flex space-x-1">
+                <p className='text-[20px]'>Hình ảnh</p>
+                <p className="text-red-800">*</p>
+              </div>
               <div className="bg-[#F9F9FC] border-dashed border-2 border-[#E0E2E7] py-5 flex flex-col justify-center items-center">
                 {images.length > 0
                   ? (

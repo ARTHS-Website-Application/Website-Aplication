@@ -44,7 +44,11 @@ const ProductDetail = () => {
     return (
         <div className="w-full">
             <div className="font-semibold text-[20px] flex space-x-4 items-center pt-3">
-                <Link to="/manage-products" className="hover:text-main">Danh sách sản phẩm</Link>
+                {data?.status===typeActiveProduct.Active?(
+                    <Link to="/manage-products" className="hover:text-main">Danh sách sản phẩm</Link>
+                ):(
+                    <Link to="/manage-products/list-not-product" className="hover:text-main">Danh sách sản phẩm đã hủy</Link>
+                )}
                 <ChevronRightIcon className="w-5 h-5" />
                 <p className="text-main">Chi tiết sản phẩm</p>
             </div>

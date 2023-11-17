@@ -65,7 +65,7 @@ const SiderBar = ({ role }: Props) => {
                   <ChevronDownIcon className="w-5 h-5" />
                 </div>
                 {openMenus[index] && (
-                  <div className="w-full flex flex-col space-y-3 pt-5 pl-5">
+                  <div className="w-full flex flex-col space-y-3 pt-5 px-5">
                     {item.subMenu.map((submenu, subIndex) => (
                         <NavLink
                         key={subIndex}

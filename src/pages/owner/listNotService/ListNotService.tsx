@@ -1,4 +1,4 @@
-import { getSortServices } from '@/actions/service'
+import { getSortServices, updateStatusService } from '@/actions/service'
 import LoadingPage from '@/components/LoadingPage'
 import Pagination from '@/components/Pagination'
 import SearchFilter from '@/components/SearchFilter'
@@ -19,13 +19,16 @@ const ListNotService = () => {
     const [sortValue, setSortValue] = useState<string>("");
     const [sortAsc, setSortAsc] = useState<boolean | undefined>();
     const [sortAscPrice, setSortAscPrice] = useState<boolean | undefined>();
+    console.log("not ser",productData)
     useEffect(() => {
-        setTimeout(() => {
-            setIsLoading(false);
-        }, 500)
-        setProductData(serviceInfor.data);
-
-    }, [serviceInfor.data]);
+        const checkStatus = serviceInfor?.data?.every((item) => item?.status === typeService.Discontinued);
+        if (checkStatus && serviceInfor) {
+            setProductData(serviceInfor.data);
+            setTimeout(() => {
+                setIsLoading(false);
+            }, 500)
+        }
+    }, [serviceInfor]);
     useEffect(() => {
         if (serviceInfor.pagination?.totalRow) {
             setPaginationNumber(0);
@@ -73,6 +76,24 @@ const ListNotService = () => {
 
 
     }, [addSearch, dispatch, paginationNumber, sortAsc, sortAscPrice, sortValue])
+    const handleRemove = (item: itemService<string, number>) => {
+        const data = {
+            value: sortValue,
+            sortByAsc: sortValue === 'price' ? sortAscPrice : sortAsc,
+            name: addSearch,
+            pageNumber: paginationNumber,
+            status: typeService.Discontinued,
+        };
+        if (item?.id) {
+            const shouldDelete = window.confirm(`Bạn có chắc chắn muốn xóa dịch vụ này: ${item.name} ?`);
+            if (shouldDelete) {
+                dispatch(updateStatusService(item?.id, typeService.Active, data));
+                setIsLoading(true)
+            }
+        }
+
+
+    }
 
     return (
         <div className="w-full">
@@ -86,6 +107,7 @@ const ListNotService = () => {
                         <div>
                             <div className="min-h-[70vh]">
                                 <TableService
+                                    handleRemove={handleRemove}
                                     setSortValue={setSortValue}
                                     setSortAscPrice={setSortAscPrice}
                                     setSortAsc={setSortAsc}
@@ -99,11 +121,11 @@ const ListNotService = () => {
                                 currentPage={paginationNumber}
                             />
                         </div>
-                    ):(
-                            <div className='h-[70vh] flex justify-center items-center'>
-                                <p className="text-[25px] font-semibold">Không tìm thấy dịch vụ</p>
-                            </div>
-                        ))
+                    ) : (
+                        <div className='h-[70vh] flex justify-center items-center'>
+                            <p className="text-[25px] font-semibold">Không tìm thấy dịch vụ</p>
+                        </div>
+                    ))
                 }
             </div>
 

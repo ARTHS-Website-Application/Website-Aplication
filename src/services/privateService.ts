@@ -45,10 +45,24 @@ export class Private {
         formData.append('name', data.name);
         formData.append('price', data.price);
         formData.append('description', data.description);
+        // formData.append('discountId', data.discountId);
+        formData.append('warrantyDuration', data.warrantyDuration);
+        formData.append('duration', data.duration);
+        formData.append('reminderInterval', data.reminderInterval);
         // for (let i = 0; i < data.images.length; i++) {
         //     formData.append('images', data.images[i], data.images[i].name);
         // }
         return await axiosPrivate.put(`/repair-services/${serviceId}`, formData, {
+            headers: {
+                'Content-type': 'multipart/form-data',
+            },
+        })
+    }
+    updateServiceStatus = async (idService:string,status: string) => {
+        const formData = new FormData();
+        const axiosPrivate = userAxiosPrivate();
+        formData.append('status', status);
+        return await axiosPrivate.put(`/repair-services/${idService}`, formData, {
             headers: {
                 'Content-type': 'multipart/form-data',
             },

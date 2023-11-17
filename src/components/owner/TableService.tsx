@@ -1,4 +1,3 @@
-import { typeActiveProduct } from '@/types/typeProduct';
 import { formatDateSeven } from '@/utils/formatDate';
 import { formatPrice } from '@/utils/formatPrice';
 import { ChevronDownIcon, PencilIcon, TrashIcon } from '@heroicons/react/24/solid';
@@ -6,13 +5,15 @@ import { RxDotsHorizontal } from 'react-icons/rx';
 import { useState } from 'react'
 import { Link } from 'react-router-dom';
 import { itemService } from '@/types/actions/listService';
+import { typeService } from '@/types/typeService';
 type Props = {
     productData: itemService<string, number>[];
     setSortValue: React.Dispatch<React.SetStateAction<string>>;
     setSortAsc: React.Dispatch<React.SetStateAction<boolean | undefined>>;
     setSortAscPrice: React.Dispatch<React.SetStateAction<boolean | undefined>>;
+    handleRemove: (item: itemService<string, number>) => void;
 }
-const TableService = ({ productData, setSortAsc, setSortValue,setSortAscPrice }: Props) => {
+const TableService = ({ productData, setSortAsc, setSortValue, setSortAscPrice, handleRemove }: Props) => {
     const [showDivIndex, setShowDivIndex] = useState<number>(-1);
     const handleShowDiv = (index: number) => {
         if (showDivIndex === index) {
@@ -55,7 +56,7 @@ const TableService = ({ productData, setSortAsc, setSortValue,setSortAscPrice }:
                         <div className="flex items-center justify-center space-x-3">
                             <p>Giá tiền (VNĐ)</p>
                             <button
-                            onClick={handleSortPrice}
+                                onClick={handleSortPrice}
                             >
                                 <ChevronDownIcon className="w-5 h-5" />
                             </button>
@@ -86,8 +87,8 @@ const TableService = ({ productData, setSortAsc, setSortValue,setSortAscPrice }:
                         </td>
                         <td className="">
                             <div className="flex items-center justify-center space-x-2">
-                                <div className={`w-2 h-2 rounded-full ${item.status === typeActiveProduct.Active ? "bg-green-600" : "bg-red-600"} `}></div>
-                                <p className={`${item.status === typeActiveProduct.Active ? "text-green-600" : ""}  text-[14px]`}> {item.status}</p>
+                                <div className={`w-2 h-2 rounded-full ${item.status === typeService.Active ? "bg-green-600" : "bg-red-600"} `}></div>
+                                <p className={`${item.status === typeService.Active ? "text-green-600" : "text-red-600"}  text-[14px]`}> {item.status}</p>
                             </div>
 
                         </td>
@@ -101,15 +102,33 @@ const TableService = ({ productData, setSortAsc, setSortValue,setSortAscPrice }:
                             {showDivIndex === index && (
                                 <div className="absolute flex flex-col items-center bg-white shadow-lg rounded-lg w-[140px] right-0 space-y-3 py-2 font-semibold text-[#667085]">
                                     <Link to={`/manage-services/${item.id}`} className="hover:text-main">Chi tiết</Link>
-                                    <Link to={`/manage-services/update-service/${item.id}`} className='flex items-center space-x-1 hover:text-main hover:stroke-main'
-                                    >
-                                        <PencilIcon className="w-5 h-5" />
-                                        <p> Cập nhật</p>
-                                    </Link>
-                                    <button className='flex items-center space-x-1 hover:text-main hover:fill-main'>
-                                        <TrashIcon className="w-5 h-5" />
-                                        <p> Xóa</p>
-                                    </button>
+                                    {item?.status === typeService.Active && (
+                                        <Link to={`/manage-services/update-service/${item.id}`} className='flex items-center space-x-1 hover:text-main hover:stroke-main'>
+                                            <PencilIcon className="w-5 h-5" />
+                                            <p> Cập nhật</p>
+                                        </Link>
+                                    )}
+                                    {item.status === typeService.Active ? (
+                                        <button className='flex items-center space-x-1 hover:text-main hover:fill-main'
+                                            onClick={() => {
+                                                handleRemove(item)
+                                                handleShowDiv(index)
+                                            }}
+                                        >
+                                            <TrashIcon className="w-5 h-5" />
+                                            <p> Xóa</p>
+                                        </button>
+                                    ) : (
+                                        <button className='flex items-center space-x-1 hover:text-main hover:fill-main'
+                                            onClick={() => {
+                                                handleRemove(item)
+                                                handleShowDiv(index)
+                                            }}
+                                        >
+                                            <PencilIcon className="w-5 h-5" />
+                                            <p> Khôi phục</p>
+                                        </button>
+                                    )}
                                 </div>
                             )}
 

@@ -1,4 +1,5 @@
 import userAxiosPrivate from "@/hooks/useAxiosPrivate";
+import { warrantyCreate } from "@/types/actions/detailOrder";
 import { callFilterOrder } from "@/types/actions/listOrder";
 import { itemCustomer, itemStaffProduct } from "@/types/actions/updateCustomerOrder";
 export class Private {
@@ -53,6 +54,10 @@ export class Private {
                 status:data
             }
             return await axiosPrivate.put(`/orders/offline/${idOrder}`,dataProduct)
+        }
+    postWarranty =async(data:warrantyCreate)=>{
+        const axiosPrivate = userAxiosPrivate();
+            return await axiosPrivate.post(`/warranties-history`,data)
         }
 }
 

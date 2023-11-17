@@ -89,3 +89,13 @@ export const updateService = (serviceId:string,data:any) => {
         serviceId
     };
 };
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const updateStatusService = (idService:string,status:string,data:any) => {
+    return {
+        type: serviceUpdate.SERVICE_UPDATE_STATUS,
+        status,
+        idService,
+        data
+    };
+}

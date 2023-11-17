@@ -1,5 +1,4 @@
 import SearchFilter from '@/components/SearchFilter'
-import Pagination from '@/components/Pagination'
 import { useEffect, useState } from 'react'
 import TableOrder from '@/components/teller/TableOrder'
 import { useDispatch, useSelector } from 'react-redux'
@@ -8,6 +7,7 @@ import { itemOrder, listOrder, selectorOrder } from '@/types/actions/listOrder'
 import { statusOrder } from '@/types/typeOrder'
 import LoadingPage from '@/components/LoadingPage'
 import SelectFilterOrder from '@/components/SelectFilterOrder'
+import PaginationParam from '@/components/PaginationParam'
 
 
 const ListOrder = () => {
@@ -26,7 +26,7 @@ const ListOrder = () => {
     }, [orderPaidInfor.pagination?.totalRow]);
 
     useEffect(() => {
-        if (addSearch !=="") {
+        if (addSearch !== "") {
             if (chooseSelect === "name") {
                 const data = {
                     customerName: addSearch,
@@ -59,15 +59,16 @@ const ListOrder = () => {
 
     useEffect(() => {
         const isAnyPendingOrder = orderPaidInfor?.data?.every((item) => item.status === statusOrder.Processing);
-        if (isAnyPendingOrder && orderPaidInfor?.data) {
-            setOrderData(orderPaidInfor.data);
-            setTimeout(() => {
-                setIsLoading(false);
-            }, 500);
-        } else {
-            setOrderData([]);
+        if (isAnyPendingOrder) {
+            if (orderPaidInfor) {
+                setOrderData(orderPaidInfor.data);
+                setTimeout(() => {
+                    setIsLoading(false);
+                }, 500);
+            }
+
         }
-        
+
     }, [orderPaidInfor]);
 
     return (
@@ -92,7 +93,7 @@ const ListOrder = () => {
                                 </div>
                             )}
                         <div className="pt-3">
-                            <Pagination
+                            <PaginationParam
                                 totalPosts={orderPaidInfor.pagination?.totalRow}
                                 postsPerPage={orderPaidInfor.pagination?.pageSize}
                                 setCurrentPage={setPaginationNumber}
