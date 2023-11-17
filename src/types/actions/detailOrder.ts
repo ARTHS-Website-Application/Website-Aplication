@@ -73,17 +73,37 @@ export interface inStoreOrderDetails<T, N> {
         discountAmount: N,
         image: T
     },
-    warrantyHistories: [
-        {
-            id: T,
-            repairDate: Date,
-            productQuantity: N,
-            repairDetails: T,
-            handledBy: T,
-            totalAmount: N,
-            status: T
-        }
-    ]
+    warrantyHistories: listWarranty[]
 }
+export interface listWarranty {
+
+    id: string
+    repairDate: Date
+    productQuantity: number
+    repairDetails: string
+    totalAmount: number
+    status: string
+    handledByNavigation: {
+        accountId: string
+        fullName: string
+        gender: string
+        phoneNumber: string
+        avatar: string
+    }
+
+}
+
+export interface sagaCreateWarranty {
+    type:"create_warranty",
+    data:warrantyCreate,
+    idOrder:string
+}
+export interface warrantyCreate {
+    orderDetailId: string
+    handledBy: string
+    productQuantity: number
+    repairDetails: string
+}
+
 
 

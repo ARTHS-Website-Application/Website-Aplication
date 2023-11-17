@@ -1,8 +1,10 @@
 import { updateCustomerOrder } from '@/actions/order';
 import { showSuccessAlert } from '@/constants/chooseToastify';
+import { itemDetailOrder, selectorDetailOrder } from '@/types/actions/detailOrder';
 import { formatPhoneNumber } from '@/utils/formatPhone';
 import { useState, useEffect } from 'react'
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import LoadingCreateUpdate from '../LoadingCreateUpdate';
 type Props = {
     isVisible: boolean;
     onClose: () => void;
@@ -13,7 +15,21 @@ type Props = {
 
 }
 
-const RepairCustomer = ({ isVisible, onClose, idOrder, nameCustomer, phoneCustomer, licensePlate }: Props) => {
+const RepairCustomer = ({ isVisible, onClose, idOrder, nameCustomer, phoneCustomer, licensePlate, }: Props) => {
+    const detailOrder: itemDetailOrder<string, number> = useSelector((state: selectorDetailOrder<string, number>) => state.orderDetailReducer.orderDetail);
+    const [isLoading, setIsLoading] = useState<number>(-1);
+    useEffect(() => {
+        if (detailOrder?.customerName !== nameCustomer || detailOrder?.customerPhoneNumber !== phoneCustomer || detailOrder?.licensePlate !== licensePlate) {
+            setIsLoading(0)
+        }
+    }, [detailOrder, licensePlate, nameCustomer, onClose, phoneCustomer])
+    useEffect(()=>{
+        if (isLoading === 0) {
+            onClose();
+            showSuccessAlert('Cập nhật thành công');
+            setIsLoading(-1);
+        }
+    },[isLoading, onClose])
     const [namUser, setNameUser] = useState<string | null>('');
     const [phoneUser, setPhoneUser] = useState<string | null>('');
     const [license, setLicense] = useState<string | null>('');
@@ -45,24 +61,20 @@ const RepairCustomer = ({ isVisible, onClose, idOrder, nameCustomer, phoneCustom
         if (idOrder && !licensePlate) {
             if (!namUser || !phoneUser) {
                 setError('Hãy điền đầy đủ các giá trị')
-                // onClose();
             } else if (namUser.trim() && phoneCustomer.length === 10) {
                 dispatch(updateCustomerOrder(idOrder, data))
                 setError('');
-                onClose();
-                showSuccessAlert('Cập nhật thành công');
+                setIsLoading(1)
             }
         }
         if (idOrder && licensePlate) {
             if (!namUser || !phoneUser || !phoneUser) {
 
                 setError('Hãy điền đầy đủ các giá trị')
-                // onClose();
             } else if (namUser.trim() && phoneCustomer.length === 10 && licensePlate.trim()) {
                 dispatch(updateCustomerOrder(idOrder, data))
                 setError('');
-                onClose();
-                showSuccessAlert('Cập nhật thành công');
+                setIsLoading(1)
             }
         }
     }
@@ -81,7 +93,9 @@ const RepairCustomer = ({ isVisible, onClose, idOrder, nameCustomer, phoneCustom
 
                 <div className="bg-white w-full p-2 pb-3 rounded-b-lg">
                     <form
-                        onSubmit={(e) => { handleUpdate(e) }}
+                        onSubmit={(e) => {
+                            handleUpdate(e)
+                        }}
                     >
                         <div className="w-full flex justify-center py-3 text-[18px] items-center">
                             <div className="w-[500px] flex flex-col space-y-5">
@@ -147,6 +161,7 @@ const RepairCustomer = ({ isVisible, onClose, idOrder, nameCustomer, phoneCustom
                     </form>
                 </div>
             </div>
+            {isLoading === 1 ? <LoadingCreateUpdate /> : ""}
         </div>
     )
 }

@@ -10,7 +10,7 @@ export enum statusOrder {
     Canceled = "Đã hủy",
 }
 
-export enum typeOrder{
-    Purchase = "Đơn mua hàng",
-    Repair = "Đơn sửa chữa",
-}
+// export enum typeOrder{
+//     Purchase = "Đơn mua hàng",
+//     Repair = "Đơn sửa chữa",
+// }

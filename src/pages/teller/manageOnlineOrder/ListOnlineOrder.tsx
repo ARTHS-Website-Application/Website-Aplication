@@ -17,6 +17,7 @@ const ListOnlineOrder = () => {
     const [paginationNumber, setPaginationNumber] = useState<number>(0);
     const [addSearch, setAddSearch] = useState<string>("");
     const [chooseSelect, setChooseSelect] = useState<string>("name");
+    console.log("asd213", onlineOrderData)
 
     useEffect(() => {
         if (onlineOrderInfo.pagination?.totalRow) {
@@ -34,9 +35,6 @@ const ListOnlineOrder = () => {
                     orderStatus: statusOrder.Processing,
                 }
                 dispatch(getOnlineOrder(data))
-                setTimeout(() => {
-                    setIsLoading(true);
-                }, 200)
             } else if (chooseSelect === "sdt") {
                 const data = {
                     customerName: "",
@@ -45,9 +43,6 @@ const ListOnlineOrder = () => {
                     orderStatus: statusOrder.Processing,
                 }
                 dispatch(getOnlineOrder(data))
-                setTimeout(() => {
-                    setIsLoading(true);
-                }, 200)
             }
         } else {
             const data = {
@@ -57,18 +52,18 @@ const ListOnlineOrder = () => {
                 orderStatus: statusOrder.Processing,
             }
             dispatch(getOnlineOrder(data));
-            setTimeout(() => {
-                setIsLoading(true);
-            }, 200)
         }
+        setIsLoading(true);
     }, [addSearch, chooseSelect, dispatch, paginationNumber])
 
     useEffect(() => {
-        setOnlineOrderData(onlineOrderInfo.data)
-        setTimeout(() => {
-            setIsLoading(false);
-        }, 1500)
-    }, [onlineOrderInfo.data])
+        if(onlineOrderInfo){
+            setOnlineOrderData(onlineOrderInfo.data)
+            setTimeout(() => {
+                setIsLoading(false);
+            }, 500)
+        }
+    }, [onlineOrderInfo])
 
 
 

@@ -7,7 +7,7 @@ import { item, itemProduct, selectorProduct } from '@/types/actions/product'
 import { typeActiveProduct } from '@/types/typeProduct'
 import { useState, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import {useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 
 const ListNotProduct = () => {
     const dispatch = useDispatch();
@@ -22,10 +22,11 @@ const ListNotProduct = () => {
     const [sortAscPrice, setSortAscPrice] = useState<boolean | undefined>();
     useEffect(() => {
         const checkStatus = productInfor?.data?.every((item) => item.status === typeActiveProduct.InActive);
-        if (checkStatus && productInfor?.data) {
-            setProductData(productInfor?.data);
-        } else {
-            setProductData([]);
+        if (checkStatus && productInfor) {
+            setProductData(productInfor.data);
+            setTimeout(() => {
+                setIsLoading(false);
+            }, 500);
         }
     }, [productInfor]);
     useEffect(() => {
@@ -83,7 +84,7 @@ const ListNotProduct = () => {
             status: typeActiveProduct.Active,
         };
         if (item) {
-            const shouldDelete = window.confirm(`Bạn có chắc chắn muốn hoàng lại sản phẩm: ${item.name} ?`);
+            const shouldDelete = window.confirm(`Bạn có chắc chắn muốn khôi phục lại sản phẩm: ${item.name} ?`);
             if (shouldDelete) {
                 dispatch(updateStatusProduct(item.id, typeActiveProduct.Active, data));
                 setIsLoading(true)

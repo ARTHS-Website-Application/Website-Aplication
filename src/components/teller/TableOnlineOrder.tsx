@@ -16,7 +16,7 @@ const TableOnlineOrder = ({ data }: Props) => {
                         <th scope="col">Số điện thoại</th>
                         <th scope="col">Thanh toán</th>
                         <th scope="col">Trạng thái</th>
-                        <th scope="col">Hành động</th>
+                        <th scope="col"></th>
                     </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-200">
@@ -24,7 +24,7 @@ const TableOnlineOrder = ({ data }: Props) => {
                         <tr key={index}>
                             <td className="">{item.id}</td>
                             <td className="px-6 py-5">{item?.customer.fullName}</td>
-                            <td className="">{item?.customer.phoneNumber}</td>
+                            <td className="">{item?.customerPhoneNumber}</td>
                             <td className="">{item.paymentMethod}</td>
                             <td className="">{item.status}</td>
                             <td className="text-blue-700 hover:underline pr-7">

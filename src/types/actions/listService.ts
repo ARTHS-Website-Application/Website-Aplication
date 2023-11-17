@@ -24,7 +24,15 @@ export interface payloadCreateService {
 
 export interface payloadUpdateService {
     type: 'service_update';
-    serviceId:string;
+    serviceId: string;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    data: any
+}
+
+export interface payloadUpdateServiceStatus {
+    type: 'service_update_status';
+    status: string;
+    idService: string;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     data: any
 }
@@ -68,13 +76,8 @@ export interface itemService<T, N> {
             imageUrl: T
         }
     ],
-    discountAmount:N
-}
-
-export interface dataProduct<T, N> {
-    id: T,
-    name: T,
-    priceCurrent: N,
     discountAmount: N,
-    image: T
+    duration: N,
+    reminderInterval: N,
+    warrantyDuration: N,
 }

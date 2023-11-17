@@ -1,4 +1,5 @@
 import { discountItem} from "@/types/actions/product";
+import { formatPrice } from "@/utils/formatPrice";
 import { useState } from "react";
 
 type Props = {
@@ -7,11 +8,12 @@ type Props = {
     _imageUrl: string,
     _discount:discountItem<string,number>
     onClickAdd:()=> void,
+    setShowDetail: React.Dispatch<React.SetStateAction<boolean>>
+    onClickItemDetail:()=> void,
 }
 
-const ItemProduct = ({_name, _priceCurrent, _imageUrl,_discount, onClickAdd }: Props) => {
+const ItemProduct = ({_name, _priceCurrent, _imageUrl,_discount, onClickAdd,setShowDetail,onClickItemDetail }: Props) => {
     const [isHovered, setIsHovered] = useState<boolean>(false);
-
     const handleMouseEnter = () => {
         setIsHovered(true);
     };
@@ -36,17 +38,28 @@ const ItemProduct = ({_name, _priceCurrent, _imageUrl,_discount, onClickAdd }: P
                     >Thêm</button>}
                 
             </div>
-            <div className='w-full flex flex-col justify-center items-center space-y-1 pt-1'>
-                <p className='text-[14px] text-center'>{_name}</p>
+            <div className='w-full space-y-1 pt-2 pl-2 pr-1'>
+                <p className='text-[14px] text-start'>{_name}</p>
+                <div className='flex justify-between items-center'>
                 {_discount ?(
-                <div>
+                <div className="text-[18px]">
                     <p className='line-through text-[#888888]'>{_priceCurrent} đ</p>
                 <p className='text-[#FE3A30]'>{_priceCurrent * (1 - _discount.discountAmount/100)} đ</p>
                 </div>
                 ):(
-                    <p className='text-[#FE3A30]'>{_priceCurrent} đ</p>
+                    <p className='text-[#FE3A30] text-[18px]'>{formatPrice(_priceCurrent)} đ</p>
                 )}
+                <div className="flex items-end">
+                <button className="underline underline-offset-4 text-[15px] text-[#FE3A30] hover:text-main"
+                onClick={()=>{
+                    setShowDetail(true);
+                    onClickItemDetail();
+                }}
+                >Chi tiết</button>
+                </div>
+                </div>
             </div>
+            
         </div>
     )
 }

@@ -325,6 +325,7 @@ const InforUser = ({ addProduct = [], addService = [], removeProduct, removeServ
                                     localStorage.removeItem('serviceItems');
                                     setOrderData([]);
                                     setOrderService([]);
+                                    setShowService([false]);
                                     setAddProduct([]);
                                     setAddService([]);
                                 }}

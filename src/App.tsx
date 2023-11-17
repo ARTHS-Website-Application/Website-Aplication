@@ -42,6 +42,7 @@ import ListOrderConfirm from './pages/teller/manageOnlineOrder/ListOrderConfirm'
 import ListOrderTransport from './pages/teller/manageOnlineOrder/ListOrderTransport';
 import ListOrderFinished from './pages/teller/manageOnlineOrder/ListOrderFinished';
 import ListOrderCanceled from './pages/teller/manageOnlineOrder/ListOrderCanceled';
+import ListAllBoking from './pages/teller/manageBooking/ListAllBooking';
 
 
 const ROLES = {
@@ -78,46 +79,50 @@ function App() {
             <Route path="/manage-order" element={<ManageOrder />}>
               <Route path="create-order" element={<CreateOrder />} />
               <Route path="list-all-order" element={<ListAllOrder />}>
-              <Route path="list-order" element={<ListOrder />} />
-              <Route path="wait-paid-order" element={<ListWaitPaidOrder />} />
-              <Route path="history-order" element={<HistoryOrder />}/>
+                <Route path="list-order" element={<ListOrder />} />
+                <Route path="wait-paid-order" element={<ListWaitPaidOrder />} />
+                <Route path="history-order" element={<HistoryOrder />} />
               </Route>
-              <Route path="online-order" element={<ManageOnlineOrder/>}>
-              <Route path="list-order" element={<ListOnlineOrder/>}/>
-              <Route path="list-order-confirm" element={<ListOrderConfirm/>}/>
-              <Route path="list-order-transport" element={<ListOrderTransport/>}/>
-              <Route path="list-order-finish" element={<ListOrderFinished/>}/>
-              <Route path="list-order-canceled" element={<ListOrderCanceled/>}/>
-            </Route>
-            <Route path="online/:orderId" element={<DetailOnlineOrder/>} />
-            <Route path=":orderId" element={<DetailOrder />} />
+              <Route path="online-order" element={<ManageOnlineOrder />}>
+                <Route path="list-order" element={<ListOnlineOrder />} />
+                <Route path="list-order-confirm" element={<ListOrderConfirm />} />
+                <Route path="list-order-transport" element={<ListOrderTransport />} />
+                <Route path="list-order-finish" element={<ListOrderFinished />} />
+                <Route path="list-order-canceled" element={<ListOrderCanceled />} />
+              </Route>
+              <Route path="online/:orderId" element={<DetailOnlineOrder />} />
+              <Route path=":orderId" element={<DetailOrder />} />
             </Route>
             <Route path="manage-booking" element={<ManageBooking />}>
-              <Route path="list-booking" index element={<ListBooking />} />
-              <Route path="wait-for-confirm-booking" element={<WaitForConfirmBooking />} />
-              <Route path="history-booking" element={<HistoryBooking />} />
+              <Route path="list" element={<ListAllBoking />}>
+                <Route path="wait-for-confirm-booking" element={<WaitForConfirmBooking />} />
+                <Route path="history-booking" element={<HistoryBooking />} />
+              </Route>
+              <Route path="list-booking" element={<ListBooking />} />
             </Route>
-            
+
           </Route>
           {/* Page của Owner */}
           <Route element={<RequireAuth allowedRoles={ROLES.Owner} />}>
             <Route path="owner" index element={<HomeOwner />} />
             <Route path="manage-employees" element={<ManageEmployee />} />
 
+            <Route path="create-product" element={<CreateProduct />} />
             <Route path="manage-products" element={<ManageProduct />}>
               <Route path="list-product" element={<ListProduct />} />
               <Route path="list-not-product" element={<ListNotProduct />} />
-              <Route path="create-product" element={<CreateProduct />} />
               <Route path=":productId" element={<ProductDetail />} />
               <Route path="update-product/:productId" element={<UpdateProduct />} />
             </Route>
 
             <Route path="manage-orders-owner" element={<ManageOrderOwner />} />
             <Route path="manage-discounts" element={<ManageDiscount />} />
+
+            <Route path="create-service" element={<CreateService />} />
+
             <Route path="manage-services" element={<ManageService />}>
               <Route path='list-service' element={<ListService />} />
               <Route path='list-not-service' element={<ListNotService />} />
-              <Route path="create-service" element={<CreateService />} />
               <Route path=":serviceId" element={<DetailService />} />
               <Route path="update-service/:serviceId" element={<UpdateService />} />
             </Route>

@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import * as React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import Description from "@/components/Description";
-import { FilterProductNotService } from '@/actions/product';
+import { FilterProductNotService, WarrantyProduct } from '@/actions/product';
 import { detailService, updateService } from '@/actions/service';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { itemService } from '@/types/actions/listService';
@@ -11,17 +11,41 @@ import { selectorDetailService } from '@/types/actions/detailService';
 import { images } from '@/types/images';
 import LoadingPage from '@/components/LoadingPage';
 import { showSuccessAlert } from '@/constants/chooseToastify';
+import { Option, Select } from '@material-tailwind/react';
+import { itemWarrantyProduct, selectorWarrantyProduct } from '@/types/actions/listWarranty';
+import { dataDiscount, itemDiscount, selectorDiscount } from '@/types/actions/listDiscout';
+import { getDiscountChoose } from '@/actions/discount';
 const UpdateService = () => {
   const { serviceId } = useParams();
   const dispatch = useDispatch();
-  const navigate =useNavigate();
-  const getDetailService: itemService<string, number> = useSelector((state: selectorDetailService<string, number>) => state.serviceDetailReducer.serviceDetail)
+  const navigate = useNavigate();
+  const getDetailService: itemService<string, number> = useSelector((state: selectorDetailService<string, number>) => state.serviceDetailReducer.serviceDetail);
+  const warrantyChoose: itemWarrantyProduct<string, number>[] = useSelector((state: selectorWarrantyProduct<string, number>) => state.warrantyReducer.warrantyProduct);
+  const discountProduct: dataDiscount<string, number> = useSelector((state: selectorDiscount<string, number>) => state.discountReducer.discountInfor);
+  const [dataDiscount, setDataDiscount] = useState<itemDiscount<string, number>[]>([])
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [nameProduct, setNameProduct] = useState<string>('');
   const [priceProduct, setPriceProduct] = useState<number>(0);
   const [descriptionProduct, setDescriptionProduct] = useState<string>('');
+  const [duration, setDuration] = useState<number>(0);
+  const [reminderInterval, setReminderInterval] = useState<number>(0);
+  const [addDiscount, setAddDiscount] = useState<string>("");
+  const [addWarranty, setAddWarranty] = useState<number>(0);
   const [images, setImages] = useState<File[]>([]);
   const [imagesUrl, setImagesUrl] = useState<images[]>([]);
+  useEffect(() => {
+    dispatch(WarrantyProduct());
+    dispatch(getDiscountChoose(50));
+    setIsLoading(true)
+  }, [dispatch])
+  useEffect(() => {
+    if (discountProduct?.data?.length > 0) {
+      setDataDiscount(discountProduct.data)
+      setTimeout(() => {
+        setIsLoading(false)
+      }, 500)
+    }
+  }, [discountProduct])
   //dispatch detail
   useEffect(() => {
     if (serviceId) {
@@ -31,11 +55,15 @@ const UpdateService = () => {
   }, [dispatch, serviceId]);
   //getDetailService
   useEffect(() => {
-    if (getDetailService?.id === serviceId) {
+    if (getDetailService && getDetailService?.id === serviceId) {
       setNameProduct(getDetailService.name);
       setPriceProduct(getDetailService.price);
       setDescriptionProduct(getDetailService.description);
       setImagesUrl(getDetailService.images);
+      setDuration(getDetailService.duration);
+      setReminderInterval(getDetailService.reminderInterval);
+      // setAddDiscount;
+      setAddWarranty(getDetailService.warrantyDuration);
       setTimeout(() => {
         setIsLoading(false);
       }, 500)
@@ -74,6 +102,23 @@ const UpdateService = () => {
   const handleDescription = (value: string) => {
     setDescriptionProduct(value);
   }
+  const handleAddWarranty = (e: string | undefined) => {
+    if (e) {
+      setAddWarranty(parseInt(e))
+    }
+  }
+
+  const handleAddDiscount = (e: string | undefined) => {
+    if (e) {
+      setAddDiscount(e)
+    }
+  }
+
+  const handleReminderInterval = (e: string | undefined) => {
+    if (e) {
+      setReminderInterval(parseInt(e))
+    }
+  }
 
 
   const handleCreateService = () => {
@@ -81,14 +126,18 @@ const UpdateService = () => {
       name: nameProduct,
       price: priceProduct,
       description: descriptionProduct,
+      duration: duration,
+      reminderInterval: reminderInterval,
+      discountId: addDiscount,
+      warrantyDuration: addWarranty,
       images: images
     }
-    if (nameProduct && priceProduct && descriptionProduct) {
+    if (nameProduct && priceProduct && descriptionProduct && duration) {
       dispatch(updateService(getDetailService.id, dataCreate))
       navigate(`/manage-services/${serviceId}`)
-        showSuccessAlert("Cập nhật thành công");
+      showSuccessAlert("Cập nhật thành công");
     } else {
-      alert('Xin đừng bỏ trống')
+      alert('Xin đừng bỏ trống ở những ký tự hiệu *')
     }
   }
   const handleClear = () => {
@@ -96,6 +145,10 @@ const UpdateService = () => {
     setPriceProduct(getDetailService.price);
     setDescriptionProduct(getDetailService.description);
     setImagesUrl(getDetailService.images);
+    setDuration(getDetailService.duration);
+    setReminderInterval(getDetailService.reminderInterval);
+    // setAddDiscount;
+    setAddWarranty(getDetailService.warrantyDuration);
   }
   return (
     <div>
@@ -113,7 +166,10 @@ const UpdateService = () => {
                 <p className="text-[21px] font-semibold">Thông tin dịch vụ</p>
                 <div className="w-full flex justify-between items-center px-3 py-5 text-[#6B7280] text-[19px] ">
                   <div className="space-y-3">
-                    <p className="pl-1">Tên</p>
+                    <div className="flex space-x-1">
+                      <p>Tên dịch vụ</p>
+                      <p className="text-red-800">*</p>
+                    </div>
                     <input type="text"
                       value={nameProduct}
                       placeholder='Tên dịch vụ'
@@ -122,7 +178,10 @@ const UpdateService = () => {
                     />
                   </div>
                   <div className=" space-y-3">
-                    <p>Giá tiền</p>
+                    <div className="flex space-x-1">
+                      <p>Giá tiền(VNĐ)</p>
+                      <p className="text-red-800">*</p>
+                    </div>
                     <div className="flex items-center space-x-2">
                       <input type="number"
                         min={1}
@@ -135,6 +194,89 @@ const UpdateService = () => {
                     </div>
                   </div>
                 </div>
+                <div className="flex justify-between py-5 text-[#6B7280] text-[19px] px-3">
+                  <div className="flex flex-col space-y-3">
+                    <div className="flex space-x-1">
+                      <p>Thời gian làm dịch vụ</p>
+                      <p className="text-red-800">*</p>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <input type="number"
+                        min={1}
+                        value={duration === 0 ? "" : duration}
+                        placeholder="Nhập số phút"
+                        className='outline-none p-2 border-2 border-[#E5E7EB] bg-gray-50 rounded-xl'
+                        onChange={(e) => setDuration(parseInt(e.target.value))}
+                      />
+                    </div>
+
+                  </div>
+                  <div className="flex flex-col space-y-3">
+                    <p className="pl-1">Thời gian nhắc nhở</p>
+                    <Select
+                      size="lg"
+                      label="Lựa chọn tháng"
+                      value={reminderInterval.toString()}
+                      className="text-[18px] w-[250px] h-[50px] bg-gray-50"
+                      onChange={handleReminderInterval}
+                    >
+                      {
+                        Array.from({ length: 12 }, (_, index) => index + 1).map((value, index) => (
+                          <Option
+                            value={value.toString()}
+                            key={index}
+                            className="text-[18px]"
+                          >{value} tháng</Option>
+                        ))
+                      }
+                    </Select>
+                  </div>
+                </div>
+                <div className="flex justify-between py-5 text-[#6B7280] text-[19px] px-3">
+                  <div className="flex flex-col space-y-3">
+                    <p>Thời gian bảo hành </p>
+                    <div className="w-[250px] text-[18px]">
+                      <Select
+                        className="px-3 h-[50px] bg-gray-50 text-[18px]"
+                        label="Chọn thời gian bảo hành"
+                        value={addWarranty.toString()}
+                        onChange={handleAddWarranty}
+                      >
+                        {warrantyChoose && warrantyChoose.length > 0
+                          ? warrantyChoose?.map((item, index) => (
+                            <Option
+                              value={item?.duration.toString()}
+                              key={index}
+                              className="text-[18px]"
+                            >{item?.duration} tháng</Option>
+                          ))
+                          : ""
+                        }
+                      </Select>
+                    </div>
+
+                  </div>
+                  <div className="flex flex-col space-y-3">
+                    <p className="pl-1">Khuyến mãi</p>
+                    <Select
+                      size="lg"
+                      label="Lựa chọn khuyến mãi"
+                      className="text-[20px] w-[250px] h-[50px] bg-gray-50"
+                      onChange={handleAddDiscount}
+                    >
+                      {dataDiscount?.length > 0
+                        ? dataDiscount?.map((item, index) => (
+                          <Option
+                            value={item.id}
+                            key={index}
+                            className="text-[18px]"
+                          >{item.title}</Option>
+                        ))
+                        : ""
+                      }
+                    </Select>
+                  </div>
+                </div>
               </div>
             </div>
             {/*add product */}
@@ -143,7 +285,10 @@ const UpdateService = () => {
             {/* Ảnh */}
             <div className=" flex justify-center pt-7">
               <div className="bg-white w-[75%] min-h-[300px] rounded-md p-5 space-y-3">
-                <p className="text-[20px]">Hình ảnh</p>
+                <div className="flex space-x-1">
+                  <p className='text-[20px]'>Hình ảnh</p>
+                  <p className="text-red-800">*</p>
+                </div>
                 <div className="bg-[#F9F9FC] border-dashed border-2 border-[#E0E2E7] py-5 flex flex-col justify-center items-center">
                   {imagesUrl?.length > 0
                     ? (

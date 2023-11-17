@@ -1,5 +1,6 @@
 import { listOrder, detailOrder, updateUserOrder, updateProductOrdered, payWithCash, listOrderPaid } from "@/constants/mainConstants";
-import { inStoreOrderDetails, itemDetailOrder } from "@/types/actions/detailOrder";
+import { createWarranty } from "@/constants/secondaryConstants";
+import {inStoreOrderDetails, itemDetailOrder, warrantyCreate } from "@/types/actions/detailOrder";
 import { callFilterOrder, itemOrder } from "@/types/actions/listOrder";
 import { itemCustomer, itemStaffProduct } from "@/types/actions/updateCustomerOrder";
 
@@ -169,3 +170,11 @@ export const updateProductOrderFailed = (error: string) => {
         },
     };
 };
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const postWarranty = (data:warrantyCreate,idOrder:string) => {
+    return {
+        type: createWarranty.CREATE_WARRANTY,
+        data,
+        idOrder
+    }
+}

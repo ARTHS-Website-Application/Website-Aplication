@@ -94,9 +94,10 @@ export const payWithCash = {
 }
 
 //online order
-export const listOnlineOrder = {
+export const listOnlineOrderConstant = {
     LIST_ONLINE_ORDER: "list_online_order",
     LIST_ORDER_SUCCESS: "list_online_order_success",
+    LIST_ORDER_CONFIRM_SUCCESS: "list_online_order_confirm_success",
     LIST_ORDER_FAIL: "list_online_order_fail",
 }
 
@@ -104,4 +105,15 @@ export const detailOnlineOrder = {
     DETAIL_ONLINE_ORDER: "detail_online_order",
     DETAIL_ONLINE_ORDER_SUCCESS: "detail_online_order_success",
     DETAIL_ONLINE_ORDER_FAIL: "detail_online_order_fail",
+}
+
+export const updateOnlineOrder = {
+    UPDATE_ONLINE_ORDER: "update_online_order",
+    UPDATE_ONLINE_ORDER_SUCCESS: "update_online_order_success",
+    UPDATE_ONLINE_ORDER_FAIL: "update_online_order_fail",
+}
+export const createOrderTransport={
+    CREATE_TRANSPORT: "create_transport",
+    CREATE_TRANSPORT_SUCCESS: "create_transport_success",
+    CREATE_TRANSPORT_FAIL: "create_transport_fail",
 }
