@@ -1,28 +1,23 @@
-import { item } from '@/types/actions/product';
+import { itemService } from '@/types/actions/listService';
 import { formatPrice } from '@/utils/formatPrice';
 import { XMarkIcon } from '@heroicons/react/24/solid';
 import { useEffect, useState } from 'react'
-import { RxDotsHorizontal } from 'react-icons/rx';
 
 type Props = {
     onClose: () => void;
     isVisible: boolean;
-    itemDetail: item<string, number> | undefined;
+    itemDetail: itemService<string, number> | undefined;
 }
 
-const ShowCreateDetail = ({ onClose, isVisible, itemDetail }: Props) => {
-    const [data, setData] = useState<item<string, number>>();
+const ShowCreateServiceDetail = ({ onClose, isVisible, itemDetail }: Props) => {
+    const [data, setData] = useState<itemService<string, number>>();
     const [selectedImage, setSelectedImage] = useState<number>(0);
-    const [showVehicle, setShowVehicle] = useState<boolean>(false);
     const handleChangeImage = (index: number) => {
         setSelectedImage(index);
     }
-    const handleBoxVehicle = () => {
-        setShowVehicle(!showVehicle);
-    }
 
     useEffect(() => {
-        if (itemDetail) {
+        if (itemDetail?.id) {
             setData(itemDetail);
         }
     }, [itemDetail])
@@ -48,7 +43,7 @@ const ShowCreateDetail = ({ onClose, isVisible, itemDetail }: Props) => {
                             {data?.images && (
                                 <div className='bg-white shadow-lg p-2 rounded-lg'>
                                     <img
-                                        src={data?.images[selectedImage].imageUrl}
+                                        src={data?.images[selectedImage]?.imageUrl}
                                         alt=""
                                         className='h-[250px] object-contain'
                                     />
@@ -56,7 +51,7 @@ const ShowCreateDetail = ({ onClose, isVisible, itemDetail }: Props) => {
                             )}
                             <div className='py-5'>
                                 <div className='flex justify-center'>
-                                    <div className={`grid grid-cols-${data?.images?.length ?? 1} gap-x-7`}>
+                                    <div className={`grid grid-cols-${data?.images?data?.images?.length: 1} gap-x-7`}>
                                         {data?.images && data?.images.map((item, index) => (
                                             <div key={index} className={`p-2  rounded-lg flex justify-center cursor-pointer  items-center border-4 ${index === selectedImage ? ' border-blue-400' : 'border-gray-100'} `}>
                                                 <img
@@ -80,52 +75,24 @@ const ShowCreateDetail = ({ onClose, isVisible, itemDetail }: Props) => {
                                     <div className='space-y-3'>
                                         <p className='font-semibold'>Giá sản phẩm:</p>
                                         <div className='flex items-center space-x-3 text-[20px]'>
-                                            <p className={`${data?.discount ? "line-through text-gray-400 text-[17px]" : "text-main"}`}>{formatPrice(data?.priceCurrent)}VNĐ</p>
-                                            {data?.discount && <p className='text-main'>{formatPrice(data?.priceCurrent * (1 - data?.discount.discountAmount / 100))}VNĐ</p>}
+                                            <p className={`${data?.discountAmount !== 0 ? "line-through text-gray-400 text-[17px]" : "text-main"}`}>{formatPrice(data?.price)}VNĐ</p>
+                                            {data?.discountAmount !== 0 && <p className='text-main'>{data?.discountAmount && data?.price ? formatPrice(data?.price * (1 - data?.discountAmount / 100)) : 0}VNĐ</p>}
                                         </div>
                                     </div>
-                                    <div className='flex space-x-3 items-center'>
-                                        {data?.installationFee ? <p className="font-semibold">Giá thay phụ kiện:</p> : ""}
-                                        {data?.installationFee ? <p className='text-main text-[20px]'>{formatPrice(data?.installationFee)} VNĐ</p> : ""}
-                                    </div>
+                                    {data?.reminderInterval ? (
+                                        <div className='flex space-x-3 items-center'>
+                                            <p className='font-semibold'>Thời gian hoàn thành:</p>
+                                            <p>{data?.reminderInterval} phút</p>
+                                        </div>
+                                    ):""}
+
                                     {data?.warrantyDuration ? (
                                         <div className='flex space-x-3 items-center'>
-                                            <p className='font-semibold'>Thời gian bảo hành:</p>
+                                            <p className='font-semibold'>Bảo hành:</p>
                                             <p>{data?.warrantyDuration} tháng</p>
                                         </div>
                                     ):""}
-                                </div>
-                                <div className='text-[#6B7280] flex justify-between items-center pb-5'>
-                                    <p className='font-semibold text-black'>Loại xe phù hợp:</p>
-                                    <div className='flex justify-end space-x-3 relative'>
-                                        {data?.vehicles && data?.vehicles.slice(0, 3).map((vehicle, index) => (
-                                            <div key={index} className='px-1 py-2 border-2 border-gray-200 rounded-lg'>
-                                                <p>{vehicle.vehicleName}</p>
 
-                                            </div>
-                                        ))}
-                                        {data?.vehicles && data?.vehicles.length > 3 && (
-                                            <button className='p-1 border-2 border-gray-200 rounded-lg hover:text-main'
-                                                onClick={handleBoxVehicle}
-                                            >
-                                                <RxDotsHorizontal className='w-5 h-5' />
-                                            </button>
-
-                                        )}
-                                        {showVehicle ? (
-                                            <div
-                                                className='bg-white shadow-lg w-[500px] h-[240px] overflow-y-scroll absolute right-9 p-3 rounded-lg'>
-                                                <div className='grid grid-cols-3 gap-2'>
-                                                    {data?.vehicles && data?.vehicles.map((vehicle, index) => (
-                                                        <div key={index} className='px-1 py-2 border-2 border-gray-200 rounded-lg'>
-                                                            <p>{vehicle.vehicleName}</p>
-                                                        </div>
-                                                    ))}
-                                                </div>
-                                            </div>
-                                        ) : ""}
-
-                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -144,4 +111,4 @@ const ShowCreateDetail = ({ onClose, isVisible, itemDetail }: Props) => {
     )
 }
 
-export default ShowCreateDetail
+export default ShowCreateServiceDetail

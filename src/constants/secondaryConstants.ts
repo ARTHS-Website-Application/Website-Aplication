@@ -27,6 +27,20 @@ export const detailServices = {
     DETAIL_SERVICES_FAIL: "detail_services_fail",
 }
 
+export const createVehicles = {
+    CREATE_VEHICLES: "create_vehicles",
+    CREATE_VEHICLES_SUCCESS: "create_vehicles_success",
+    CREATE_VEHICLES_FAil: "create_vehicles_fail",
+
+}
+
+export const removeVehicles = {
+    REMOVE_VEHICLES: "remove_vehicles",
+    REMOVE_VEHICLES_SUCCESS: "remove_vehicles_success",
+    REMOVE_VEHICLES_FAil: "remove_vehicles_fail",
+
+}
+
 export const listVehicles = {
     GET_LIST_VEHICLES: "list_vehicles",
     GET_LIST_VEHICLES_SUCCESS: "list_vehicles_success",

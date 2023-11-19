@@ -202,7 +202,7 @@ const UpdateProduct = ({ addProduct = [], addService = [], removeProduct, onClos
                         <div className="w-full h-[65vh] px-2 overflow-auto space-y-3">
                             {addProduct &&
                                 addProduct.map((item, index: number) => (
-                                    <div key={index} className='bg-white w-full rounded-lg flex items-center pb-1 drop-shadow-lg'>
+                                    <div key={index} className='bg-white w-full rounded-lg flex items-center pb-1 shadow-lg'>
                                         <div className='p-1 '>
                                             <img src={item.image} className='min-w-[95px] h-[70px] object-cover' alt="" />
                                         </div>
@@ -259,8 +259,7 @@ const UpdateProduct = ({ addProduct = [], addService = [], removeProduct, onClos
                         <div className="w-full h-[65vh] overflow-auto space-y-3 pl-2 pr-1">
                             {addService &&
                                 addService.map((item: addProductService<string, number>, index: number) => (
-                                    <div  className="w-full drop-shadow-lg px-2">
-                                        <div key={index} className='bg-white w-full rounded-lg flex justify-between py-2'>
+                                        <div key={index} className='bg-white w-full rounded-lg flex justify-between py-2 shadow-lg px-2'>
                                             <div className='flex pl-2'>
                                                 <div className='py-2 pr-1'>
                                                     <img src={item?.image} className='min-w-[100px] h-[80px] object-cover' alt="" />
@@ -287,7 +286,6 @@ const UpdateProduct = ({ addProduct = [], addService = [], removeProduct, onClos
                                                 }}>X</button>
 
                                         </div>
-                                    </div>
                                 ))
                             }
                         </div>

@@ -52,8 +52,8 @@ const TableBooking = ({ data }: Props) => {
     } else if (status === statusBooking.Came) {
       return (
         <span className={commonClasses}>
-          <span className="w-2.5 h-2.5 bg-orange-400 rounded-full"></span>
-          <span className="text-orange-400 font-bold">{statusBooking.Came}</span>
+          <span className="w-2.5 h-2.5 bg-blue-600 rounded-full"></span>
+          <span className="text-blue-600 font-bold">{statusBooking.Came}</span>
         </span>
       );
     }

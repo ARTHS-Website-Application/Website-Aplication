@@ -1,4 +1,4 @@
-import { getDetailOnlineOrderSuccess, getOnlineOrderConfirmSuccess, getOnlineOrderFailed, getOnlineOrderSuccess, onlineOrderUpdate } from "@/actions/onlineOrder";
+import { getDetailOnlineOrderSuccess, getOnlineOrderConfirmSuccess, getOnlineOrderFailed, getOnlineOrderFinishedSuccess, getOnlineOrderPaidSuccess, getOnlineOrderSuccess, getOnlineOrderTransportSuccess, onlineOrderUpdate } from "@/actions/onlineOrder";
 import { getDetailOrderFailed } from "@/actions/order";
 import { createOrderTransport, detailOnlineOrder, listOnlineOrderConstant, updateOnlineOrder } from "@/constants/mainConstants";
 import { onlineOrderService } from "@/services/onlineOrderService";
@@ -15,8 +15,17 @@ function* getOnlineOrder(payload: payloadOnlineOrder<string,number>) {
             if(data?.data?.every((item:itemOnlineOrder<string,number>)=> item.status ===statusOrder.Processing)){
                 yield put(getOnlineOrderSuccess(data));
             }
+            if(data?.data?.every((item:itemOnlineOrder<string,number>)=> item.status ===statusOrder.Paid)){
+                yield put(getOnlineOrderPaidSuccess(data));
+            }
             if(data?.data?.every((item:itemOnlineOrder<string,number>)=> item.status ===statusOrder.Confirm)){
                 yield put(getOnlineOrderConfirmSuccess(data));
+            }
+            if(data?.data?.every((item:itemOnlineOrder<string,number>)=> item.status ===statusOrder.Transport)){
+                yield put(getOnlineOrderTransportSuccess(data));
+            }
+            if(data?.data?.every((item:itemOnlineOrder<string,number>)=> item.status ===statusOrder.Finished)){
+                yield put(getOnlineOrderFinishedSuccess(data));
             }
         } else {
             yield put(getOnlineOrderFailed(data));

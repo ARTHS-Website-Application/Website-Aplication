@@ -17,9 +17,33 @@ export const getOnlineOrderSuccess = (data: listOnlineOrder<string, number>) => 
         },
     };
 };
+export const getOnlineOrderPaidSuccess = (data: listOnlineOrder<string, number>) => {
+    return {
+        type: listOnlineOrderConstant.LIST_ORDER_PAID_SUCCESS,
+        payload: {
+            data,
+        },
+    };
+};
 export const getOnlineOrderConfirmSuccess = (data: listOnlineOrder<string, number>) => {
     return {
         type: listOnlineOrderConstant.LIST_ORDER_CONFIRM_SUCCESS,
+        payload: {
+            data,
+        },
+    };
+};
+export const getOnlineOrderTransportSuccess = (data: listOnlineOrder<string, number>) => {
+    return {
+        type: listOnlineOrderConstant.LIST_ORDER_TRANSPORT_SUCCESS,
+        payload: {
+            data,
+        },
+    };
+};
+export const getOnlineOrderFinishedSuccess = (data: listOnlineOrder<string, number>) => {
+    return {
+        type: listOnlineOrderConstant.LIST_ORDER_FINISH_SUCCESS,
         payload: {
             data,
         },

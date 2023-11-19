@@ -1,9 +1,10 @@
-import { getBookingFailed, getBookingSuccess, putUpdateFailed, putUpdateSuccess } from "@/actions/booking";
+import { getBookingFailed, getBookingSuccess, getDetailBookingFailed, getDetailBookingSuccess, putUpdateFailed, putUpdateSuccess } from "@/actions/booking";
 import { showErrorAlert, showSuccessAlert, showWarningAlert } from "@/constants/chooseToastify";
-import { listBooking, updateBooking } from "@/constants/mainConstants";
+import { detailBooking, listBooking, updateBooking } from "@/constants/mainConstants";
 import { bookingService } from "@/services/bookingService";
 import { ErrorResponse } from "@/types/errorResponse";
 import { itemBooking, payloadBooking, payloadUpdateBooking, selectorBooking } from "@/types/listBooking";
+import { payloadDetailBooking } from "@/types/typeDetailBooking";
 import { AxiosError, AxiosResponse } from "axios";
 import { call, put, select, takeEvery } from "redux-saga/effects";
 
@@ -58,8 +59,24 @@ function* putBooking(payload: payloadUpdateBooking<string>) {
         }
     }
 }
+function* getBookingDetail(payload: payloadDetailBooking<string>) {
+    try {
+        const response: AxiosResponse = yield call(bookingService.bookingDetail, payload.bookingId);
+        const { status, data } = response;
+        if (data && status === 200) {
+            yield put(getDetailBookingSuccess(data));
+        } else {
+            yield put(getDetailBookingFailed(data));
+        }
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
+        const msg: string = error.message;
+        yield put(getDetailBookingFailed(msg));
+    }
+}
 
 export function* lookupBooking() {
     yield takeEvery(listBooking.LIST_BOOKING, getBooking);
-    yield takeEvery(updateBooking.UPDATE_BOOKING, putBooking)
+    yield takeEvery(updateBooking.UPDATE_BOOKING, putBooking);
+    yield takeEvery(detailBooking.DETAIL_BOOKING, getBookingDetail);
 }

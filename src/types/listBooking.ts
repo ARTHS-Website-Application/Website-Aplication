@@ -15,20 +15,21 @@ export interface repairBooking<T, N> {
 export interface payloadBooking<N> {
     type: 'list_booking';
     pageNumber: N,
-    filters: any,
+    filters: unknown,
 }
 
 
 export interface payloadUpdateBooking<T> {
     type: 'update_booking';
     bookingId: T,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     data: any
 }
 
 
 
 export interface bookingSaga<T, N> {
-    error: any;
+    error: unknown;
     data: listBooking<T, N>
 }
 
@@ -45,6 +46,7 @@ export interface itemBooking<T, N> {
     cancellationDate: Date,
     status: T,
     createAt: Date,
+    staff:staffBooking<T, N>,
     customer: customerBooking<T, N>,
 }
 
@@ -54,6 +56,14 @@ export interface customerBooking<T, N> {
     fullName: T,
     gender: T,
     address: T,
+    avatar: T,
+}
+
+export interface staffBooking<T, N> {
+    accountId: T,
+    phoneNumber: N
+    fullName: T,
+    gender: T,
     avatar: T,
 }
 

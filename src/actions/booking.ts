@@ -1,4 +1,4 @@
-import { listBooking, updateBooking } from "@/constants/mainConstants"
+import { detailBooking, listBooking, updateBooking } from "@/constants/mainConstants"
 import { itemBooking } from "@/types/listBooking";
 
 
@@ -51,6 +51,32 @@ export const putUpdateSuccess = (data: itemBooking<string,number>[]) => {
 export const putUpdateFailed = (error: string) => {
     return {
         type: updateBooking.UPDATE_BOOKING_FAIL,
+        payload: {
+            error,
+        },
+    };
+}
+
+export const getDetailBooking = (bookingId: string) => {
+    console.log(bookingId)
+    return{
+        type: detailBooking.DETAIL_BOOKING,
+        bookingId,
+    };
+}
+
+export const getDetailBookingSuccess = (data: itemBooking<string,number>[]) => {
+    return {
+        type: detailBooking.DETAIL_BOOKING_SUCCESS,
+        payload:{
+            data,
+        },
+    };
+}
+
+export const getDetailBookingFailed = (error: string) => {
+    return {
+        type: detailBooking.DETAIL_BOOKING_FAIL,
         payload: {
             error,
         },

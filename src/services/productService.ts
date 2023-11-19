@@ -92,7 +92,18 @@ export class Private {
 
         return await axiosPrivate.get(`/warranties`)
     }
-
+    //Vehicle
+    createVehicle = async (vehicleName:string) => {   
+        const axiosPrivate = userAxiosPrivate();
+        const data={
+            vehicleName:vehicleName
+        }
+        return await axiosPrivate.post(`/vehicles`,data)
+    }
+    deleteVehicle = async (vehicleId:string) => {   
+        const axiosPrivate = userAxiosPrivate();
+        return await axiosPrivate.delete(`/vehicles/${vehicleId}`)
+    }
     getVehicleProduct = async () => {
         const axiosPrivate = userAxiosPrivate();
 

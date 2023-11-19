@@ -1,6 +1,5 @@
 import { Select, Option } from "@material-tailwind/react";
 import { CategoryProduct, WarrantyProduct, getDetailProduct, getVehicleProduct, updateProduct } from '@/actions/product';
-import { getServicesChoose } from '@/actions/service';
 import { itemCategoryProduct, selectorCategoryProduct } from '@/types/actions/categoryPr';
 import { ChevronDownIcon, MagnifyingGlassIcon, PhotoIcon } from '@heroicons/react/24/solid'
 import { useEffect, useState } from 'react';
@@ -17,8 +16,6 @@ import { images } from "@/types/images";
 import { itemWarrantyProduct, selectorWarrantyProduct } from "@/types/actions/listWarranty";
 import LoadingPage from "@/components/LoadingPage";
 import { showSuccessAlert } from "@/constants/chooseToastify";
-import { typeService } from "@/types/typeService";
-
 const UpdateProduct = () => {
     const { productId } = useParams();
     const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -98,11 +95,6 @@ const UpdateProduct = () => {
         dispatch(CategoryProduct());
         dispatch(WarrantyProduct());
         dispatch(getDiscountChoose(50));
-        const dataService = {
-            pageSize: 50,
-            status: typeService.Active
-        }
-        dispatch(getServicesChoose(dataService));
         setIsLoading(true)
     }, [dispatch])
 

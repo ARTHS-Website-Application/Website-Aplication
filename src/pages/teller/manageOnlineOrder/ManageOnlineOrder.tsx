@@ -3,7 +3,11 @@ import { useEffect } from 'react';
 const linkRole = [
   {
     to: '/manage-order/online-order/list-order',
-    name: "Danh sách đơn đặt hàng"
+    name: "Các đơn đặt hàng chưa thanh toán"
+  },
+  {
+    to: '/manage-order/online-order/list-order-paid',
+    name: "Các đơn đặt hàng đã thanh toán"
   },
   {
     to: '/manage-order/online-order/list-order-confirm',

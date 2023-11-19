@@ -1,10 +1,11 @@
-import { listVehicles } from "@/constants/secondaryConstants";
+import { createVehicles, listVehicles } from "@/constants/secondaryConstants";
 import { storeVehicleProduct, vehicleProductSaga } from "@/types/actions/listVehicle";
 
 
 
 const initialState: storeVehicleProduct<string> = {
     vehicleProduct: [],
+    createVehicleProduct:null,
     showError: null,
 };
 
@@ -19,13 +20,18 @@ const vehicleProductReducer = (
             return {
                 ...state,
                 vehicleProduct: payload.data,
-
             }
+        
+            case createVehicles.CREATE_VEHICLES_SUCCESS:
+                return {
+                    ...state,
+                    createVehicleProduct: payload.data,
+                }
 
         case listVehicles.GET_LIST_VEHICLES_FAil:
             return {
                 ...state,
-                vehicleProduct: [],
+                showError: payload.data,
             }
         default:
             return state;
