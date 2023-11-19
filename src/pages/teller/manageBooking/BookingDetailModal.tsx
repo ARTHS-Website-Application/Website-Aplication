@@ -4,6 +4,7 @@ import { putBooking } from "@/actions/booking";
 import { useDispatch, useSelector } from "react-redux";
 import { statusBooking } from "@/types/typeBooking";
 import LoadingPage from "@/components/LoadingPage";
+import { Link } from "react-router-dom";
 
 const BookingDetailModal = ({ booking, onClose }: { booking: itemBooking<string, number> | null, onClose: () => void }) => {
     const [showEditForm, setShowEditForm] = useState(false);
@@ -68,14 +69,14 @@ const BookingDetailModal = ({ booking, onClose }: { booking: itemBooking<string,
 
     };
 
-    const handleConfirmCameBooking = async () =>{
-        const updateData ={
-            status: statusBooking.Came
-        }
-        dispatch(putBooking(localBooking?.id, updateData))
-        setIsLoading(true);
+    // const handleConfirmCameBooking = async () =>{
+    //     const updateData ={
+    //         status: statusBooking.Came
+    //     }
+    //     dispatch(putBooking(localBooking?.id, updateData))
+    //     setIsLoading(true);
 
-    }
+    // }
 
     const formatPhoneNumber = (phoneNumber: number): string => {
         return phoneNumber.toString().replace(/(\d{4})(\d{3})(\d{3})/, '$1 $2 $3');
@@ -140,7 +141,7 @@ const BookingDetailModal = ({ booking, onClose }: { booking: itemBooking<string,
         if (localBooking?.status === statusBooking.WaitForConfirm) {
             return <button className="bg-green-500 text-white px-10 py-4 rounded hover:bg-green-600" onClick={handleConfirmBooking}>Xác nhận</button>;
         } else if (localBooking?.status === statusBooking.Confirmed) {
-            return <button className="bg-red-500 text-white px-10 py-4 rounded hover:bg-red-600" onClick={handleConfirmCameBooking}>Xác nhận đã đến</button>;
+            return <Link to={`/manage-order/create-order/${localBooking.id}`} className="bg-red-500 text-white px-10 py-4 rounded hover:bg-red-600">Xác nhận đã đến</Link>;
         }
         return null;
     };
@@ -189,8 +190,8 @@ const BookingDetailModal = ({ booking, onClose }: { booking: itemBooking<string,
         }else if (status === statusBooking.Came) {
             return (
                 <span className={commonClasses}>
-                    <span className="w-2.5 h-2.5 bg-orange-400 rounded-full"></span>
-                    <span className="text-orange-400 font-bold">{statusBooking.Came}</span>
+                    <span className="w-2.5 h-2.5 bg-blue-600 rounded-full"></span>
+                    <span className="text-blue-600 font-bold">{statusBooking.Came}</span>
                 </span>
             );
         }
@@ -251,22 +252,23 @@ const BookingDetailModal = ({ booking, onClose }: { booking: itemBooking<string,
     
                         {/* Date and Time */}
     
-                        <div className="space-y-4 mt-2 flex flex-col md:flex-row justify-between items-center">
+                        <div className="space-y-4 py-2 flex flex-col md:flex-row justify-between items-center">
     
-                            <div className="space-y-2">
-                                <h2 className="text-xl font-bold text-gray-700">Ngày Đến: {formatDate(localBooking?.dateBook)}</h2>
-                                <h2 className="text-xl font-bold text-gray-700">Thời gian: {checkTimeDisplay(new Date(localBooking?.dateBook || ''))}</h2>
+                            <div className="space-y-2 text-xl font-bold text-gray-700">
+                                <h2 className="">Ngày Đến: {formatDate(localBooking?.dateBook)}</h2>
+                                <h2 className="">Thời gian: {checkTimeDisplay(new Date(localBooking?.dateBook || ''))}</h2>
+                                {localBooking?.staff?<p>Nhân viên sửa chữa: {localBooking?.staff?.fullName}</p>:''}
                             </div>
                             {renderEditButton()}
                         </div>
-                        <div className="space-y-4 mt-2 flex flex-col md:flex-row justify-between items-center">
-                            <div className="flex flex-col items-start">
+                        <div className=" mt-2 flex flex-col md:flex-row justify-between items-center">
+                            <div className="flex flex-col items-start space-y-4">
                                 {renderStatus(localBooking.status)}
-                                {localBooking.status === statusBooking.Canceled && (
-                                    <div className="text-red-500 mt-5 text-lg rounded-lg p-2 bg-red-100">
+                                {localBooking.status === statusBooking.Canceled ? (
+                                    <div className="text-red-500 text-lg rounded-lg p-2 bg-red-100">
                                         {localBooking.cancellationReason}
                                     </div>
-                                )}
+                                ):""}
                             </div>
                         </div>
                         {/* Edit Form */}

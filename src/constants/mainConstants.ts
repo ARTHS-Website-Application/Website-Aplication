@@ -87,6 +87,12 @@ export const updateBooking = {
     UPDATE_BOOKING_FAIL: "update_booking_fail",
 }
 
+export const detailBooking = {
+    DETAIL_BOOKING: "detail_booking",
+    DETAIL_BOOKING_SUCCESS: "detail_booking_success",
+    DETAIL_BOOKING_FAIL: "detail_booking_fail",
+}
+
 export const payWithCash = {
     PAY_WITH_CASH: "pay_with_cash",
     PAY_WITH_CASH_SUCCESS: "pay_with_cash_success",
@@ -97,7 +103,10 @@ export const payWithCash = {
 export const listOnlineOrderConstant = {
     LIST_ONLINE_ORDER: "list_online_order",
     LIST_ORDER_SUCCESS: "list_online_order_success",
+    LIST_ORDER_PAID_SUCCESS: "list_online_order_paid_success",
     LIST_ORDER_CONFIRM_SUCCESS: "list_online_order_confirm_success",
+    LIST_ORDER_TRANSPORT_SUCCESS: "list_online_order_transport_success",
+    LIST_ORDER_FINISH_SUCCESS: "list_online_order_finish_success",
     LIST_ORDER_FAIL: "list_online_order_fail",
 }
 

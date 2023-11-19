@@ -4,8 +4,10 @@ import { onlineOrderSaga, storeOrderOnline } from "@/types/actions/listOnlineOrd
 
 const initialState: storeOrderOnline<string, number> = {
     onlineOrderInfo: [],
-    onlineOrderConfirm:[],
-    onlineOrderTransport:[],
+    onlineOrderPaid: [],
+    onlineOrderConfirm: [],
+    onlineOrderTransport: [],
+    onlineOrderFinish: [],
     showError: null,
 };
 
@@ -19,12 +21,27 @@ const onlineOrderReducer = (
             return {
                 ...state,
                 onlineOrderInfo: payload.data,
-                
+
+            }
+        case listOnlineOrderConstant.LIST_ORDER_PAID_SUCCESS:
+            return {
+                ...state,
+                onlineOrderPaid: payload.data,
             }
         case listOnlineOrderConstant.LIST_ORDER_CONFIRM_SUCCESS:
             return {
                 ...state,
-                onlineOrderConfirm:payload.data,
+                onlineOrderConfirm: payload.data,
+            }
+        case listOnlineOrderConstant.LIST_ORDER_TRANSPORT_SUCCESS:
+            return {
+                ...state,
+                onlineOrderTransport: payload.data,
+            }
+        case listOnlineOrderConstant.LIST_ORDER_FINISH_SUCCESS:
+            return {
+                ...state,
+                onlineOrderFinish: payload.data,
             }
         case listOnlineOrderConstant.LIST_ORDER_FAIL:
             return {

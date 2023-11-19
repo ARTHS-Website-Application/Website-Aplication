@@ -15,14 +15,17 @@ import {
     vehicleProductFailed,
     WarrantyProductSuccess,
     WarrantyProductFailed,
-    SortProduct
+    SortProduct,
+    createVehicleSuccess,
+    getVehicleProduct
 } from '@/actions/product';
 import { payloadCreateProduct, payloadSaga, payloadSortProduct, payloadUpdateProduct, payloadUpdateStatusProduct } from '@/types/actions/product';
 import { sagaDetailProduct } from '@/types/actions/detailProduct';
-import { listVehicles, listWarranty, productCategory } from '@/constants/secondaryConstants';
+import { createVehicles, listVehicles, listWarranty, productCategory, removeVehicles } from '@/constants/secondaryConstants';
 import { History } from '@/context/NavigateSetter';
 import { getFilter, getFilterProductInService, getFilterProductNotService } from '@/types/actions/filterCreate';
 import { ownerService } from '@/services/ownerService';
+import { payloadCreateVehicle, payloadDeleteVehicle } from '@/types/actions/listVehicle';
 
 function* createProduct(payload: payloadCreateProduct) {
     try {
@@ -145,7 +148,41 @@ function* getWarrantyProduct() {
 
 }
 
-function* getVehicleProduct() {
+function* createVehicleProduct(payload:payloadCreateVehicle<string>) {
+    try {
+        const resp: AxiosResponse = yield call(privateService.createVehicle,payload.vehicleName);
+        const { status, data } = resp;
+        if (data && status === 201) {
+            yield put(createVehicleSuccess(data));
+        } else {
+            yield put(vehicleProductFailed(data));
+        }
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
+        const msg: string = error.message;
+        yield put(vehicleProductFailed(msg));
+    }
+
+}
+
+function* deleteVehicleProduct(payload:payloadDeleteVehicle<string>) {
+    try {
+        const resp: AxiosResponse = yield call(privateService.deleteVehicle,payload.vehicleId);
+        const { status, data } = resp;
+        if (data && status === 200) {
+            yield put(getVehicleProduct());
+        } else {
+            yield put(vehicleProductFailed(data));
+        }
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
+        const msg: string = error.message;
+        yield put(vehicleProductFailed(msg));
+    }
+
+}
+
+function* getVehicle() {
     try {
         const resp: AxiosResponse = yield call(privateService.getVehicleProduct);
         const { status, data } = resp;
@@ -240,7 +277,9 @@ export function* lookupProduct() {
     yield takeEvery(productInfor.GET_SORT_PRODUCT_INFO, getSortProduct);
     yield takeEvery(productCategory.GET_PRODUCT_CATEGORY, getCategoryProduct);
     yield takeEvery(listWarranty.GET_LIST_WARRANTY, getWarrantyProduct);
-    yield takeEvery(listVehicles.GET_LIST_VEHICLES, getVehicleProduct);
+    yield takeEvery(listVehicles.GET_LIST_VEHICLES, getVehicle);
+    yield takeEvery(createVehicles.CREATE_VEHICLES, createVehicleProduct);
+    yield takeEvery(removeVehicles.REMOVE_VEHICLES, deleteVehicleProduct);
     yield takeEvery(productFilter.GET_PRODUCT_FILTER, getFilterProduct);
     yield takeEvery(productFilter.GET_PRODUCT_FILTER_SERVICE, getProductFilterService);
     yield takeEvery(productFilter.GET_PRODUCT_FILTER_NOT_SERVICE, getProductFilterNotService);

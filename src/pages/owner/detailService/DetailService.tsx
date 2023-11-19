@@ -92,12 +92,14 @@ const ProductDetail = () => {
                 <div className='flex justify-between text-[#6B7280] items-center'>
                   <div className=' space-y-5'>
                   <p>Giá dịch vụ</p>
+                  {data?.discountAmount ? <p>Giá sau khuyến mãi</p>:""}
                   {data?.duration && <p>Thời gian làm dịch vụ</p>}
                   {data?.reminderInterval ? <p>Thời gian nhắc nhở</p>:""}
                   {data?.warrantyDuration ? <p>Bảo hành</p>:""}
                   </div>
                   <div className='space-y-5 flex flex-col text-end'>
                     <p>{formatPrice(data?.price)}VNĐ</p>
+                    {data?.discountAmount ? <p>{formatPrice(data?.price * (1 - data?.discountAmount / 100))}VNĐ</p>:""}
                     {data?.duration && <p>{data?.duration} phút</p>}
                     {data?.reminderInterval ? <p>{data?.reminderInterval} tháng</p>:""}
                     {data?.warrantyDuration ? <p>{data?.warrantyDuration} tháng</p>:""}

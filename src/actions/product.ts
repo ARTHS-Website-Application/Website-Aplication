@@ -1,5 +1,5 @@
 import { productInfor, productFilter, detailProduct, productCreate, productUpdate } from "@/constants/mainConstants";
-import { listVehicles, listWarranty, productCategory } from "@/constants/secondaryConstants";
+import { createVehicles, listVehicles, listWarranty, productCategory, removeVehicles } from "@/constants/secondaryConstants";
 import { itemCategoryProduct } from "@/types/actions/categoryPr";
 import { filterProductInService, filterProductNotService, itemFilter } from "@/types/actions/filterCreate";
 import { itemVehicleProduct } from "@/types/actions/listVehicle";
@@ -110,6 +110,7 @@ export const WarrantyProductFailed = (error:string) => {
     };
 };
 
+
 export const getVehicleProduct = () => {
     return {
         type: listVehicles.GET_LIST_VEHICLES,
@@ -129,6 +130,28 @@ export const vehicleProductFailed = (error:string) => {
         type: listVehicles.GET_LIST_VEHICLES_FAil,
         payload: {
             error,
+        },
+    };
+};
+
+export const createVehicle = (vehicleName:string)=>{
+    return {
+        type: createVehicles.CREATE_VEHICLES,
+        vehicleName
+    }
+}
+export const deleteVehicle = (vehicleId:string)=>{
+    return {
+        type: removeVehicles.REMOVE_VEHICLES,
+        vehicleId
+    }
+}
+
+export const createVehicleSuccess = (data:itemVehicleProduct<string>) => {
+    return {
+        type: createVehicles.CREATE_VEHICLES_SUCCESS,
+        payload: {
+            data,
         },
     };
 };

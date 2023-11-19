@@ -84,7 +84,7 @@ const DetailOnlineOrder = () => {
                     data?.status === statusOrder.Processing ? "bg-[#bac5e9] text-blue-500" :
                       data?.status === statusOrder.Transport ? "bg-[#e1a157] text-[#90530C]" :
                         data?.status === statusOrder.Confirm ? "bg-[#FBEABC] text-yellow-600" :
-                        data?.status === statusOrder.Finished ? "bg-[#cdcac4] text-[#38890d]" :
+                        data?.status === statusOrder.Finished ? "bg-[#6fe46d] text-[#0d890f]" :
                           ""}`}>
                   {data?.status}
                 </p>
@@ -212,7 +212,7 @@ const DetailOnlineOrder = () => {
                 <p className='text-[19px] font-semibold'>Tổng cộng:</p>
                 <p className='font-semibold text-[19px]'>{formatPrice(data.totalAmount)} VNĐ</p>
               </div>
-              {data?.status === statusOrder.Processing ? (
+              {data?.status === statusOrder.Processing || data?.status === statusOrder.Paid  ? (
                 <div className='flex justify-end pr-[90px] pt-2'>
                   <button className='bg-main hover:bg-red-800 w-[190px] py-5 text-white rounded-md'
                     onClick={handleUpdateStatus}

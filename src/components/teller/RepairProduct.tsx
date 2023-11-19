@@ -15,20 +15,23 @@ import ChooseServiceOrder from './ChooseServiceOrder';
 import { dataService, itemService, selectorService } from '@/types/actions/listService';
 import { getFilterServices, getServices } from '@/actions/service';
 import { typeService } from '@/types/typeService';
+import ShowCreateDetail from './ShowCreateDetail';
 
 type Props = {
     isVisible: boolean;
     onClose: () => void;
     dataProduct?: inStoreOrderDetails<string, number>[];
     idOrder: string | null;
-    staffId:string|null;
+    staffId: string | null;
 }
 enum createShow {
     showProduct = "show_product",
     showService = "show_service",
 }
-const RepairProduct = ({ isVisible, onClose, dataProduct, idOrder,staffId }: Props) => {
+const RepairProduct = ({ isVisible, onClose, dataProduct, idOrder, staffId }: Props) => {
     const dispatch = useDispatch();
+    const [showDetail, setShowDetail] = useState<boolean>(false);
+    const [itemDetail, setItemDetail] = useState<item<string, number>>();
     const [showCreate, setShowCreate] = useState<createShow>(createShow.showProduct);
 
     const tranfomDataProduct: addProductOrder<string, number>[] = (dataProduct ?? [])?.filter((item) => item?.motobikeProduct)?.map((item: inStoreOrderDetails<string, number>) => {
@@ -50,7 +53,7 @@ const RepairProduct = ({ isVisible, onClose, dataProduct, idOrder,staffId }: Pro
             name: item?.repairService.name,
             price: item?.repairService.price,
             image: item?.repairService.image,
-            discountAmount:item?.repairService.discountAmount,
+            discountAmount: item?.repairService.discountAmount,
         };
         return transformedItem;
     });
@@ -178,7 +181,7 @@ const RepairProduct = ({ isVisible, onClose, dataProduct, idOrder,staffId }: Pro
             name: dataService?.name,
             price: dataService?.price,
             image: dataService?.images[0].imageUrl,
-            discountAmount:dataService?.discountAmount,
+            discountAmount: dataService?.discountAmount,
         }
         const itemToAdd = newDataService;
         const existingCartItems = addService || [];
@@ -287,6 +290,8 @@ const RepairProduct = ({ isVisible, onClose, dataProduct, idOrder,staffId }: Pro
                                         <div className='flex flex-col pt-5 space-y-3'>
                                             <div className=' w-full flex flex-col space-y-3'>
                                                 <ListProduct
+                                                    setItemDetail={setItemDetail}
+                                                    setShowDetail={setShowDetail}
                                                     onClickAdd={handleAddProduct}
                                                     data={productData} />
                                             </div>
@@ -331,6 +336,11 @@ const RepairProduct = ({ isVisible, onClose, dataProduct, idOrder,staffId }: Pro
                 </div>
 
             </div>
+            <ShowCreateDetail
+                itemDetail={itemDetail}
+                isVisible={showDetail}
+                onClose={() => setShowDetail(false)}
+            />
         </div>
     )
 }

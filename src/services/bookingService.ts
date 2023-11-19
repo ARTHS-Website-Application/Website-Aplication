@@ -15,5 +15,9 @@ export class Private{
         console.log('call api update nè');
         return await axiosPrivate.put(`/repair-bookings/${bookingId}`, data);
     }
+    bookingDetail = async (bookingId: string) =>{
+        const axiosPrivate = userAxiosPrivate();
+        return await axiosPrivate.get(`/repair-bookings/${bookingId}`);
+    }
 }
 export const bookingService = new Private();

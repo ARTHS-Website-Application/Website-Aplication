@@ -66,12 +66,12 @@ const CreateTransport = ({ isVisible, onClose, idOrder }: Props) => {
                     <div className='flex flex-col w-full space-y-1'>
                         <p className="text-[17px] font-semibold">Ghi chú:</p>
                         <textarea
-                            className='w-full min-h-[100px] px-1 border-2 border-gray-500'
+                            className='w-full min-h-[130px] py-1 px-2 border-2 border-gray-500 rounded-lg'
                             placeholder='Nhập ghi chú...'
                             onChange={(e) => setAddContent(e.target.value)}
                         ></textarea>
                     </div>
-                    <div className='grid grid-cols-2 gap-3 '>
+                    <div className='grid grid-cols-2 justify-items-center gap-3 '>
                         <div className='flex items-center space-x-3 pt-3 font-semibold '>
                             <p className='text-[17px]'>Cân nặng(kg):</p>
                             <input type="number"

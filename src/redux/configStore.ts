@@ -15,6 +15,7 @@ import serviceDetailReducer from './reducer/serviceDetailReducer';
 import warrantyReducer from './reducer/warrantyReducer';
 import discountReducer from './reducer/discountReducer';
 import bookingReducer from './reducer/bookingReducer';
+import detailBookingReducer from './reducer/detailBookingReducer';
 import onlineOrderReducer from './reducer/onlineOrderReducer';
 import onlineOrderDetailReducer from './reducer/onlineOrderDetailReducer';
 
@@ -37,8 +38,9 @@ const allReducer = combineReducers({
 
   //discount
   discountReducer,
-
+  //booking
   bookingReducer,
+  detailBookingReducer,
 
   //warranty
   warrantyReducer,

@@ -4,8 +4,10 @@ import { callFilterOrder } from "./listOrder";
 export interface selectorOnlineOrder<T, N> {
     onlineOrderReducer: {
         onlineOrderInfo: listOnlineOrder<T, N>;
+        onlineOrderPaid: listOnlineOrder<T, N>;
         onlineOrderConfirm: listOnlineOrder<T, N>;
         onlineOrderTransport: listOnlineOrder<T, N>;
+        onlineOrderFinish: listOnlineOrder<T, N>;
         showError: T | null;
     }
 }
@@ -13,8 +15,10 @@ export interface selectorOnlineOrder<T, N> {
 export interface storeOrderOnline<T, N> {
     showError: T | null;
     onlineOrderInfo: onlineOrderSaga<T, N>[];
+    onlineOrderPaid: onlineOrderSaga<T, N>[];
     onlineOrderConfirm: onlineOrderSaga<T, N>[];
     onlineOrderTransport: onlineOrderSaga<T, N>[];
+    onlineOrderFinish: onlineOrderSaga<T, N>[];
 }
 
 export interface payloadOnlineOrder<T, N> {

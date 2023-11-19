@@ -43,6 +43,7 @@ import ListOrderTransport from './pages/teller/manageOnlineOrder/ListOrderTransp
 import ListOrderFinished from './pages/teller/manageOnlineOrder/ListOrderFinished';
 import ListOrderCanceled from './pages/teller/manageOnlineOrder/ListOrderCanceled';
 import ListAllBoking from './pages/teller/manageBooking/ListAllBooking';
+import ListOnlineOrderPaid from './pages/teller/manageOnlineOrder/ListOnlineOrderPaid';
 
 
 const ROLES = {
@@ -78,6 +79,7 @@ function App() {
             <Route path="teller" element={<HomeTeller />} />
             <Route path="/manage-order" element={<ManageOrder />}>
               <Route path="create-order" element={<CreateOrder />} />
+              <Route path="create-order/:bookingId" element={<CreateOrder />} />
               <Route path="list-all-order" element={<ListAllOrder />}>
                 <Route path="list-order" element={<ListOrder />} />
                 <Route path="wait-paid-order" element={<ListWaitPaidOrder />} />
@@ -85,6 +87,7 @@ function App() {
               </Route>
               <Route path="online-order" element={<ManageOnlineOrder />}>
                 <Route path="list-order" element={<ListOnlineOrder />} />
+                <Route path="list-order-paid" element={<ListOnlineOrderPaid />} />
                 <Route path="list-order-confirm" element={<ListOrderConfirm />} />
                 <Route path="list-order-transport" element={<ListOrderTransport />} />
                 <Route path="list-order-finish" element={<ListOrderFinished />} />

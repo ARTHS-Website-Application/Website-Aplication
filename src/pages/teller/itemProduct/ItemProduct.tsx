@@ -43,8 +43,8 @@ const ItemProduct = ({_name, _priceCurrent, _imageUrl,_discount, onClickAdd,setS
                 <div className='flex justify-between items-center'>
                 {_discount ?(
                 <div className="text-[18px]">
-                    <p className='line-through text-[#888888]'>{_priceCurrent} đ</p>
-                <p className='text-[#FE3A30]'>{_priceCurrent * (1 - _discount.discountAmount/100)} đ</p>
+                    <p className='line-through text-[#888888]'>{formatPrice(_priceCurrent)} đ</p>
+                <p className='text-[#FE3A30]'>{formatPrice(_priceCurrent * (1 - _discount.discountAmount/100))} đ</p>
                 </div>
                 ):(
                     <p className='text-[#FE3A30] text-[18px]'>{formatPrice(_priceCurrent)} đ</p>

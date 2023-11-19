@@ -54,7 +54,7 @@ const TableService = ({ productData, setSortAsc, setSortValue, setSortAscPrice, 
                     </th>
                     <th scope="col" >
                         <div className="flex items-center justify-center space-x-3">
-                            <p>Giá tiền (VNĐ)</p>
+                            <p> Tiền sau khi giảm - Tiền mặc định (VNĐ)</p>
                             <button
                                 onClick={handleSortPrice}
                             >
@@ -83,7 +83,11 @@ const TableService = ({ productData, setSortAsc, setSortValue, setSortAscPrice, 
                             {formatDateSeven(item?.createAt.toString())}
                         </td>
                         <td className="">
-                            <p>{formatPrice(item.price) ?? 0}</p>
+                            {item?.discountAmount
+                                ? <p>{formatPrice(item.price * (1 - item?.discountAmount / 100))} - {formatPrice(item.price)}</p>
+                                : <p>{formatPrice(item.price)}</p>}
+
+
                         </td>
                         <td className="">
                             <div className="flex items-center justify-center space-x-2">

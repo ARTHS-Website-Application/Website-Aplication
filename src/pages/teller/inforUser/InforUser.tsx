@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { ClipboardDocumentListIcon } from '@heroicons/react/24/solid';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { item } from '@/types/actions/product'
 import { itemOrder } from '@/types/actions/createOrder';
 import { showSuccessAlert } from '@/constants/chooseToastify';
@@ -9,6 +9,10 @@ import { formatPhoneNumber } from '@/utils/formatPhone';
 import StaffSelect from '@/components/teller/StaffSelect';
 import { itemService } from '@/types/actions/listService';
 import LoadingCreateUpdate from '@/components/LoadingCreateUpdate';
+import { useDispatch, useSelector } from 'react-redux';
+import { getDetailBooking } from '@/actions/booking';
+import { itemBooking } from '@/types/listBooking';
+import { selectorDetailBooking } from '@/types/typeDetailBooking';
 type Props = {
     addProduct?: item<string, number>[];
     addService?: itemService<string, number>[]
@@ -20,6 +24,7 @@ type Props = {
 }
 
 const InforUser = ({ addProduct = [], addService = [], removeProduct, removeService, setAddProduct, setAddService }: Props) => {
+    const dispatch = useDispatch();
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const navigate = useNavigate();
     const [isLoading, setIsLoading] = useState(false);
@@ -32,6 +37,24 @@ const InforUser = ({ addProduct = [], addService = [], removeProduct, removeServ
     const [orderService, setOrderService] = useState<{ repairServiceId: string; }[]>([]);
     const [showStaff, setShowStaff] = useState<boolean>(false);
     const axiosPrivate = userAxiosPrivate();
+    const { bookingId } = useParams();
+    const detailBookingInfor: itemBooking<string, number> = useSelector((state: selectorDetailBooking<string, number>) => state.detailBookingReducer.detailBookingInfor);
+    console.log("Id", detailBookingInfor)
+    useEffect(() => {
+        if (bookingId)
+            dispatch(getDetailBooking(bookingId));
+    }, [bookingId, dispatch]);
+    useEffect(() => {
+        if (bookingId && detailBookingInfor) {
+            setNameCustomer(detailBookingInfor?.customer?.fullName ?? '');
+            setPhoneCustomer(detailBookingInfor?.customer?.phoneNumber.toString() ?? '');
+            setStaffId(detailBookingInfor?.staff?.accountId ?? '');
+        } else {
+            setPhoneCustomer('');
+            setNameCustomer('');
+            setStaffId('');
+        }
+    }, [detailBookingInfor])
     useEffect(() => {
         // Nếu orderData chưa được thiết lập,tạo dữ liệu ban đầu
         if (!orderData.length) {
@@ -124,7 +147,7 @@ const InforUser = ({ addProduct = [], addService = [], removeProduct, removeServ
             licensePlate: licensePlate,
             orderDetailModel: [...orderData, ...orderService]
         };
-        console.log("date",data)
+        console.log("date", data)
         try {
             const response = await axiosPrivate.post('/orders/offline', data);
 
@@ -309,7 +332,7 @@ const InforUser = ({ addProduct = [], addService = [], removeProduct, removeServ
                     </div>
 
                 </div>
-                {phoneCustomer.length === 10 && nameCustomer && orderData.length > 0
+                {phoneCustomer?.length === 10 && nameCustomer && orderData?.length > 0
                     ?
 
                     (
@@ -319,6 +342,7 @@ const InforUser = ({ addProduct = [], addService = [], removeProduct, removeServ
                                     setPhoneCustomer('');
                                     setNameCustomer('');
                                     setLicensePlate('');
+                                    setStaffId('')
                                     localStorage.removeItem('cartItems');
                                     localStorage.removeItem('orderData');
                                     localStorage.removeItem('orderData');
@@ -345,7 +369,7 @@ const InforUser = ({ addProduct = [], addService = [], removeProduct, removeServ
                                 )}
 
                         </div>
-                    ):(
+                    ) : (
                         <div className='w-full h-[10vh] py-5'>
                         </div>
                     )}
