@@ -4,8 +4,8 @@ import { History } from '@/context/NavigateSetter';
 import { ownerService } from '@/services/ownerService';
 import { privateService } from '@/services/privateService';
 import { payloadDetailService } from '@/types/actions/detailService';
-import { getFilterService, getSortService } from '@/types/actions/filterService';
-import { payloadCreateService, payloadService, payloadServiceChoose, payloadUpdateService, payloadUpdateServiceStatus } from '@/types/actions/listService';
+import { getFilterService, getServiceDiscount, getSortService } from '@/types/actions/filterService';
+import { payloadCreateService, payloadService, payloadUpdateService, payloadUpdateServiceStatus } from '@/types/actions/listService';
 import { AxiosResponse } from 'axios';
 import { call, put, takeEvery } from 'redux-saga/effects';
 
@@ -64,9 +64,9 @@ function* updateServiceStatus(payload: payloadUpdateServiceStatus) {
     }
 }
 
-function* getChooseService(payload:payloadServiceChoose<string,number>) {
+function* filterServiceDiscount(payload:getServiceDiscount<string,number>) {
     try {
-        const resp: AxiosResponse = yield call(ownerService.getServiceCreate,payload.data);
+        const resp: AxiosResponse = yield call(ownerService.getServiceDiscount,payload.data);
         const { status, data } = resp;
         if (data && status === 200) {
             yield put(getServicesSuccess(data));
@@ -153,7 +153,7 @@ export function* lookupService() {
     yield takeEvery(serviceCreate.SERVICE_CREATE, createService);
     yield takeEvery(serviceUpdate.SERVICE_UPDATE, updateService);
     yield takeEvery(serviceUpdate.SERVICE_UPDATE_STATUS, updateServiceStatus);
-    yield takeEvery(listServices.GET_LIST_SERVICES_CHOOSE, getChooseService);
+    yield takeEvery(listServices.GET_LIST_SERVICES_DISCOUNT, filterServiceDiscount);
     yield takeEvery(listServices.GET_LIST_SERVICES, getListService);
     yield takeEvery(detailServices.DETAIL_SERVICES, getDetailService);
     yield takeEvery(listServices.GET_LIST_SERVICES_FILTER, filterService);

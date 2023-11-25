@@ -267,7 +267,13 @@ const CreateProduct = () => {
                       value={quantityProduct}
                       placeholder="Nhập số sản phẩm"
                       className='outline-none p-2 border-2 border-[#E5E7EB] bg-gray-50 rounded-xl'
-                      onChange={(e) => setQuantityProduct(parseInt(e.target.value))}
+                      onChange={(e) => {
+                        if(parseInt(e.target.value)>1){
+                          setQuantityProduct(parseInt(e.target.value))
+                        }else{
+                          setQuantityProduct(1)
+                        }
+                      }}
                     />
                   </div>
                   <div className="flex items-center space-x-3">
@@ -281,7 +287,13 @@ const CreateProduct = () => {
                         value={priceProduct === 0 ? "" : priceProduct}
                         placeholder="Nhập số tiền"
                         className='outline-none p-2 border-2 border-[#E5E7EB] bg-gray-50 rounded-xl'
-                        onChange={(e) => setPriceProduct(parseInt(e.target.value))}
+                        onChange={(e) => {
+                          if(parseInt(e.target.value)>0){
+                            setPriceProduct(parseInt(e.target.value))
+                          }else{
+                            setPriceProduct(1)
+                          }
+                        }}
                       />
                       <p>VNĐ</p>
                     </div>
@@ -349,7 +361,13 @@ const CreateProduct = () => {
                       value={priceInstallationFee === 0 ? "" : priceInstallationFee}
                       placeholder="Nhập số tiền"
                       className='outline-none p-2 border-2 border-[#E5E7EB] bg-gray-50 rounded-xl'
-                      onChange={(e) => setPriceInstallationFee(parseInt(e.target.value))}
+                      onChange={(e) => {
+                        if(parseInt(e.target.value)>0){
+                          setPriceInstallationFee(parseInt(e.target.value))
+                        }else{
+                          setPriceInstallationFee(1)
+                        }
+                      }}
                     />
                     <p>VNĐ</p>
                   </div>
@@ -530,7 +548,7 @@ const CreateProduct = () => {
             <button className='w-[200px] h-[60px] text-center bg-slate-300 text-[20px] rounded-lg text-white font-semibold bg-gray-300 hover:bg-green-600'
               onClick={handleCreateProduct}
             >Thêm sản phẩm</button>
-            <button className='w-[200px] h-[60px] text-center bg-slate-300 text-[20px] rounded-lg text-white font-semibold bg-gray-300 hover:bg-red-700'
+            <button className='w-[200px] h-[60px] text-center bg-slate-300 text-[20px] rounded-lg text-white font-semibold bg-red-700'
               onClick={handleClear}
             >Hủy</button>
           </div>

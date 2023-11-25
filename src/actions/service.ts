@@ -1,18 +1,11 @@
 import { detailServices, listServices, serviceCreate, serviceUpdate } from "@/constants/secondaryConstants";
-import { serviceFilter, sortService } from "@/types/actions/filterService";
-import { callService, dataService, itemService, itemServiceChoose } from "@/types/actions/listService";
+import { callServiceDiscount, serviceFilter, sortService } from "@/types/actions/filterService";
+import { callService, dataService, itemService } from "@/types/actions/listService";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const postCreateService = (data:any) => {
     return {
         type: serviceCreate.SERVICE_CREATE,
-        data
-    };
-};
-
-export const getServicesChoose = (data: itemServiceChoose<string,number>) => {
-    return {
-        type: listServices.GET_LIST_SERVICES_CHOOSE,
         data
     };
 };
@@ -27,6 +20,13 @@ export const getServices = (data: callService<string,number>) => {
 export const getFilterServices = (data:serviceFilter<string,number>) => {
     return {
         type: listServices.GET_LIST_SERVICES_FILTER,
+        data
+    };
+};
+
+export const FilterServiceDiscount = (data:callServiceDiscount<string,number>) => {
+    return {
+        type: listServices.GET_LIST_SERVICES_DISCOUNT,
         data
     };
 };

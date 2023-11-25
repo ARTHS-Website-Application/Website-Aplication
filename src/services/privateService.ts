@@ -11,7 +11,6 @@ export class Private {
     }
     getListStaff = async () => {
         const axiosPrivate = userAxiosPrivate();
-
         return await axiosPrivate.get(`/staffs`)
     }
 

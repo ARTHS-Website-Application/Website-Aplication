@@ -1,31 +1,40 @@
 import userAxiosPrivate from "@/hooks/useAxiosPrivate";
-import { filterProductInService, filterProductNotService } from "@/types/actions/filterCreate";
-import { itemServiceChoose } from "@/types/actions/listService";
+import {itemFilterDiscount } from "@/types/actions/filterCreate";
+import { callServiceDiscount } from "@/types/actions/filterService";
 
 export class Private {
-    getServiceCreate = async (data: itemServiceChoose<string,number>) => {
+    getServiceDiscount = async (data:callServiceDiscount<string,number>) => {
         const axiosPrivate = userAxiosPrivate();
+        const endCodeName = encodeURIComponent(data.name);
         const endCodeStatus = encodeURIComponent(data.status);
-        return await axiosPrivate.get(`/repair-services?status=${endCodeStatus}&pageSize=${data.pageSize}`)
+        return await axiosPrivate.get(`/repair-services?name=${endCodeName}&status=${endCodeStatus}&haveDiscount=false&pageNumber=${data.pageNumber}`)
     }
-    getProductInService = async (data:filterProductInService<string,number>) => {
+    // getServiceDiscountUpdate = async (data:callServiceDiscount<string,number>) => {
+    //     const axiosPrivate = userAxiosPrivate();
+    //     const endCodeName = encodeURIComponent(data.name);
+    //     const endCodeStatus = encodeURIComponent(data.status);
+    //     return await axiosPrivate.get(`/repair-services?name=${endCodeName}&status=${endCodeStatus}&haveDiscount=false&pageNumber=${data.pageNumber}`)
+    // }
+    getProductDiscount = async (data: itemFilterDiscount<string, number>) => {
         const axiosPrivate = userAxiosPrivate();
-        if(data.repairService){
-            const encodeName = encodeURIComponent(data.repairService);
-            return await axiosPrivate.get(`/motobike-products?repairService=${encodeName}&pageSize=${data.pageSize}`)
-        }
+        const enCodeStatus = encodeURIComponent(data.status)
+        const encodeName = encodeURIComponent(data.name);
+        const encodeCategory = encodeURIComponent(data.category);
+        return await axiosPrivate.get(`/motobike-products?haveDiscount=${data.haveDiscount}&status=${enCodeStatus}&name=${encodeName}&category=${encodeCategory}&pageNumber=${data.paginationNumber}`)
     }
 
-    getProductNotService = async(data:filterProductNotService<number>)=>{
-        const axiosPrivate = userAxiosPrivate();
-        return await axiosPrivate.get(`/motobike-products?noRepairService=${data.noRepairService}&pageSize=${data.pageSize}`)
-    }
-    getDiscountCreate = async (pageSize:number) => {
-        const axiosPrivate = userAxiosPrivate();
-        return await axiosPrivate.get(`/discounts?pageSize=${pageSize}`)
-    }
+    // getProductDiscountUpdate = async (data: itemFilterDiscount<string, number>) => {
+    //     const axiosPrivate = userAxiosPrivate();
+    //     const enCodeStatus = encodeURIComponent(data.status)
+    //     const encodeName = encodeURIComponent(data.name);
+    //     const encodeCategory = encodeURIComponent(data.category);
+    //     return await axiosPrivate.get(`/motobike-products?haveDiscount=${data.haveDiscount}&status=${enCodeStatus}&name=${encodeName}&category=${encodeCategory}&pageNumber=${data.paginationNumber}`)
+    // }
 
-    
+    getDiscountCreate = async (pageSize: number) => {
+        const axiosPrivate = userAxiosPrivate();
+        return await axiosPrivate.get(`/discounts?status=Applying&pageSize=${pageSize}`)
+    }
 }
 
 export const ownerService = new Private();

@@ -10,6 +10,10 @@ const linkRole = [
     name: "Danh sách đơn chờ thanh toán"
   },
   {
+    to: '/manage-order/list-all-order/paid-order',
+    name: "Danh sách đã thanh toán"
+  },
+  {
     to: '/manage-order/list-all-order/history-order',
     name: "Lịch sử đơn hàng"
   }

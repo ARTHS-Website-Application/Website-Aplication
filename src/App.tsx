@@ -44,6 +44,12 @@ import ListOrderFinished from './pages/teller/manageOnlineOrder/ListOrderFinishe
 import ListOrderCanceled from './pages/teller/manageOnlineOrder/ListOrderCanceled';
 import ListAllBoking from './pages/teller/manageBooking/ListAllBooking';
 import ListOnlineOrderPaid from './pages/teller/manageOnlineOrder/ListOnlineOrderPaid';
+import CreateDiscount from './pages/owner/createDiscount/CreateDiscount';
+import ListDiscount from './pages/owner/listDiscount/ListDiscount';
+import ListNotDiscount from './pages/owner/listNotDiscount/ListNotDiscount';
+import DetailDiscount from './pages/owner/detailDiscount/DetailDiscount';
+import UpdateDiscount from './pages/owner/updateDiscount/UpdateDiscount';
+import ListPaidOrder from './pages/teller/listPaidOrder/ListPaidOrder';
 
 
 const ROLES = {
@@ -83,6 +89,7 @@ function App() {
               <Route path="list-all-order" element={<ListAllOrder />}>
                 <Route path="list-order" element={<ListOrder />} />
                 <Route path="wait-paid-order" element={<ListWaitPaidOrder />} />
+                <Route path="paid-order" element={<ListPaidOrder />} />
                 <Route path="history-order" element={<HistoryOrder />} />
               </Route>
               <Route path="online-order" element={<ManageOnlineOrder />}>
@@ -119,9 +126,16 @@ function App() {
             </Route>
 
             <Route path="manage-orders-owner" element={<ManageOrderOwner />} />
-            <Route path="manage-discounts" element={<ManageDiscount />} />
+
+            <Route path="manage-discounts" element={<ManageDiscount />}>
+            <Route path="list-discount" element={<ListDiscount />} />
+            <Route path="list-not-discount" element={<ListNotDiscount />} />
+            <Route path=":discountId" element={<DetailDiscount/>} />
+            <Route path="update-discount/:discountId" element={<UpdateDiscount/>} />
+            </Route>
 
             <Route path="create-service" element={<CreateService />} />
+            <Route path="create-discount" element={<CreateDiscount />} />
 
             <Route path="manage-services" element={<ManageService />}>
               <Route path='list-service' element={<ListService />} />

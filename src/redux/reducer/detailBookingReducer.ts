@@ -15,7 +15,6 @@ const detailBookingReducer = (
 ) => {
     switch (type) {
         case detailBooking.DETAIL_BOOKING_SUCCESS:
-            console.log("first",payload.data)
             return {
                 ...state,
                 detailBookingInfor: payload.data,

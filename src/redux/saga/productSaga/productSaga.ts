@@ -23,7 +23,7 @@ import { payloadCreateProduct, payloadSaga, payloadSortProduct, payloadUpdatePro
 import { sagaDetailProduct } from '@/types/actions/detailProduct';
 import { createVehicles, listVehicles, listWarranty, productCategory, removeVehicles } from '@/constants/secondaryConstants';
 import { History } from '@/context/NavigateSetter';
-import { getFilter, getFilterProductInService, getFilterProductNotService } from '@/types/actions/filterCreate';
+import { getFilter, getFilterProductDiscount } from '@/types/actions/filterCreate';
 import { ownerService } from '@/services/ownerService';
 import { payloadCreateVehicle, payloadDeleteVehicle } from '@/types/actions/listVehicle';
 
@@ -234,9 +234,9 @@ function* getDetailProduct(payload: sagaDetailProduct) {
     }
 }
 
-function* getProductFilterService(payload: getFilterProductInService<string, number>) {
+function* getProductFilterDiscount(payload: getFilterProductDiscount<string, number>) {
     try {
-        const resp: AxiosResponse = yield call(ownerService.getProductInService, payload.data);
+        const resp: AxiosResponse = yield call(ownerService.getProductDiscount, payload.data);
         const { status, data } = resp;
         if (data && status === 200) {
             yield put(FilterProductSuccess(data));
@@ -251,22 +251,6 @@ function* getProductFilterService(payload: getFilterProductInService<string, num
 
 }
 
-function* getProductFilterNotService(payload: getFilterProductNotService<number>) {
-    try {
-        const resp: AxiosResponse = yield call(ownerService.getProductNotService, payload.data);
-        const { status, data } = resp;
-        if (data && status === 200) {
-            yield put(FilterProductSuccess(data));
-        } else {
-            yield put(FilterProductFailed(data));
-        }
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    } catch (error: any) {
-        const msg: string = error.message;
-        yield put(FilterProductFailed(msg));
-    }
-
-}
 
 export function* lookupProduct() {
     yield takeEvery(productCreate.PRODUCT_CREATE, createProduct);
@@ -281,7 +265,6 @@ export function* lookupProduct() {
     yield takeEvery(createVehicles.CREATE_VEHICLES, createVehicleProduct);
     yield takeEvery(removeVehicles.REMOVE_VEHICLES, deleteVehicleProduct);
     yield takeEvery(productFilter.GET_PRODUCT_FILTER, getFilterProduct);
-    yield takeEvery(productFilter.GET_PRODUCT_FILTER_SERVICE, getProductFilterService);
-    yield takeEvery(productFilter.GET_PRODUCT_FILTER_NOT_SERVICE, getProductFilterNotService);
+    yield takeEvery(productFilter.GET_PRODUCT_FILTER_DISCOUNT, getProductFilterDiscount);
     yield takeEvery(detailProduct.DETAIL_PRODUCT, getDetailProduct);
 }

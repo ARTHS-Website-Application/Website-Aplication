@@ -5,38 +5,39 @@ import { axiosPrivate } from '@/api/axios';
 import { Notifications } from '@/types/actions/notification';
 import { FaBell, FaCheckCircle } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
+import LoadingPage from './LoadingPage';
 
 type Props = {
   handleNotification: () => void,
 }
 
-const Notification = ({ handleNotification}: Props) => {
+const Notification = ({ handleNotification }: Props) => {
 
   const navigate = useNavigate();
   const [listNotification, setListNotifications] = useState<Notifications<string, number> | null | undefined>();
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  
+
 
   const getDeviceToken = async () => {
     const messaging = getMessaging(app);
-  
+
     // Yêu cầu bật thông báo từ trình duyệt
     window.Notification.requestPermission().then(permission => {
       if (permission === 'granted') {
         console.log('Notification permission granted.');
-        
+
         // Tiếp tục lấy FCM token
-        getToken(messaging, { 
-          vapidKey: 'BAvc5vNDfpLtKJshitmRxcvSPt8zAIqtrDq-IP19pTgYS4uxwfpUVJGnNlC9oFEIHXZMEMJM3uh0b-dJDBvjSvY' 
+        getToken(messaging, {
+          vapidKey: 'BAvc5vNDfpLtKJshitmRxcvSPt8zAIqtrDq-IP19pTgYS4uxwfpUVJGnNlC9oFEIHXZMEMJM3uh0b-dJDBvjSvY'
         })
-        .then((token) => {
-          handleSaveDeviceToken(token);
-          console.log('Current device token:', token);
-        })
-        .catch((error) => {
-          console.error('An error occurred while retrieving token. ', error);
-        });
-  
+          .then((token) => {
+            handleSaveDeviceToken(token);
+            console.log('Current device token:', token);
+          })
+          .catch((error) => {
+            console.error('An error occurred while retrieving token. ', error);
+          });
+
       } else {
         console.log('Unable to get permission to notify.');
       }
@@ -102,12 +103,12 @@ const Notification = ({ handleNotification}: Props) => {
 
 
   return (
-    <div className="absolute z-10 right-0 top-[-10px] pr-[240px] p-4">{
-      isLoading ? (
-        <div className="animate-spin rounded-full h-5 w-5 border-t-2 border-b-2 border-gray-900"></div>
-      ) : (
-        <div className="bg-[#E5E5E5] w-[500px] h-[500px] rounded-[10px] overflow-y-auto p-4">
-          {listNotification?.data?.map((notification, index) => (
+    <div className="absolute z-10 right-0 top-[-10px] pr-[240px] p-4">
+      <div className="bg-[#E5E5E5] w-[500px] h-[500px] rounded-[10px] overflow-y-auto p-4">
+        {isLoading ? (
+          <LoadingPage/>
+        ) : (
+          listNotification?.data?.map((notification, index) => (
             <div key={index}
               className="flex justify-between bg-white hover:bg-mainB items-center rounded-md px-4 py-2 mb-2"
               onClick={() => handleNotificationClick(notification.id, notification.data.isRead, notification.data.link)}>
@@ -124,10 +125,10 @@ const Notification = ({ handleNotification}: Props) => {
                 {notification.data.isRead && <FaCheckCircle className="text-white" />}
               </div>
             </div>
-          ))}
-        </div>
-      )
-    }
+          ))
+        )}
+      </div>
+
 
     </div>
   );

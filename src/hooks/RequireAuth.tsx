@@ -34,7 +34,7 @@ const RequireAuth = ({ allowedRoles }: Props) => {
       ? (
 
         <div className='w-full min-h-screen flex bg-mainB'>
-          <div className='bg-white w-[17%]'>
+          <div className='bg-white w-[17%] min-h-full'>
             <SiderBar role={initialAuth?.roles} />
           </div>
           <div className='w-full px-5 '>

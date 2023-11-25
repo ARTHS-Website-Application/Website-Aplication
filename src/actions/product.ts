@@ -1,7 +1,7 @@
 import { productInfor, productFilter, detailProduct, productCreate, productUpdate } from "@/constants/mainConstants";
 import { createVehicles, listVehicles, listWarranty, productCategory, removeVehicles } from "@/constants/secondaryConstants";
 import { itemCategoryProduct } from "@/types/actions/categoryPr";
-import { filterProductInService, filterProductNotService, itemFilter } from "@/types/actions/filterCreate";
+import {itemFilter, itemFilterDiscount } from "@/types/actions/filterCreate";
 import { itemVehicleProduct } from "@/types/actions/listVehicle";
 import { itemWarrantyProduct } from "@/types/actions/listWarranty";
 import { callProduct, callSortProduct, item, itemProduct } from "@/types/actions/product";
@@ -162,16 +162,9 @@ export const FilterProduct = (data:itemFilter<string,number>) => {
         data
     };
 };
-
-export const FilterProductService = (data:filterProductInService<string,number>) => {
+export const FilterProductDiscount = (data:itemFilterDiscount<string,number>) => {
     return {
-        type: productFilter.GET_PRODUCT_FILTER_SERVICE,
-        data
-    };
-};
-export const FilterProductNotService = (data:filterProductNotService<number>) => {
-    return {
-        type: productFilter.GET_PRODUCT_FILTER_NOT_SERVICE,
+        type: productFilter.GET_PRODUCT_FILTER_DISCOUNT,
         data
     };
 };

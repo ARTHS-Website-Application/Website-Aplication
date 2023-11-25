@@ -14,6 +14,7 @@ const BookingDetailModal = ({ booking, onClose }: { booking: itemBooking<string,
     const [newTime, setNewTime] = useState<string>('');
     const bookingInfo: listBooking<string, number> = useSelector((state: selectorBooking<string, number>) => state.bookingReducer?.bookingInfo);
     const [localBooking, setLocalBooking] = useState<itemBooking<string, number> | null>(booking);
+    console.log(localBooking);
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const dispatch = useDispatch();
 
@@ -69,14 +70,14 @@ const BookingDetailModal = ({ booking, onClose }: { booking: itemBooking<string,
 
     };
 
-    // const handleConfirmCameBooking = async () =>{
-    //     const updateData ={
-    //         status: statusBooking.Came
-    //     }
-    //     dispatch(putBooking(localBooking?.id, updateData))
-    //     setIsLoading(true);
+    const handleConfirmCameBooking = async () => {
+        const updateData = {
+            status: statusBooking.Came
+        }
+        dispatch(putBooking(localBooking?.id, updateData))
+        setIsLoading(true);
 
-    // }
+    }
 
     const formatPhoneNumber = (phoneNumber: number): string => {
         return phoneNumber.toString().replace(/(\d{4})(\d{3})(\d{3})/, '$1 $2 $3');
@@ -117,7 +118,7 @@ const BookingDetailModal = ({ booking, onClose }: { booking: itemBooking<string,
             setNewDate(convertDateToInputFormat(localBooking.dateBook));
             setNewTime(convertTimeToInputFormat(localBooking.dateBook));
         }
-        
+
     }, [localBooking?.dateBook]);
 
     useEffect(() => {
@@ -127,8 +128,8 @@ const BookingDetailModal = ({ booking, onClose }: { booking: itemBooking<string,
             if (updatedBooking) {
                 setLocalBooking(updatedBooking)
                 setShowEditForm(false);
-                
-                
+
+
             }
             setTimeout(() => {
                 setIsLoading(false);
@@ -141,7 +142,7 @@ const BookingDetailModal = ({ booking, onClose }: { booking: itemBooking<string,
         if (localBooking?.status === statusBooking.WaitForConfirm) {
             return <button className="bg-green-500 text-white px-10 py-4 rounded hover:bg-green-600" onClick={handleConfirmBooking}>Xác nhận</button>;
         } else if (localBooking?.status === statusBooking.Confirmed) {
-            return <Link to={`/manage-order/create-order/${localBooking.id}`} className="bg-red-500 text-white px-10 py-4 rounded hover:bg-red-600">Xác nhận đã đến</Link>;
+            return <button className="bg-red-500 text-white px-10 py-4 rounded hover:bg-red-600" onClick={handleConfirmCameBooking}>Xác nhận đã đến</button>;
         }
         return null;
     };
@@ -158,7 +159,9 @@ const BookingDetailModal = ({ booking, onClose }: { booking: itemBooking<string,
         if (localBooking?.status === statusBooking.Came || localBooking?.status === statusBooking.Canceled) {
             return null;
         } else {
-            return <button className="bg-indigo-500 text-white px-6 py-2 rounded-md hover:bg-indigo-600 mt-4 md:mt-0 transition duration-200 ease-in-out transform hover:scale-105" onClick={toggleEditForm}>
+            return <button className="bg-indigo-500 text-white font-semibold px-2 py-2 rounded-md hover:bg-indigo-600 transition duration-200 ease-in-out transform hover:scale-105"
+                onClick={toggleEditForm}
+            >
                 Chỉnh sửa
             </button>;
         }
@@ -187,12 +190,20 @@ const BookingDetailModal = ({ booking, onClose }: { booking: itemBooking<string,
                     <span className="text-green-500 font-bold">{statusBooking.Confirmed}</span>
                 </span>
             );
-        }else if (status === statusBooking.Came) {
+        } else if (status === statusBooking.Came) {
             return (
-                <span className={commonClasses}>
-                    <span className="w-2.5 h-2.5 bg-blue-600 rounded-full"></span>
-                    <span className="text-blue-600 font-bold">{statusBooking.Came}</span>
-                </span>
+                <div className="flex flex-col space-y-4">
+                    <span className={commonClasses}>
+                        <span className="w-2.5 h-2.5 bg-blue-600 rounded-full"></span>
+                        <span className="text-blue-600 font-bold">{statusBooking.Came}</span>
+                    </span>
+                    {!localBooking?.orderId ? (
+                        <Link to={`/manage-order/create-order/${localBooking?.id}`}
+                            className="text-[18px] font-semibold text-white bg-gray-500 p-2 rounded-lg shadow-md hover:bg-green-600"
+                        >Tạo đơn hàng</Link>
+                    ) : ""}
+                </div>
+
             );
         }
     };
@@ -200,142 +211,162 @@ const BookingDetailModal = ({ booking, onClose }: { booking: itemBooking<string,
     if (!localBooking) return null;
     return (
         <div>
-            {isLoading ? <LoadingPage/> : (
+            {isLoading ? <LoadingPage /> : (
                 <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-60" onClick={onClose}>
 
-                <div className="bg-white w-full max-w-4xl p-8 rounded-lg flex space-x-8" onClick={stopPropagation}>
-                    {/* Customer Information */}
-                    <div className="flex-none w-2/5 space-y-6 rounded-lg p-4 shadow-lg">
-                        <div className="flex flex-col items-center relative">
-                            <div className="bg-orange-500 w-full h-32 rounded relative z-0"></div>
-                            <img
-                                src={localBooking.customer.avatar ?? "https://mdbcdn.b-cdn.net/img/Photos/Vertical/mountain3.webp"}
-                                alt="Avatar customer"
-                                className="w-40 h-40 rounded-full border-4 border-white absolute top-1/2 transform -translate-y-1/2 z-10 object-cover"
-                            />
-                            <div className="border-b border-gray-300 w-full rounded-b">
-                                <h2 className="text-2xl font-bold text-center mt-24 pb-4">{localBooking.customer.fullName}</h2>
+                    <div className="bg-white w-full max-w-4xl p-8 rounded-lg flex space-x-8" onClick={stopPropagation}>
+                        {/* Customer Information */}
+                        <div className="flex-none w-2/5 space-y-6 rounded-lg p-4 shadow-lg">
+                            <div className="flex flex-col items-center relative">
+                                <div className="bg-orange-500 w-full h-32 rounded relative z-0"></div>
+                                <img
+                                    src={localBooking.customer.avatar ?? "https://mdbcdn.b-cdn.net/img/Photos/Vertical/mountain3.webp"}
+                                    alt="Avatar customer"
+                                    className="w-40 h-40 rounded-full border-4 border-white absolute top-1/2 transform -translate-y-1/2 z-10 object-cover"
+                                />
+                                <div className="border-b border-gray-300 w-full rounded-b">
+                                    <h2 className="text-2xl font-bold text-center mt-24 pb-4">{localBooking.customer.fullName}</h2>
+                                </div>
                             </div>
-                        </div>
-                        <div className="space-y-9 rounded-lg p-1 shadow-md">
-                            <div className="flex items-center space-x-5 text-md">
-                                <div className="w-10 h-10 bg-blue-400 rounded-full border-4 border-gray"></div>
-                                <div>
-                                    <div>Số điện thoại</div>
-                                    <div>{formatPhoneNumber(localBooking.customer.phoneNumber)}</div>
-                                </div>
-                            </div >
-                            <div className="flex items-center space-x-5 text-md">
-                                <div className="w-10 h-10 bg-blue-400 rounded-full border-4 border-gray"></div>
-                                <div>
-                                    <div>Giới tính</div>
-                                    <div>{localBooking.customer.gender}</div>
-                                </div>
-                            </div >
-                            <div className="flex items-center space-x-5 text-md">
-                                <div className="w-10 h-10 bg-blue-400 rounded-full border-4 border-gray"></div>
-                                <div>
-                                    <div>Địa chỉ</div>
-                                    <div>{localBooking.customer.address}</div>
-                                </div>
-                            </div  >
-                        </div>
-                    </div>
-    
-                    {/* Description and Action Buttons */}
-                    <div className="flex-grow flex flex-col justify-between space-y-2 pl-4">
-                        <h2 className="text-3xl font-bold mb-2">Thông tin mô tả xe</h2>
-                        <div className="border rounded-lg p-6 border-gray-400 w-full h-48 mt-2">
-                            <p className="text-md">{localBooking.description}</p>
-    
-                        </div>
-    
-                        {/* Date and Time */}
-    
-                        <div className="space-y-4 py-2 flex flex-col md:flex-row justify-between items-center">
-    
-                            <div className="space-y-2 text-xl font-bold text-gray-700">
-                                <h2 className="">Ngày Đến: {formatDate(localBooking?.dateBook)}</h2>
-                                <h2 className="">Thời gian: {checkTimeDisplay(new Date(localBooking?.dateBook || ''))}</h2>
-                                {localBooking?.staff?<p>Nhân viên sửa chữa: {localBooking?.staff?.fullName}</p>:''}
-                            </div>
-                            {renderEditButton()}
-                        </div>
-                        <div className=" mt-2 flex flex-col md:flex-row justify-between items-center">
-                            <div className="flex flex-col items-start space-y-4">
-                                {renderStatus(localBooking.status)}
-                                {localBooking.status === statusBooking.Canceled ? (
-                                    <div className="text-red-500 text-lg rounded-lg p-2 bg-red-100">
-                                        {localBooking.cancellationReason}
+                            <div className="space-y-9 rounded-lg p-1 shadow-md">
+                                <div className="flex items-center space-x-5 text-md">
+                                    <div className="w-10 h-10 bg-blue-400 rounded-full border-4 border-gray"></div>
+                                    <div>
+                                        <div>Số điện thoại</div>
+                                        <div>{formatPhoneNumber(localBooking.customer.phoneNumber)}</div>
                                     </div>
-                                ):""}
+                                </div >
+                                <div className="flex items-center space-x-5 text-md">
+                                    <div className="w-10 h-10 bg-blue-400 rounded-full border-4 border-gray"></div>
+                                    <div>
+                                        <div>Giới tính</div>
+                                        <div>{localBooking.customer.gender}</div>
+                                    </div>
+                                </div >
+                                <div className="flex items-center space-x-5 text-md">
+                                    <div className="w-10 h-10 bg-blue-400 rounded-full border-4 border-gray"></div>
+                                    <div>
+                                        <div>Địa chỉ</div>
+                                        <div>{localBooking.customer.address}</div>
+                                    </div>
+                                </div  >
                             </div>
                         </div>
-                        {/* Edit Form */}
-                        <div className={`mt-4 h-24 transition-opacity duration-300 flex items-center space-x-4 ${showEditForm ? 'opacity-100 visible' : 'opacity-0 invisible'}`}>
-                            <input
-                                type="date"
-                                name="newDate"
-                                value={newDate}
-                                onChange={handleInputChange}
-                                className="border-2 border-indigo-300 focus:border-indigo-500 rounded px-4 py-2 transition duration-200 ease-in-out transform focus:scale-105"
-                            />
-    
-                            <input
-                                type="time"
-                                name="newTime"
-                                value={newTime}
-                                onChange={handleInputChange}
-                                className="border-2 border-indigo-300 focus:border-indigo-500 rounded px-4 py-2 transition duration-200 ease-in-out transform focus:scale-105"
-                            />
-                            {localBooking.status !== statusBooking.WaitForConfirm ?
-                                (<button className="bg-green-600 text-white px-6 py-2 rounded-md hover:bg-green-700 transition duration-200 ease-in-out transform hover:scale-105" onClick={handleUpdateDateBook}>Cập nhật</button>)
-                                : null}
-                        </div>
-    
-    
-                        {/* Action Buttons */}
-                        <div className="flex justify-end items-end mt-10">
-                            <div className="flex space-x-8">
-                                {renderCancelButton()}
-                                {showCancelModal && (
-                                    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-60 z-10">
-                                        <div className="bg-white rounded-lg p-8 w-full max-w-2xl"> {/* Chỉnh max-w-2xl để thay đổi độ rộng tối đa của modal */}
-                                            <h2 className="text-2xl font-semibold">Nhập lý do hủy</h2>
-                                            <textarea
-                                                placeholder="Enter your reason"
-                                                className="border-2 border-indigo-300 focus:border-indigo-500 rounded px-4 py-2 mt-4 w-full h-48 text-lg resize-none"
-                                                value={cancelReason}
-                                                onChange={(e) => setCancelReason(e.target.value)}
-                                                style={{ width: '100%' }} // Bạn cũng có thể sử dụng inline style
-                                            ></textarea>
-                                            <div className="mt-4 flex justify-end">
-                                                <button
-                                                    className="bg-red-700 text-white px-6 py-2 rounded-md hover:bg-red-800 text-lg"
-                                                    disabled={!cancelReason}
-                                                    onClick={handleCancelBooking}
-                                                >
-                                                    Xác nhận hủy
-                                                </button>
-                                                <button
-                                                    className="bg-gray-500 text-white px-6 py-2 rounded-md hover:bg-gray-600 ml-4 text-lg"
-                                                    onClick={() => setShowCancelModal(false)}
-                                                >
-                                                    Đóng
-                                                </button>
-                                            </div>
+
+                        {/* Description and Action Buttons */}
+                        <div className="flex-grow flex flex-col justify-between space-y-2 pl-4">
+                            <h2 className="text-3xl font-bold mb-2">Thông tin mô tả xe</h2>
+                            <div className="border rounded-lg p-6 border-gray-400 w-full h-48 mt-2">
+                                <p className="text-md">{localBooking.description}</p>
+
+                            </div>
+
+                            {/* Date and Time */}
+
+                            <div className="py-2 flex justify-center">
+
+                                <div className="flex flex-col space-y-2 text-xl font-bold text-gray-700 ">
+                                    <div className="flex justify-between items-center">
+                                        <div>
+                                            <h2 className="">Ngày Đến: {formatDate(localBooking?.dateBook)}</h2>
+                                            <h2 className="">Thời gian: {checkTimeDisplay(new Date(localBooking?.dateBook || ''))}</h2>
+                                        </div>
+                                        <div>
+                                            {renderEditButton()}
                                         </div>
                                     </div>
-                                )}
-                                {renderActionButton()}
+
+                                    {localBooking?.staff ? (
+                                        <div className="flex space-x-3 items-center">
+                                            <p>Nhân viên sửa chữa:</p>
+
+                                            <div className="flex space-x-3 items-center">
+                                                <img src={localBooking?.staff.avatar ?? "https://mdbcdn.b-cdn.net/img/Photos/Vertical/mountain3.webp"} alt=""
+                                                    className="w-11 h-11 rounded-full"
+                                                />
+                                                <p>{localBooking?.staff?.fullName}</p>
+                                            </div>
+                                        </div>
+                                    ) : ''}
+
+                                </div>
+
+                            </div>
+                            <div className=" mt-2 flex flex-col md:flex-row justify-between items-center">
+                                <div className="flex flex-col pl-5 space-y-4">
+                                    {renderStatus(localBooking.status)}
+                                    {localBooking.status === statusBooking.Canceled ? (
+                                        <div className="text-red-500 text-lg rounded-lg p-2 bg-red-100">
+                                            {localBooking.cancellationReason}
+                                        </div>
+                                    ) : ""}
+                                </div>
+                            </div>
+                            {/* Edit Form */}
+                            <div className={`mt-4 h-24 transition-opacity duration-300 flex items-center space-x-4 ${showEditForm ? 'opacity-100 visible' : 'opacity-0 invisible'}`}>
+                                <input
+                                    type="date"
+                                    name="newDate"
+                                    value={newDate}
+                                    onChange={handleInputChange}
+                                    className="border-2 border-indigo-300 focus:border-indigo-500 rounded px-4 py-2 transition duration-200 ease-in-out transform focus:scale-105"
+                                />
+
+                                <input
+                                    type="time"
+                                    name="newTime"
+                                    value={newTime}
+                                    onChange={handleInputChange}
+                                    className="border-2 border-indigo-300 focus:border-indigo-500 rounded px-4 py-2 transition duration-200 ease-in-out transform focus:scale-105"
+                                />
+                                {localBooking.status !== statusBooking.WaitForConfirm ?
+                                    (<button className="bg-green-600 text-white px-6 py-2 rounded-md hover:bg-green-700 transition duration-200 ease-in-out transform hover:scale-105" onClick={handleUpdateDateBook}>Cập nhật</button>)
+                                    : null}
+                            </div>
+
+
+                            {/* Action Buttons */}
+                            <div className="flex justify-end items-end mt-10">
+                                <div className="flex space-x-8">
+                                    {renderCancelButton()}
+                                    {showCancelModal && (
+                                        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-60 z-10">
+                                            <div className="bg-white rounded-lg p-8 w-full max-w-2xl"> {/* Chỉnh max-w-2xl để thay đổi độ rộng tối đa của modal */}
+                                                <h2 className="text-2xl font-semibold">Nhập lý do hủy</h2>
+                                                <textarea
+                                                    placeholder="Enter your reason"
+                                                    className="border-2 border-indigo-300 focus:border-indigo-500 rounded px-4 py-2 mt-4 w-full h-48 text-lg resize-none"
+                                                    value={cancelReason}
+                                                    onChange={(e) => setCancelReason(e.target.value)}
+                                                    style={{ width: '100%' }} // Bạn cũng có thể sử dụng inline style
+                                                ></textarea>
+                                                <div className="mt-4 flex justify-end">
+                                                    <button
+                                                        className="bg-red-700 text-white px-6 py-2 rounded-md hover:bg-red-800 text-lg"
+                                                        disabled={!cancelReason}
+                                                        onClick={handleCancelBooking}
+                                                    >
+                                                        Xác nhận hủy
+                                                    </button>
+                                                    <button
+                                                        className="bg-gray-500 text-white px-6 py-2 rounded-md hover:bg-gray-600 ml-4 text-lg"
+                                                        onClick={() => setShowCancelModal(false)}
+                                                    >
+                                                        Đóng
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    )}
+                                    {renderActionButton()}
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
             )}
         </div>
-        
+
 
     );
 }

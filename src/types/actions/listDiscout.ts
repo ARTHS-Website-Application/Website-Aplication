@@ -1,10 +1,9 @@
-// import { itemPagination } from "../pagination";
-
 import { itemPagination } from "../pagination";
 
 export interface selectorDiscount<T, N> {
     discountReducer: {
         discountInfor: dataDiscount<T, N>;
+        notDiscountInfor: dataDiscount<T, N>;
         showError: T | null;
     }
 }
@@ -12,6 +11,7 @@ export interface selectorDiscount<T, N> {
 export interface storeDiscount<T, N> {
     showError: T | null,
     discountInfor: discountSaga<T, N>[];
+    notDiscountInfor: discountSaga<T, N>[];
 }
 
 export interface discountSaga<T, N> {
@@ -23,9 +23,9 @@ export interface payloadDiscountChoose<N> {
     pageSize: N
 }
 
-export interface payloadDiscount<N> {
+export interface payloadDiscount<T,N> {
     type: "list_discounts",
-    pageNumber: N
+    data:callListDiscount<T, N>
 }
 
 export interface dataDiscount<T, N> {
@@ -42,4 +42,10 @@ export interface itemDiscount<T, N> {
     imageUrl: T,
     description: T,
     status: T
+}
+
+export interface callListDiscount<T, N> {
+    pageNumber:N,
+    status:T,
+    title:T,
 }

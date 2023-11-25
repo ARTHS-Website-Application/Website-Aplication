@@ -49,6 +49,14 @@ export const getOnlineOrderFinishedSuccess = (data: listOnlineOrder<string, numb
         },
     };
 };
+export const getOnlineOrderCanceledSuccess = (data: listOnlineOrder<string, number>) => {
+    return {
+        type: listOnlineOrderConstant.LIST_ORDER_CANCELED_SUCCESS,
+        payload: {
+            data,
+        },
+    };
+};
 export const getOnlineOrderFailed = (error: string) => {
     return {
         type: listOnlineOrderConstant.LIST_ORDER_FAIL,

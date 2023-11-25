@@ -19,3 +19,13 @@ export interface sortService<T,N>{
     sortByAsc?:boolean;
     name:T
 }
+
+export interface getServiceDiscount<T,N>{
+    type:"list_services_discount";
+    data:callServiceDiscount<T,N>
+}
+export interface callServiceDiscount<T,N>{
+    status:T;
+    pageNumber:N;
+    name:T
+}

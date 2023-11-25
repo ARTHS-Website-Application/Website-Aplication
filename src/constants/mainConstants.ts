@@ -22,9 +22,8 @@ export const productInfor = {
 }
 
 export const productFilter = {
-    GET_PRODUCT_FILTER_SERVICE: "get_product_filter_service",
-    GET_PRODUCT_FILTER_NOT_SERVICE: "get_product_filter_not_service",
     GET_PRODUCT_FILTER: "get_product_filter",
+    GET_PRODUCT_FILTER_DISCOUNT: "get_product_filter_discount",
     GET_PRODUCT_FILTER_SUCCESS: "get_product_filter_success",
     GET_PRODUCT_FILTER_FAIL: "get_product_filter_fail",
 }
@@ -107,6 +106,7 @@ export const listOnlineOrderConstant = {
     LIST_ORDER_CONFIRM_SUCCESS: "list_online_order_confirm_success",
     LIST_ORDER_TRANSPORT_SUCCESS: "list_online_order_transport_success",
     LIST_ORDER_FINISH_SUCCESS: "list_online_order_finish_success",
+    LIST_ORDER_CANCELED_SUCCESS: "list_online_order_canceled_success",
     LIST_ORDER_FAIL: "list_online_order_fail",
 }
 

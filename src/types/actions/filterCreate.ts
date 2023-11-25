@@ -10,20 +10,15 @@ export interface itemFilter<T,N>{
     status:T
 }
 
-export interface getFilterProductInService<T,N>{
-    type:"get_product_filter_service";
-    data:filterProductInService<T,N>
-}
-export interface filterProductInService<T,N>{
-    pageSize?:N
-    repairService?:T;
+export interface itemFilterDiscount<T,N>{
+    paginationNumber:N
+    name:T;
+    category:T;
+    status:T,
+    haveDiscount:boolean,
 }
 
-export interface getFilterProductNotService<N>{
-    type:"get_product_filter_not_service";
-    data:filterProductNotService<N>
-}
-export interface filterProductNotService<N>{
-    pageSize?:N
-    noRepairService?:boolean;
+export interface getFilterProductDiscount<T,N>{
+    type:"get_product_filter_discount";
+    data:itemFilterDiscount<T,N>
 }
