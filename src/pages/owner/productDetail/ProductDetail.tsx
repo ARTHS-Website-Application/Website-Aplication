@@ -68,7 +68,7 @@ const ProductDetail = () => {
                             )}
                             <div className='py-5'>
                                 <div className='flex justify-center'>
-                                    <div className={`grid grid-cols-${data?.images?.length ?? 1} gap-x-7`}>
+                                    <div className={`flex gap-x-3`}>
                                         {data?.images && data?.images.map((item, index) => (
                                             <div key={index} className={`p-2  rounded-lg flex justify-center cursor-pointer  items-center ${index === selectedImage ? 'border-4 border-blue-400' : ''} `}>
                                                 <img

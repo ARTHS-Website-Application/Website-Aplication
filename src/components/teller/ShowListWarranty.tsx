@@ -1,7 +1,6 @@
 import { inStoreOrderDetails } from '@/types/actions/detailOrder';
 import { formatDateSeven } from '@/utils/formatDate';
 import { XMarkIcon } from '@heroicons/react/24/solid';
-import React from 'react'
 
 type Props = {
     onClose: () => void;

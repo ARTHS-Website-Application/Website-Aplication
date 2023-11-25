@@ -51,8 +51,8 @@ const ShowCreateServiceDetail = ({ onClose, isVisible, itemDetail }: Props) => {
                             )}
                             <div className='py-5'>
                                 <div className='flex justify-center'>
-                                    <div className={`grid grid-cols-${data?.images?data?.images?.length: 1} gap-x-7`}>
-                                        {data?.images && data?.images.map((item, index) => (
+                                    <div className={`flex gap-x-3`}>
+                                        {data?.images && data?.images?.map((item, index) => (
                                             <div key={index} className={`p-2  rounded-lg flex justify-center cursor-pointer  items-center border-4 ${index === selectedImage ? ' border-blue-400' : 'border-gray-100'} `}>
                                                 <img
                                                     src={item?.imageUrl}

@@ -40,6 +40,7 @@ export interface listBooking<T, N> {
 
 export interface itemBooking<T, N> {
     id: T,
+    orderId:T,
     dateBook: Date,
     description: T,
     cancellationReason: T,

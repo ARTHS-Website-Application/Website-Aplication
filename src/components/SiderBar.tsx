@@ -71,7 +71,7 @@ const SiderBar = ({ role }: Props) => {
                         key={subIndex}
                           to={submenu.to}
                           className={({ isActive }) =>
-                            `w-full text-start pl-5 py-3 px-3
+                            `w-full text-start p-3
                               ${isActive ? "text-white bg-main rounded-md" : "hover:text-main text-[#757575]"}`
                           }
                         >

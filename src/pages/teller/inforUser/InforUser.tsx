@@ -3,7 +3,7 @@ import { ClipboardDocumentListIcon } from '@heroicons/react/24/solid';
 import { useNavigate, useParams } from 'react-router-dom';
 import { item } from '@/types/actions/product'
 import { itemOrder } from '@/types/actions/createOrder';
-import { showSuccessAlert } from '@/constants/chooseToastify';
+import { showErrorAlert, showSuccessAlert, showWarningAlert } from '@/constants/chooseToastify';
 import userAxiosPrivate from '@/hooks/useAxiosPrivate';
 import { formatPhoneNumber } from '@/utils/formatPhone';
 import StaffSelect from '@/components/teller/StaffSelect';
@@ -143,6 +143,7 @@ const InforUser = ({ addProduct = [], addService = [], removeProduct, removeServ
         const data = {
             staffId: staffId,
             customerName: nameCustomer,
+            bookingId:detailBookingInfor.id??"",
             customerPhoneNumber: phoneCustomer,
             licensePlate: licensePlate,
             orderDetailModel: [...orderData, ...orderService]
@@ -162,8 +163,19 @@ const InforUser = ({ addProduct = [], addService = [], removeProduct, removeServ
                 console.log('Lỗi');
             }
 
-        } catch (error) {
-            console.error('Lỗi:', error);
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        } catch (error: any) {
+            console.log('error', error);
+            if (error.response) {
+                if (error.response.status === 409) {
+                    showWarningAlert(error.response.data.Message);
+    
+                } else {
+                    showErrorAlert('Đã xảy ra lỗi khi cập nhật thông tin. Vui lòng thử lại.');
+                }
+            } else {
+                showErrorAlert('Không thể kết nối tới máy chủ. Vui lòng thử lại sau.');
+            }
             setIsLoading(false);
         }
     }

@@ -37,16 +37,6 @@ export interface payloadUpdateServiceStatus {
     data: any
 }
 
-export interface payloadServiceChoose<T, N> {
-    type: "list_services_choose",
-    data: itemServiceChoose<T, N>
-}
-
-export interface itemServiceChoose<T, N> {
-    status: T,
-    pageSize: N
-}
-
 export interface payloadService<T, N> {
     type: "list_services",
     data: callService<T, N>

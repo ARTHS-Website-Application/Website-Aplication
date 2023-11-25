@@ -1,4 +1,4 @@
-import { getDetailOnlineOrderSuccess, getOnlineOrderConfirmSuccess, getOnlineOrderFailed, getOnlineOrderFinishedSuccess, getOnlineOrderPaidSuccess, getOnlineOrderSuccess, getOnlineOrderTransportSuccess, onlineOrderUpdate } from "@/actions/onlineOrder";
+import { getDetailOnlineOrderSuccess, getOnlineOrderCanceledSuccess, getOnlineOrderConfirmSuccess, getOnlineOrderFailed, getOnlineOrderFinishedSuccess, getOnlineOrderPaidSuccess, getOnlineOrderSuccess, getOnlineOrderTransportSuccess, onlineOrderUpdate } from "@/actions/onlineOrder";
 import { getDetailOrderFailed } from "@/actions/order";
 import { createOrderTransport, detailOnlineOrder, listOnlineOrderConstant, updateOnlineOrder } from "@/constants/mainConstants";
 import { onlineOrderService } from "@/services/onlineOrderService";
@@ -26,6 +26,9 @@ function* getOnlineOrder(payload: payloadOnlineOrder<string,number>) {
             }
             if(data?.data?.every((item:itemOnlineOrder<string,number>)=> item.status ===statusOrder.Finished)){
                 yield put(getOnlineOrderFinishedSuccess(data));
+            }
+            if(data?.data?.every((item:itemOnlineOrder<string,number>)=> item.status ===statusOrder.Canceled)){
+                yield put(getOnlineOrderCanceledSuccess(data));
             }
         } else {
             yield put(getOnlineOrderFailed(data));

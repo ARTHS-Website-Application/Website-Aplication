@@ -13,9 +13,9 @@ export const serviceUpdate = {
 }
 
 export const listServices = {
-    GET_LIST_SERVICES_CHOOSE: "list_services_choose",
     GET_SORT_SERVICES: "get_sort_services",
     GET_LIST_SERVICES: "list_services",
+    GET_LIST_SERVICES_DISCOUNT: "list_services_discount",
     GET_LIST_SERVICES_FILTER: "list_services_filter",
     GET_LIST_SERVICES_SUCCESS: "list_services_success",
     GET_LIST_SERVICES_FAIL: "list_services_fail",
@@ -54,11 +54,22 @@ export const listWarranty = {
     GET_LIST_WARRANTY_FAIL: "list_warranty_fail",
 }
 
+export const discountCreate = {
+    DISCOUNT_CREATE: "discount_create",
+}
+
 export const listDiscount = {
     GET_LIST_DISCOUNT_CHOOSE: "list_discount_choose",
     GET_LIST_DISCOUNT: "list_discount",
     GET_LIST_DISCOUNT_SUCCESS: "list_discount_success",
+    GET_LIST_NOT_DISCOUNT_SUCCESS: "list_not_discount_success",
     GET_LIST_DISCOUNT_FAIL: "list_discount_fail",
+}
+
+export const detailDiscount = {
+    DETAIL_DISCOUNT: "detail_discount",
+    DETAIL_DISCOUNT_SUCCESS: "detail_discount_success",
+    DETAIL_DISCOUNT_FAIL: "detail_discount_fail",
 }
 
 export const listStaff = {

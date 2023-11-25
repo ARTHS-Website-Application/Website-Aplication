@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import * as React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import Description from "@/components/Description";
-import { FilterProductNotService, WarrantyProduct } from '@/actions/product';
+import { WarrantyProduct } from '@/actions/product';
 import { detailService, updateService } from '@/actions/service';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { itemService } from '@/types/actions/listService';
@@ -21,6 +21,7 @@ const UpdateService = () => {
   const navigate = useNavigate();
   const getDetailService: itemService<string, number> = useSelector((state: selectorDetailService<string, number>) => state.serviceDetailReducer.serviceDetail);
   const warrantyChoose: itemWarrantyProduct<string, number>[] = useSelector((state: selectorWarrantyProduct<string, number>) => state.warrantyReducer.warrantyProduct);
+  const [dataWarranty,setDataWarranty] = useState<itemWarrantyProduct<string, number>[]>([]);
   const discountProduct: dataDiscount<string, number> = useSelector((state: selectorDiscount<string, number>) => state.discountReducer.discountInfor);
   const [dataDiscount, setDataDiscount] = useState<itemDiscount<string, number>[]>([])
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -52,7 +53,11 @@ const UpdateService = () => {
       dispatch(detailService(serviceId));
       setIsLoading(true);
     }
-  }, [dispatch, serviceId]);
+    if(warrantyChoose){
+      setDataWarranty(warrantyChoose)
+      setIsLoading(true);
+    }
+  }, [dispatch, serviceId, warrantyChoose]);
   //getDetailService
   useEffect(() => {
     if (getDetailService && getDetailService?.id === serviceId) {
@@ -69,15 +74,6 @@ const UpdateService = () => {
       }, 500)
     }
   }, [dispatch, getDetailService, serviceId])
-
-  //dispatch product not service
-  useEffect(() => {
-    const data = {
-      pageSize: 50,
-      noRepairService: true,
-    }
-    dispatch(FilterProductNotService(data))
-  }, [dispatch])
 
   const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const fileList = event.target.files;
@@ -216,7 +212,7 @@ const UpdateService = () => {
                     <Select
                       size="lg"
                       label="Lựa chọn tháng"
-                      value={reminderInterval.toString()}
+                      value={reminderInterval?.toString()}
                       className="text-[18px] w-[250px] h-[50px] bg-gray-50"
                       onChange={handleReminderInterval}
                     >
@@ -237,13 +233,14 @@ const UpdateService = () => {
                     <p>Thời gian bảo hành </p>
                     <div className="w-[250px] text-[18px]">
                       <Select
+                        size="lg"
                         className="px-3 h-[50px] bg-gray-50 text-[18px]"
                         label="Chọn thời gian bảo hành"
-                        value={addWarranty.toString()}
+                        value={addWarranty>0?addWarranty.toString():""}
                         onChange={handleAddWarranty}
                       >
-                        {warrantyChoose && warrantyChoose.length > 0
-                          ? warrantyChoose?.map((item, index) => (
+                        {dataWarranty && dataWarranty?.length > 0
+                          ? dataWarranty?.map((item, index) => (
                             <Option
                               value={item?.duration.toString()}
                               key={index}

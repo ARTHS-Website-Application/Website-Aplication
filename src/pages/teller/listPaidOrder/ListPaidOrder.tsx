@@ -9,7 +9,7 @@ import { statusOrder } from '@/types/typeOrder'
 import LoadingPage from '@/components/LoadingPage'
 
 
-const HistoryOrder = () => {
+const ListPaidOrder = () => {
     const dispatch = useDispatch()
     const orderPaidInfor: listOrder<string, number> = useSelector((state: selectorOrder<string, number>) => state.orderReducer.orderPaidInfor);
     const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -31,7 +31,7 @@ const HistoryOrder = () => {
                     customerName: addSearch,
                     customerPhone: "",
                     number: paginationNumber,
-                    orderStatus: statusOrder.Finished,
+                    orderStatus: statusOrder.Paid,
                 }
                 dispatch(getFilterOrderPaid(data))
                 setTimeout(() => {
@@ -42,7 +42,7 @@ const HistoryOrder = () => {
                     customerName: "",
                     customerPhone: addSearch,
                     number: paginationNumber,
-                    orderStatus: statusOrder.Finished,
+                    orderStatus: statusOrder.Paid,
                 }
                 dispatch(getFilterOrderPaid(data))
                 setTimeout(() => {
@@ -50,14 +50,14 @@ const HistoryOrder = () => {
                 }, 200)
             }
         } else {
-            dispatch(getOrderPaid(paginationNumber, statusOrder.Finished));
+            dispatch(getOrderPaid(paginationNumber, statusOrder.Paid));
             setIsLoading(true);
         }
 
     }, [addSearch, chooseSelect, dispatch, paginationNumber])
 
     useEffect(() => {
-        const isAnyPendingOrder = orderPaidInfor?.data?.every((item) => item.status === statusOrder.Finished);
+        const isAnyPendingOrder = orderPaidInfor?.data?.every((item) => item.status === statusOrder.Paid);
         if (isAnyPendingOrder && orderPaidInfor?.data) {
             setOrderData(orderPaidInfor.data);
             setTimeout(() => {
@@ -112,4 +112,4 @@ const HistoryOrder = () => {
     )
 }
 
-export default HistoryOrder
+export default ListPaidOrder

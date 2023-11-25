@@ -8,6 +8,7 @@ const initialState: storeOrderOnline<string, number> = {
     onlineOrderConfirm: [],
     onlineOrderTransport: [],
     onlineOrderFinish: [],
+    onlineOrderCanceled: [],
     showError: null,
 };
 
@@ -43,6 +44,11 @@ const onlineOrderReducer = (
                 ...state,
                 onlineOrderFinish: payload.data,
             }
+            case listOnlineOrderConstant.LIST_ORDER_CANCELED_SUCCESS:
+                return {
+                    ...state,
+                    onlineOrderCanceled: payload.data,
+                }
         case listOnlineOrderConstant.LIST_ORDER_FAIL:
             return {
                 ...state,

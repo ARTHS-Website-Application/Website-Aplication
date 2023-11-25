@@ -14,6 +14,7 @@ interface IDecodedToken {
     exp?: number;
 }
 const Login = () => {
+    const [isLoading,setIsLoading] = useState<boolean>(false);
     const [phoneNumber, setPhoneNumber] = useState<string>('');
     const [password, setPassword] = useState<string>('');
     const [errMsg, setErrMsg] = useState<string>('');
@@ -31,6 +32,7 @@ const Login = () => {
     }, [])
     const postData = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
+        setIsLoading(true);
         try {
             const response = await axios.post(LOGIN_URL,
                 JSON.stringify({ phoneNumber, password }),
@@ -80,6 +82,7 @@ const Login = () => {
             if (errRef && errRef.current) {
                 errRef.current.focus();
             }
+            setIsLoading(false)
         }
     }
     return (
@@ -123,8 +126,11 @@ const Login = () => {
                             </div>
                             <button
                                 type="submit"
-                                className="h-[70px] w-full bg-main font-semibold text-[24px] text-white rounded-[10px] hover:border-4 hover:border-orange-600 hover:shadow-lg">
-                                Đăng nhập
+                                className=
+                                "h-[70px] w-full bg-main font-semibold text-[24px] text-white rounded-[10px] hover:border-4 hover:border-orange-600 hover:shadow-lg flex justify-center items-center">
+                                <p className={`
+                                ${isLoading?"animate-spin rounded-full h-9 w-9 border-t-4 border-b-4 border-white":""}
+                                `}>{isLoading?"":"Đăng nhập"}</p>
                             </button>
                         </div>
                     </form>

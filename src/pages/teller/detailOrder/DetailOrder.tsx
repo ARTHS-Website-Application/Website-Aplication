@@ -97,11 +97,30 @@ const DetailOrder = () => {
   const TotalOrderDetail = TotalOrderProduct();
   const TotalService = TotalOrderService();
 
+  const handleCreateBill = async () => {
+    if(data?.id){
+      try {
+        const response = await axiosPrivate.get(`/orders/generate-invoice/${data?.id}`)
+        if (response.status === 200) {
+          window.open(response.data, '')
+          dispatch(updateStatusOrder(data?.id, statusOrder.Finished));
+          setIsLoading(true);
+          showSuccessAlert('Đơn hàng đang xuất bill');
+          
+        } else {
+          console.log('Lỗi');
+        }
+      } catch (error) {
+        console.log(error)
+      }
+    }
+
+  }
   const handlePayment = async () => {
     try {
       const response = await axiosPrivate.post('/payments/vn-pay',
         {
-          inStoreOrderId: data?.id,
+          orderId: data?.id,
           amount: data?.totalAmount
         }
       )
@@ -138,7 +157,7 @@ const DetailOrder = () => {
     if (data?.id) {
       dispatch(updateStatusOrder(data?.id, statusOrder.Paid));
       setIsLoading(true);
-      showSuccessAlert('Thanh toán thành công, đơn hàng đang xuất bill');
+      showSuccessAlert('Thanh toán thành công');
     }
   }
 
@@ -147,15 +166,20 @@ const DetailOrder = () => {
       {isLoading
         ? <Loading />
         : data && (
-          <div className={`w-full bg-white rounded-md px-3 
-          ${data?.status === statusOrder.Paid || data?.status !== statusOrder.WaitForPay ? "py-3" : ""}`}>
+          <div className={`w-full bg-white rounded-md px-3 py-3`}>
             <div className="font-semibold text-[20px] flex space-x-4 items-center pt-3">
-              {data?.status !== statusOrder.Paid
-                ? (
+              {data?.status === statusOrder.Processing ?
+                (
                   <Link to="/manage-order/list-all-order/list-order" className="hover:text-main">Danh sách đơn hàng</Link>
-                ) : (
-                  <Link to="/manage-order/list-all-order/history-order" className="hover:text-main">Lịch sử đơn hàng</Link>
-                )}
+                ) : data?.status === statusOrder.WaitForPay ?
+                  (
+                    <Link to="/manage-order/list-all-order/wait-paid-order" className="hover:text-main">Danh sách đơn chờ thanh toán</Link>
+                  ) : data?.status === statusOrder.Paid ?
+                    (
+                      <Link to="/manage-order/list-all-order/paid-order" className="hover:text-main">Danh sách đơn đã thanh toán</Link>
+                    ) : (
+                      <Link to="/manage-order/list-all-order/history-order" className="hover:text-main">Lịch sử đơn hàng</Link>
+                    )}
               <ChevronRightIcon className="w-5 h-5" />
               <p>Chi tiết đơn hàng</p>
             </div>
@@ -164,9 +188,11 @@ const DetailOrder = () => {
               <div className='w-[50%] border-2 border-[#E0E2E7] px-5 pt-5 pb-2 space-y-3  rounded-lg'>
                 <p className={`rounded-2xl font-semibold py-1 w-[170px] text-center text-[19px]
                     ${data?.status === statusOrder.Paid ? "bg-[#E7F4EE] text-[#0D894F]" :
-                    data?.status === statusOrder.Processing ? "bg-[#bac5e9] text-blue-500" :
-                      data?.status === statusOrder.WaitForPay ? "bg-[#FBEABC] text-[#90530C]" :
-                        ""}`}>
+                    data?.status === statusOrder.Finished ? "bg-[#E7F4EE] text-[#083b0db5]" :
+                      data?.status === statusOrder.Processing ? "bg-[#bac5e9] text-blue-500" :
+                        data?.status === statusOrder.WaitForPay ? "bg-[#FBEABC] text-[#90530C]" :
+                          data?.status === statusOrder.Canceled ? "bg-[#f2a8a9] text-[#900c0c]" :
+                            ""}`}>
                   {data?.status}
                 </p>
                 <div className='pt-3 text-[18px] flex justify-between'>
@@ -175,7 +201,7 @@ const DetailOrder = () => {
                       <CalendarDaysIcon className='w-7 h-7 fill-gray-500' />
                       <p>Ngày đặt</p>
                     </div>
-                    {data?.orderDetails.every((item) => item.instUsed === false && !item.repairService) || data?.paymentMethod || data?.status === statusOrder.WaitForPay ? (
+                    {(data?.orderDetails?.every((item) => item?.instUsed === false && item?.repairService === null) && data?.status === statusOrder.Processing) || data?.paymentMethod || data?.status === statusOrder.WaitForPay ? (
                       <div className='flex space-x-3'>
                         <CreditCardIcon className='w-7 h-7  fill-gray-500 ' />
                         <p>Phương thức thanh toán</p>
@@ -206,7 +232,7 @@ const DetailOrder = () => {
                     </div>
                     {data?.paymentMethod
                       ? <p>{data?.paymentMethod}</p>
-                      : data?.orderDetails.every((item) => item.instUsed === false && item.repairService === null) || data?.status === statusOrder.WaitForPay ? (
+                      : (data?.orderDetails.every((item) => item.instUsed === false && item.repairService === null) && data?.status === statusOrder.Processing) || data?.status === statusOrder.WaitForPay ? (
                         <select className='border-2 bg-main text-white pl-1 border-mainB w-[170px] py-2 rounded-lg'
                           defaultValue={payment}
                           onChange={(e) => setPayment(e.target.value)}
@@ -237,7 +263,7 @@ const DetailOrder = () => {
               <div className='w-[50%] border-2 border-[#E0E2E7] px-5 py-5 rounded-lg'>
                 <div className='flex justify-between pb-3'>
                   <h1 className='text-[20px] font-semibold '>Thông tin khách hàng</h1>
-                  {data?.status !== statusOrder.Paid && (
+                  {data?.status !== statusOrder.Paid && data?.status !== statusOrder.Finished && (
                     <button className='underline text-[22px] text-[#13B2E4] font-semibold hover:text-main'
                       onClick={() => setShowUpdate(true)}
                     >Sửa thông tin</button>
@@ -277,14 +303,13 @@ const DetailOrder = () => {
             </div>
 
             {/* thông tin sản phẩm */}
-            <div className={`w-full border-[#E0E2E7] space-y-3  
-            ${data?.status === statusOrder.Paid || data?.status !== statusOrder.WaitForPay ? "border-2 rounded-md py-3" : "border-x-2 border-t-2 rounded-t-md pt-3"} `}>
+            <div className={`w-full border-[#E0E2E7] space-y-3 border-2 rounded-md py-3 `}>
               <div className='flex justify-between w-full px-3'>
                 <div className='font-semibold flex items-center space-x-3 '>
                   <h2 className='text-[20px]'>Danh sách sản phẩm</h2>
                   <h3 className='bg-[#E7F4EE] text-[#0D894F] w-[100px] py-1 text-center rounded-lg'>{data?.orderDetails?.length} sản phẩm</h3>
                 </div>
-                {data?.status !== statusOrder.Paid && data?.status !== statusOrder.WaitForPay && (
+                {data?.status !== statusOrder.Paid && data?.status !== statusOrder.WaitForPay && data?.status !== statusOrder.Finished && (
                   <button className='bg-main w-[200px] text-center py-3 rounded-lg font-semibold text-white hover:bg-[#ec504b]'
                     onClick={() => {
                       setShowUpdateProduct(true);
@@ -345,7 +370,7 @@ const DetailOrder = () => {
                           <div className="w-[11%] text-center">
                             {formatPrice((item?.quantity * item?.price) + (item?.instUsed === true ? item?.motobikeProduct?.installationFee : 0))}
                           </div>
-                          {detailOrder?.status === statusOrder.Paid &&
+                          {detailOrder?.status === statusOrder.Finished &&
                             (item?.warrantyEndDate !== null && (new Date(Date.parse(item.warrantyEndDate.toString()) + 7 * 60 * 60 * 1000)) >= new Date()
                               || item?.warrantyHistories?.length > 0) && (
                               <div className="w-[5%] flex items-center justify-center relative">
@@ -412,7 +437,7 @@ const DetailOrder = () => {
                             <div className="w-[11%] text-center">
                               <p>{formatPrice(item?.repairService?.price)}</p>
                             </div>
-                            {detailOrder?.status === statusOrder.Paid &&
+                            {detailOrder?.status === statusOrder.Finished &&
                               (item?.warrantyEndDate !== null && (new Date(Date.parse(item.warrantyEndDate.toString()) + 7 * 60 * 60 * 1000)) >= new Date()
                                 || item?.warrantyHistories?.length > 0) && (
                                 <div className="w-[5%] flex items-center justify-center relative">
@@ -465,31 +490,43 @@ const DetailOrder = () => {
                 <p className='text-[19px] font-semibold'>Tổng cộng:</p>
                 <p className='font-semibold text-[19px]'>{formatPrice(TotalOrderDetail + TotalService)} VNĐ</p>
               </div>
-              {data?.orderDetails.every((item) => item.instUsed === false && item.repairService === null) || data?.status === statusOrder.WaitForPay
-                ?
-                data?.status !== statusOrder.Paid ? (
-                  payment === "Tiền mặt" ? (
-                    <div className='flex justify-end pr-[90px] pt-2'>
-                      <button className='bg-main hover:bg-red-800 w-[190px] py-5 text-white rounded-md'
-                        onClick={handleCash}
-                      >Xác nhận thanh toán</button>
-                    </div>
-                  ) : payment === "VN Pay" ? (
-                    <div className='flex justify-end pr-[90px] pt-2'>
-                      <button className='bg-main hover:bg-red-800 w-[190px] py-5 text-white rounded-md'
-                        onClick={handlePayment}
-                      >Thanh toán VN Pay</button>
-                    </div>
-                  ) : (
-                    <div className='flex justify-end pr-[90px] pt-2'>
-                      <button className='bg-main hover:bg-red-800 w-[190px] py-5 text-white rounded-md'
-                        onClick={handleZaloPay}
-                      >Quét mã OR</button>
-                    </div>
-                  )
-                ) : ""
-                : ""
-              }
+              <div className='font-semibold'>
+                {data?.orderDetails.every((item) => item.instUsed === false && item.repairService === null) 
+                || data?.status === statusOrder.WaitForPay
+                  ?
+                  data?.status !== statusOrder.Paid && data?.status !== statusOrder.Finished ? (
+                    payment === "Tiền mặt" ? (
+                      <div className='flex justify-end pr-[90px] pt-2'>
+                        <button className='bg-main hover:bg-red-800 w-[190px] py-5 text-white rounded-md'
+                          onClick={handleCash}
+                        >Xác nhận thanh toán</button>
+                      </div>
+                    ) : payment === "VN Pay" ? (
+                      <div className='flex justify-end pr-[90px] pt-2'>
+                        <button className='bg-main hover:bg-red-800 w-[190px] py-5 text-white rounded-md'
+                          onClick={handlePayment}
+                        >Thanh toán VN Pay</button>
+                      </div>
+                    ) : (
+                      <div className='flex justify-end pr-[90px] pt-2'>
+                        <button className='bg-main hover:bg-red-800 w-[190px] py-5 text-white rounded-md'
+                          onClick={handleZaloPay}
+                        >Quét mã OR</button>
+                      </div>
+                    )
+                  ) : ""
+                  : ""
+                }
+                {data?.status === statusOrder.Paid && (
+                  <div className='flex justify-end pr-[90px] pt-2'>
+                    <button className='bg-main hover:bg-red-800 w-[190px] py-5 text-white rounded-md'
+                      onClick={handleCreateBill}
+                    >In bill đơn hàng</button>
+                  </div>
+                )}
+              </div>
+
+
 
             </div>
             <RepairCustomer

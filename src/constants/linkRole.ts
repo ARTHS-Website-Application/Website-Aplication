@@ -37,8 +37,17 @@ const roleOwner = [
         name: 'Quản lý đơn hàng',
     },
     {
-        to: '/manage-discounts',
         name: 'Quản lý khuyến mãi',
+        subMenu: [
+            {
+                name:'Tạo khuyến mãi',
+                to:'/create-discount'
+            },
+            {
+                name: "Danh sách khuyến mãi",
+                to: '/manage-discounts',
+            },
+        ],
     },
     {   
         name: 'Quản lý dịch vụ',

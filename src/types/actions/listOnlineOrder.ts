@@ -8,6 +8,7 @@ export interface selectorOnlineOrder<T, N> {
         onlineOrderConfirm: listOnlineOrder<T, N>;
         onlineOrderTransport: listOnlineOrder<T, N>;
         onlineOrderFinish: listOnlineOrder<T, N>;
+        onlineOrderCanceled: listOnlineOrder<T, N>;
         showError: T | null;
     }
 }
@@ -19,6 +20,7 @@ export interface storeOrderOnline<T, N> {
     onlineOrderConfirm: onlineOrderSaga<T, N>[];
     onlineOrderTransport: onlineOrderSaga<T, N>[];
     onlineOrderFinish: onlineOrderSaga<T, N>[];
+    onlineOrderCanceled: onlineOrderSaga<T, N>[];
 }
 
 export interface payloadOnlineOrder<T, N> {
