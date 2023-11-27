@@ -6,6 +6,8 @@ import * as serviceSaga from './RepairServiceSaga/serviceSaga'
 import * as discountSaga from './discountSaga/discountSaga'
 import * as bookingSaga from './bookingSaga/bookingSaga'
 import * as onlineOrderSaga from './onlineOrderSaga/onlineOrderSaga'
+import * as revenueSaga from './revenueSaga/revenueSaga'
+import * as staticSaga from './revenueSaga/staticsSaga'
 
 export function* rootSaga(){
     yield all([
@@ -16,7 +18,8 @@ export function* rootSaga(){
         discountSaga.lookupDiscount(),
         bookingSaga.lookupBooking(),
         onlineOrderSaga.lookupOnlineOrder(),
-        
+        revenueSaga.lookupRevenue(),
+        staticSaga.lookupRevenue(),
         
     ])
 }
