@@ -1,8 +1,9 @@
+import RevenueChart from "@/components/owner/RevenueChart"
 
 
 const HomeOwner = () => {
   return (
-    <div>HomeOwner</div>
+    <div><RevenueChart/></div>
   )
 }
 
