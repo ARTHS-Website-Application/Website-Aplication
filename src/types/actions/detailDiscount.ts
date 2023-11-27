@@ -20,10 +20,17 @@ export interface payloadDetailDiscount<T> {
     discountId: T,
 }
 
-export interface payloadCreateDiscount{
+export interface payloadCreateDiscount {
     type: 'discount_create',
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     data: any,
+}
+
+export interface payloadUpdateDiscount {
+    type: 'discount_update',
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    data: any,
+    discountId:string,
 }
 
 export interface detaiDiscount<T, N> {
@@ -35,22 +42,25 @@ export interface detaiDiscount<T, N> {
     imageUrl: T,
     description: T,
     status: T,
-    motobikeProducts: {
-        id: T,
-        name: T,
-        priceCurrent: N,
-        quantity: N,
-        warrantyDuration: N,
-        status: T,
-        discountAmount: N,
-        imageUrl: T,
-    }[],
-    repairService: {
-        id: T,
-        name: T,
-        duration: N,
-        price: N,
-        discountAmount: N,
-        image: T,
-    }[],
+    motobikeProducts: motorbikeDiscount<T, N>[],
+    repairService: repairDiscount<T, N>[],
+}
+export interface motorbikeDiscount<T, N> {
+    id: T,
+    name: T,
+    priceCurrent: N,
+    quantity: N,
+    warrantyDuration: N,
+    status: T,
+    discountAmount: N,
+    imageUrl: T,
+}
+
+export interface repairDiscount<T, N> {
+    id: T,
+    name: T,
+    duration: N,
+    price: N,
+    discountAmount: N,
+    image: T,
 }

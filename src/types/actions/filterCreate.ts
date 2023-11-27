@@ -16,6 +16,7 @@ export interface itemFilterDiscount<T,N>{
     category:T;
     status:T,
     haveDiscount:boolean,
+    discountId:T|undefined;
 }
 
 export interface getFilterProductDiscount<T,N>{

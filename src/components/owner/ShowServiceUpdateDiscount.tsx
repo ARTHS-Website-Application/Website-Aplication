@@ -1,33 +1,31 @@
 import { useState, useEffect } from 'react'
 import Pagination from '../Pagination';
-import { itemCategoryProduct, selectorCategoryProduct } from '@/types/actions/categoryPr';
 import { useDispatch, useSelector } from 'react-redux';
-import { typeActiveProduct } from '@/types/typeProduct';
-import { item, itemProduct, selectorProduct } from '@/types/actions/product';
-import { CategoryProduct, FilterProductDiscount } from '@/actions/product';
 import LoadingPage from '../LoadingPage';
 import { CheckCircleIcon, MagnifyingGlassIcon, XMarkIcon } from '@heroicons/react/24/solid';
+import { dataService, selectorService } from '@/types/actions/listService';
+import { FilterServiceDiscount } from '@/actions/service';
+import { typeService } from '@/types/typeService';
+import { repairDiscount } from '@/types/actions/detailDiscount';
 
 type Props = {
     isVisible: boolean;
     onClose: () => void;
-    setDataProduct: React.Dispatch<React.SetStateAction<item<string, number>[]>>;
-    dataProduct: item<string, number>[]
+    setDataProduct: React.Dispatch<React.SetStateAction<repairDiscount<string, number>[]>>;
+    dataProduct: repairDiscount<string, number>[];
+    discountId: string | undefined;
 }
 
-const ShowProductDiscount = ({ isVisible, onClose, setDataProduct, dataProduct }: Props) => {
+const ShowServiceUpdateDiscount = ({ isVisible, onClose, setDataProduct, dataProduct, discountId }: Props) => {
     const dispatch = useDispatch();
     const [isLoading, setIsLoading] = useState<boolean>(false);
-    const [productData, setProductData] = useState([] as item<string, number>[]);
-
-    const [addCategory, setAddCategory] = useState<string>("");
+    const [productData, setProductData] = useState([] as repairDiscount<string, number>[]);
     const [addSearch, setAddSearch] = useState<string>("");
     const [searchTimeout, setSearchTimeout] = useState<number | null>(null);
     const [paginationNumber, setPaginationNumber] = useState<number>(0);
-    const categoryProduct: itemCategoryProduct<string>[] = useSelector((state: selectorCategoryProduct<string>) => state.categoryProductReducer.categoryProduct);
-    const productInfor: itemProduct<string, number> = useSelector((state: selectorProduct<string, number>) => state.productReducer.productInfor);
+    const dataService: dataService<string, number> = useSelector((state: selectorService<string, number>) => state.serviceReducer.serviceInfor);
     const [hoveredItemIndex, setHoveredItemIndex] = useState<number | null>(null);
-    const [dataItem, setDataItem] = useState<item<string, number>[]>([]);
+    const [dataItem, setDataItem] = useState<repairDiscount<string, number>[]>([]);
     console.log(dataItem)
 
     const handleMouseEnter = (index: number) => {
@@ -38,7 +36,7 @@ const ShowProductDiscount = ({ isVisible, onClose, setDataProduct, dataProduct }
         setHoveredItemIndex(null);
     };
 
-    const handleClick = (item: item<string, number>) => {
+    const handleClick = (item: repairDiscount<string, number>) => {
         const isSelected = dataItem.includes(item);
 
         if (isSelected) {
@@ -49,9 +47,19 @@ const ShowProductDiscount = ({ isVisible, onClose, setDataProduct, dataProduct }
     };
 
     const handleSelectAll = () => {
-        const allItemIds = productInfor?.data?.map((item) => item) || [];
-
-        setDataItem(allItemIds);
+        const allItemIds = dataService?.data?.map((item) => item) || [];
+        const dataUpdate: repairDiscount<string, number>[] = allItemIds?.map((item) => {
+            const transData: repairDiscount<string, number> = {
+                id: item?.id,
+                name: item.name,
+                duration: item?.duration,
+                price: item?.price,
+                discountAmount: item?.discountAmount,
+                image: item?.images[0]?.imageUrl,
+            }
+            return transData
+        })
+        setDataItem(dataUpdate);
     };
 
     const handleDeselectAll = () => {
@@ -65,35 +73,43 @@ const ShowProductDiscount = ({ isVisible, onClose, setDataProduct, dataProduct }
         setDataProduct([...dataProduct, ...uniqueItems]);
     };
     useEffect(() => {
-        dispatch(CategoryProduct());
-    }, [dispatch])
-    useEffect(() => {
-        setProductData(productInfor.data);
+        const dataUpdate: repairDiscount<string, number>[] = dataService?.data?.map((item) => {
+            const transData: repairDiscount<string, number> = {
+                id: item?.id,
+                name: item.name,
+                duration: item?.duration,
+                price: item?.price,
+                discountAmount: item?.discountAmount,
+                image: item?.images[0]?.imageUrl,
+            }
+            return transData
+        })
+        setProductData(dataUpdate);
         setTimeout(() => {
             setIsLoading(false);
         }, 500)
-    }, [productInfor?.data]);
+    }, [dataService?.data]);
     useEffect(() => {
-        if (productInfor.pagination?.totalRow) {
+        if (dataService.pagination?.totalRow) {
             setPaginationNumber(0);
             setTimeout(() => {
                 setIsLoading(false);
             }, 500)
         }
 
-    }, [productInfor.pagination?.totalRow]);
+    }, [dataService.pagination?.totalRow]);
     useEffect(() => {
-        const data = {
-            paginationNumber: paginationNumber,
-            name: addSearch,
-            category: addCategory,
-            status: typeActiveProduct.Active,
-            haveDiscount: false,
-            discountId:undefined,
+        if (discountId) {
+            const data = {
+                pageNumber: paginationNumber,
+                name: addSearch,
+                status: typeService.Active,
+                discountId: discountId
+            }
+            dispatch(FilterServiceDiscount(data))
+            setIsLoading(true);
         }
-        dispatch(FilterProductDiscount(data))
-        setIsLoading(true);
-    }, [addCategory, addSearch, dispatch, paginationNumber])
+    }, [addSearch, discountId, dispatch, paginationNumber])
     useEffect(() => {
         if (dataProduct) {
             setDataItem(dataProduct)
@@ -109,7 +125,7 @@ const ShowProductDiscount = ({ isVisible, onClose, setDataProduct, dataProduct }
             <div className="w-[70%] bg-white rounded-lg pb-3">
                 <div className="bg-gray-600 p-2 rounded-t-lg flex justify-between items-center">
                     <div className="w-full flex flex-row justify-between py-[5px] text-white ">
-                        <p className="ml-2 mt-1 font-bold">Thêm sản phẩm cho khuyễn mãi.Hiện có:{dataProduct?.length} sản phẩm</p>
+                        <p className="ml-2 mt-1 font-bold">Thêm dịch vụ cho khuyễn mãi.Hiện có:{dataProduct?.length} dịch vụ</p>
                     </div>
                     <button
                         onClick={onClose}
@@ -118,49 +134,31 @@ const ShowProductDiscount = ({ isVisible, onClose, setDataProduct, dataProduct }
                 <div className='px-3 pt-5'>
                     <div className="w-full px-3">
                         <div className="w-full">
-                            <div className=" w-full flex justify-around">
-                                <select className='cursor-pointer w-[220px] font-semibold rounded-lg text-center text-main focus:outline-none capitalize drop-shadow-xl'
-                                    value={addCategory}
-                                    onChange={(e) => {
-                                        setAddCategory(e.target.value??"")
-                                    }}
-                                >
-                                    <option value=' ' className='text-gray-700'>Danh mục</option>
-                                    {categoryProduct
-                                        ? categoryProduct.map((item, index) => (
-                                            <option
-                                                className='text-gray-700'
-                                                key={index}
-                                            >{item.categoryName}</option>
-                                        ))
-                                        : ""
-                                    }
-                                </select>
-                                {/* search */}
-                                <div className="w-[70%]">
-                                    <div className="w-full relative">
-                                        <input
-                                            defaultValue={addSearch}
-                                            type="text"
-                                            placeholder="Tìm kiếm sản phẩm"
-                                            className="w-full py-3 pl-3 pr-4 text-gray-500 border rounded-md outline-none bg-gray-50 focus:bg-white focus:border-gray-20"
-                                            onChange={(e) => {
-                                                if (searchTimeout) {
-                                                    clearTimeout(searchTimeout);
-                                                }
-                                                const newTimeSearch = window.setTimeout(() => {
-                                                    setAddSearch(e.target.value);
-                                                }, 800);
+                            {/* search */}
+                            <div className="w-[70%] pl-[5%]">
+                                <div className="w-full relative">
+                                    <input
+                                        defaultValue={addSearch}
+                                        type="text"
+                                        placeholder="Tìm kiếm sản phẩm"
+                                        className="w-full py-3 pl-3 pr-4 text-gray-500 border rounded-md outline-none bg-gray-50 focus:bg-white focus:border-gray-20"
+                                        onChange={(e) => {
+                                            if (searchTimeout) {
+                                                clearTimeout(searchTimeout);
+                                            }
+                                            const newTimeSearch = window.setTimeout(() => {
+                                                setAddSearch(e.target.value);
+                                            }, 800);
 
-                                                // Cập nhật trạng thái searchTimeout
-                                                setSearchTimeout(newTimeSearch);
-                                            }}
+                                            // Cập nhật trạng thái searchTimeout
+                                            setSearchTimeout(newTimeSearch);
+                                        }}
 
-                                        />
-                                        <MagnifyingGlassIcon className="w-6 h-6 absolute right-3 top-0 bottom-0 my-auto stroke-gray-500" />
-                                    </div>
+                                    />
+                                    <MagnifyingGlassIcon className="w-6 h-6 absolute right-3 top-0 bottom-0 my-auto stroke-gray-500" />
                                 </div>
                             </div>
+
 
                             {/* danh sách sản phẩm*/}
                             {isLoading ? (
@@ -187,7 +185,7 @@ const ShowProductDiscount = ({ isVisible, onClose, setDataProduct, dataProduct }
                                                 onMouseLeave={handleMouseLeave}
                                                 onClick={() => handleClick(item)}
                                             >
-                                                <img src={item?.images[0]?.imageUrl} alt="" className='h-[90px] w-[100px] object-cover bg-white p-2 shadow-lg' />
+                                                <img src={item?.image} alt="" className='h-[90px] w-[100px] object-cover bg-white p-2 shadow-lg' />
                                                 <p className='text-center'>{item?.name}</p>
                                                 {(hoveredItemIndex === index || dataItem?.some(data => data.id === item.id)) && (
                                                     <button className='absolute bg-[#192038] bg-opacity-40 w-full h-[95%] top-0 rounded-lg flex justify-center items-end pb-5'
@@ -200,15 +198,15 @@ const ShowProductDiscount = ({ isVisible, onClose, setDataProduct, dataProduct }
                                         ))}
                                     </div>
                                     <Pagination
-                                        totalPosts={productInfor.pagination?.totalRow}
-                                        postsPerPage={productInfor.pagination?.pageSize}
+                                        totalPosts={dataService.pagination?.totalRow}
+                                        postsPerPage={dataService.pagination?.pageSize}
                                         setCurrentPage={setPaginationNumber}
                                         currentPage={paginationNumber}
                                     />
                                 </div>
                             ) : (
                                 <div className='w-full h-[60vh] flex justify-center items-center'>
-                                    <p className='text-[20px]'>Không tìm thấy sản phẩm</p>
+                                    <p className='text-[20px]'>Không tìm thấy dịch vụ</p>
                                 </div>
                             )}
                         </div>
@@ -220,4 +218,4 @@ const ShowProductDiscount = ({ isVisible, onClose, setDataProduct, dataProduct }
     )
 }
 
-export default ShowProductDiscount
+export default ShowServiceUpdateDiscount

@@ -24,12 +24,17 @@ const CreateDiscount = () => {
   // const formattedEndDate: string | null = endDate ? endDate.toISOString() : null;
   const [nameDiscount, setNameDiscount] = useState<string>('');
   const [numberDiscount, setNumberDiscount] = useState<number>(1);
-  const formattedStartDate: string | null = startDate ? new Date(startDate.setHours(0, 0, 0, 0)).toISOString() : null;
-  const formattedEndDate: string | null = endDate ? new Date(endDate.setHours(0, 0, 0, 0)).toISOString() : null;
+  const formattedStartDate: string | null = startDate
+    ? new Date(startDate.setUTCHours(0, 0, 0, 0) + 7 * 60 * 60 * 1000).toISOString()
+    : null;
+
+  const formattedEndDate: string | null = endDate
+    ? new Date(endDate.setUTCHours(0, 0, 0, 0) + 7 * 60 * 60 * 1000).toISOString()
+    : null;
   const [images, setImages] = useState<File | null>(null);
   const [descriptionProduct, setDescriptionProduct] = useState<string>('');
 
-  // console.log("format", formattedStartDate, formattedEndDate)
+  console.log("format", startDate, endDate)
   const handleStartDateChange = (date: Date | null) => {
     if (date) {
       if (date < new Date()) {
@@ -87,12 +92,22 @@ const CreateDiscount = () => {
       repairServiceId: dataService?.map((item) => item.id),
     }
     console.log(data)
-    if (nameDiscount && numberDiscount > 0 && formattedStartDate && formattedEndDate && descriptionProduct && dataProduct?.length > 0 && dataService?.length > 0 && images) {
+    if (nameDiscount && numberDiscount > 0 && formattedStartDate && formattedEndDate && (descriptionProduct || (dataProduct?.length > 0 && dataService?.length > 0))  && images) {
       dispatch(postCreateDiscount(data))
     } else {
       alert('Hãy nhập đầy đủ các mục')
     }
 
+  }
+  const handleClear = () => {
+    setNameDiscount('');
+    setNumberDiscount(1);
+    setStartDate(new Date());
+    setEndDate(undefined);
+    setImages(null);
+    setDataProduct([]);
+    setDataService([]);
+    setDescriptionProduct('');
   }
 
 
@@ -305,10 +320,13 @@ const CreateDiscount = () => {
             </div>
             {/* Tạo */}
             <div className="py-5 flex flex-row-reverse space-x-reverse space-x-5">
-              <button className='w-[200px] h-[60px] text-center bg-slate-300 text-[20px] rounded-lg text-white font-semibold bg-gray-300 hover:bg-green-600'
+              <button className={`px-2 h-[60px] text-center bg-slate-300 text-[20px] rounded-lg text-white font-semibold bg-gray-300 
+              ${!errorDate ? "hover:bg-green-600" : ""} `}
+                disabled={!errorDate ? false : true}
                 onClick={handleCreateDiscount}
               >Thêm khuyến mãi</button>
               <button className='w-[200px] h-[60px] text-center bg-slate-300 text-[20px] rounded-lg text-white font-semibold bg-red-700'
+                onClick={handleClear}
               >Hủy</button>
             </div>
           </div>

@@ -38,7 +38,7 @@ const DetailDiscount = () => {
           <Link to="/manage-discounts/list-not-discount" className="hover:text-main">Danh sách khuyến mãi ngừng hoạt động</Link>
         )}
         <ChevronRightIcon className="w-5 h-5" />
-        <p className="text-main">Chi tiết dịch vụ</p>
+        <p className="text-main">Chi tiết khuyến mãi</p>
       </div>
       {isLoading
         ? <LoadingPage />

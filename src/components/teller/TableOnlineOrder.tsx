@@ -11,7 +11,7 @@ const TableOnlineOrder = ({ data }: Props) => {
             <table className="min-w-full bg-white divide-y divide-gray-200 table-fixed text-center">
                 <thead>
                     <tr className="text-xs font-medium uppercase tracking-wider bg-yellow-400">
-                        <th scope="col" className="px-6 py-3">Mã đơn hàng</th>
+                        <th scope="col" className="px-6 py-2">Mã đơn hàng</th>
                         <th scope="col" >Tên khách hàng</th>
                         <th scope="col">Số điện thoại</th>
                         <th scope="col">Thanh toán</th>
@@ -23,7 +23,7 @@ const TableOnlineOrder = ({ data }: Props) => {
                     {data && data.map((item, index) => (
                         <tr key={index}>
                             <td className="">{item.id}</td>
-                            <td className="px-6 py-5">{item?.customer.fullName}</td>
+                            <td className="px-6 py-3">{item?.customer.fullName}</td>
                             <td className="">{item?.customerPhoneNumber}</td>
                             <td className="">{item.paymentMethod}</td>
                             <td className="">{item.status}</td>
