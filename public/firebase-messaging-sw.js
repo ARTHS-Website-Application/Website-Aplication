@@ -3,7 +3,7 @@ importScripts('https://www.gstatic.com/firebasejs/9.0.1/firebase-app-compat.js')
 // eslint-disable-next-line no-undef
 importScripts('https://www.gstatic.com/firebasejs/9.0.1/firebase-messaging-compat.js');
 
-try {
+
     console.log("Initializing Firebase in Service Worker");
 
     // eslint-disable-next-line no-undef
@@ -25,8 +25,7 @@ try {
             const notificationOptions = {
                 body: payload.notification.body,
                 icon: '/assets/icons/icon-72x72.png',
-                renotify: false,
-                timestamp: Date.now()
+                data: payload.data // Lưu trữ dữ liệu để sử dụng khi xử lý sự kiện click
             };
 
             // Kiểm tra xem có thông báo nào đang được hiển thị hay không
@@ -38,6 +37,32 @@ try {
             self.registration.showNotification(notificationTitle, notificationOptions);
         });
     });
-} catch (error) {
-    console.error("Lỗi")
-}
+    
+    // Người nghe sự kiện khi người dùng nhấn vào thông báo
+    self.addEventListener('notificationclick', function (event) {
+        console.log('Notification click Received.', event.notification.data);
+        
+        event.notification.close(); // Đóng thông báo
+        
+        // Sử dụng dữ liệu 'link' từ payload để mở URL
+        if (event.notification.data && event.notification.data.link) {
+            const link = event.notification.data.link;
+            const urlToOpen = new URL(`/manage-order/${link}`, self.location.origin).href;
+            console.log('Opening:', urlToOpen);
+    
+            event.waitUntil(
+                clients.matchAll({type: 'window', includeUncontrolled: true}).then(windowClients => {
+                    // Kiểm tra xem có tab nào đã mở URL này chưa
+                    for (const client of windowClients) {
+                        if (new URL(client.url).href === urlToOpen && 'focus' in client) {
+                            console.log('Focusing on existing tab:', client.url);
+                            return client.focus();
+                        }
+                    }
+                    console.log('Opening new window for:', urlToOpen);
+                    // Nếu không, mở một tab mới
+                    return clients.openWindow(urlToOpen).then(windowClient => windowClient ? windowClient.focus() : null);
+                })
+            );
+        }
+    });

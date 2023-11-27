@@ -75,11 +75,11 @@ const DetailOrder = () => {
   const TotalOrderDetail = TotalOrderProduct();
   const TotalService = TotalOrderService();
 
-  const handlePayment = async () => {
+  const handleVNPay = async () => {
     try {
       const response = await axiosPrivate.post('/payments/vn-pay',
         {
-          inStoreOrderId: data?.id,
+          orderId: data?.id,
           amount: data?.totalAmount
         }
       )
@@ -93,6 +93,26 @@ const DetailOrder = () => {
     }
 
   }
+
+  const handleZaloPay = async () => {
+    try {
+      const response = await axiosPrivate.post('/payments/zalo-pay',
+        {
+          orderId: data?.id
+        }
+      )
+      if (response.status === 200) {
+        //window.location.href = response.data.order_url;
+        window.open(response.data.order_url, '')
+      } else {
+        console.log('Lỗi');
+      }
+    } catch (error) {
+      console.log(error)
+    }
+
+  }
+
   const handleCash = () => {
     if (data?.id) {
       dispatch(updateStatusOrder(data?.id, statusOrder.Paid));
@@ -100,6 +120,7 @@ const DetailOrder = () => {
       showSuccessAlert('Thanh toán thành công, đơn hàng đang xuất bill');
     }
   }
+
 
   return (
     <div>
@@ -176,6 +197,9 @@ const DetailOrder = () => {
                           </option>
                           <option className='bg-white text-black'>
                             VN Pay
+                          </option>
+                          <option className='bg-white text-black'>
+                            Zalo Pay
                           </option>
                         </select>
                       ) : ""}
@@ -370,10 +394,16 @@ const DetailOrder = () => {
                         onClick={handleCash}
                       >Xác nhận thanh toán</button>
                     </div>
+                  ) : payment === "VN Pay" ? (
+                    <div className='flex justify-end pr-[90px] pt-2'>
+                      <button className='bg-main hover:bg-red-800 w-[190px] py-5 text-white rounded-md'
+                        onClick={handleVNPay}
+                      >Thanh toán VN Pay</button>
+                    </div>
                   ) : (
                     <div className='flex justify-end pr-[90px] pt-2'>
                       <button className='bg-main hover:bg-red-800 w-[190px] py-5 text-white rounded-md'
-                        onClick={handlePayment}
+                        onClick={handleZaloPay}
                       >Quét mã OR</button>
                     </div>
                   )

@@ -43,7 +43,6 @@ import ListOrderTransport from './pages/teller/manageOnlineOrder/ListOrderTransp
 import ListOrderFinished from './pages/teller/manageOnlineOrder/ListOrderFinished';
 import ListOrderCanceled from './pages/teller/manageOnlineOrder/ListOrderCanceled';
 
-
 const ROLES = {
   Owner: "Owner",
   Teller: "Teller",
