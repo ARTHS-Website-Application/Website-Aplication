@@ -22,6 +22,8 @@ import onlineOrderDetailReducer from './reducer/onlineOrderDetailReducer';
 import filterAccountReducer from './reducer/filterAccountReducer';
 import accountReducer from './reducer/accountReducer';
 import createUpdateReducer from './reducer/createUpdateReducer';
+import revenueReducer from './reducer/revenueReducer';
+import staticsReducer from './reducer/staticsReducer';
 
 const middleSaga = createMiddleWareSaga();
 const allReducer = combineReducers({
@@ -58,6 +60,10 @@ const allReducer = combineReducers({
   accountReducer,
   filterAccountReducer,
 
+  //revenue
+  revenueReducer,
+  staticsReducer,
+  
   });
 
   const store = configureStore({

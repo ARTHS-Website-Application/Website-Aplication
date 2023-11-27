@@ -126,3 +126,17 @@ export const createOrderTransport={
     CREATE_TRANSPORT_SUCCESS: "create_transport_success",
     CREATE_TRANSPORT_FAIL: "create_transport_fail",
 }
+
+//revenue
+export const listRevenue = {
+    LIST_REVENUE: "list_revenue",
+    LIST_REVENUE_SUCCESS: "list_revenue_success",
+    LIST_REVENUE_FAIL: "list_revenue_fail",
+}
+
+//statics
+export const listStatics = {
+    LIST_STATICS: "list_statics",
+    LIST_STATICS_SUCCESS: "list_statics_success",
+    LIST_STATICS_FAIL: "list_statics_fail",
+}
