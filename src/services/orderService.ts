@@ -4,24 +4,24 @@ import { callFilterOrder } from "@/types/actions/listOrder";
 import { itemCustomer, itemStaffProduct } from "@/types/actions/updateCustomerOrder";
 export class Private {
 
-    getOrder = async (pageNumber: number,excludeOrderStatus:string) => {
+    getOrder = async (pageNumber: number, excludeOrderStatus: string) => {
         const axiosPrivate = userAxiosPrivate();
         const encodeStatus = encodeURIComponent(excludeOrderStatus);
         //URLSearchParams  không dùng encodeURIComponent
-        const queryParams = new URLSearchParams({pageNumber: pageNumber.toString() });
+        const queryParams = new URLSearchParams({ pageNumber: pageNumber.toString() });
         return await axiosPrivate.get(`/orders?orderType=Offline&${queryParams}&excludeOrderStatus=${encodeStatus}`)
     }
 
-    getOrderPaid = async (pageNumber: number,orderStatus:string) => {
+    getOrderPaid = async (pageNumber: number, orderStatus: string) => {
         const axiosPrivate = userAxiosPrivate();
         const encodeStatusPaid = encodeURIComponent(orderStatus);
         return await axiosPrivate.get(`/orders?orderType=Offline&orderStatus=${encodeStatusPaid}&pageNumber=${pageNumber}`)
     }
-    getFilterOrderPaid = async (data:callFilterOrder<string,number>) => {
+    getFilterOrderPaid = async (data: callFilterOrder<string, number>) => {
         const axiosPrivate = userAxiosPrivate();
         const encodeOrderStatus = encodeURIComponent(data?.orderStatus);
         const encodeUserName = encodeURIComponent(data.customerName);
-        const queryParams = new URLSearchParams({customerPhone:data.customerPhone, pageNumber: data.number.toString()});
+        const queryParams = new URLSearchParams({ customerPhone: data.customerPhone, pageNumber: data.number.toString() });
         return await axiosPrivate.get(`/orders?orderType=Offline&${queryParams}&orderStatus=${encodeOrderStatus}&customerName=${encodeUserName}`)
     }
 
@@ -43,22 +43,22 @@ export class Private {
         }
     }
 
-    updateProductOrder = async (idOrder: string, data: itemStaffProduct<string,number>) => {
+    updateProductOrder = async (idOrder: string, data: itemStaffProduct<string, number>) => {
         const axiosPrivate = userAxiosPrivate();
-            return await axiosPrivate.put(`/orders/offline/${idOrder}`, data)
+        return await axiosPrivate.put(`/orders/offline/${idOrder}`, data)
 
     }
-    updateStatusOrder= async (idOrder: string, data:string) => {
+    updateStatusOrder = async (idOrder: string, data: string) => {
         const axiosPrivate = userAxiosPrivate();
-            const dataProduct={
-                status:data
-            }
-            return await axiosPrivate.put(`/orders/offline/${idOrder}`,dataProduct)
+        const dataProduct = {
+            status: data
         }
-    postWarranty =async(data:warrantyCreate)=>{
+        return await axiosPrivate.put(`/orders/offline/${idOrder}`, dataProduct)
+    }
+    postWarranty = async (data: warrantyCreate) => {
         const axiosPrivate = userAxiosPrivate();
-            return await axiosPrivate.post(`/warranties-history`,data)
-        }
+        return await axiosPrivate.post(`/warranties-history`, data)
+    }
 }
 
 export const orderService = new Private();

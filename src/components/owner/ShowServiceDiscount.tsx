@@ -80,6 +80,7 @@ const ShowServiceDiscount = ({ isVisible, onClose, setDataProduct, dataProduct }
             pageNumber: paginationNumber,
             name: addSearch,
             status: typeService.Active,
+            discountId:undefined
         }
         dispatch(FilterServiceDiscount(data))
         setIsLoading(true);

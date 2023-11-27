@@ -58,6 +58,11 @@ export const discountCreate = {
     DISCOUNT_CREATE: "discount_create",
 }
 
+export const discountUpdate = {
+    DISCOUNT_UPDATE: "discount_update",
+    DISCOUNT_UPDATE_STATUS: "discount_update_status",
+}
+
 export const listDiscount = {
     GET_LIST_DISCOUNT_CHOOSE: "list_discount_choose",
     GET_LIST_DISCOUNT: "list_discount",
@@ -82,4 +87,38 @@ export const createWarranty = {
     CREATE_WARRANTY: "create_warranty",
     CREATE_WARRANTY_SUCCESS: "create_warranty_success",
     CREATE_WARRANTY_FAIL: "create_warranty_fail",
+}
+//admin
+export const listAllAccounts = {
+    LIST_ALL_ACCOUNT: "list_all_account",
+    LIST_ALL_ACCOUNT_SUCCESS: "list_all_account_success",
+}
+
+export const listAccounts = {
+    LIST_ACCOUNT: "list_account",
+    LIST_ACCOUNT_SUCCESS: "list_account_success",
+    LIST_ACCOUNT_FAIL: "list_account_fail",
+}
+
+export const listNotAccounts = {
+    LIST_NOT_ACCOUNT: "list_not_account",
+    LIST_NOT_ACCOUNT_SUCCESS: "list_not_account_success",
+}
+
+export const listFilterAccounts = {
+    LIST_FILTER_ACCOUNT: "list_filter_account",
+    LIST_FILTER_NOT_ACCOUNT: "list_filter_not_account",
+    LIST_FILTER_ACCOUNT_SUCCESS: "list_filter_account_success",
+    LIST_FILTER_NOT_ACCOUNT_SUCCESS: "list_filter_not_account_success",
+}
+
+
+export const updateAccount = {
+    UPDATE_ACCOUNT: "update_account",
+}
+
+export const createAccounts = {
+    CREATE_ACCOUNT: "create_account",
+    CREATE_ACCOUNT_SUCCESS: "create_account_success",
+    CREATE_ACCOUNT_FAIL: "create_account_fail",
 }

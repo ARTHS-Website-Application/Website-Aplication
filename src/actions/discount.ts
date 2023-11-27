@@ -1,4 +1,4 @@
-import { detailDiscount, discountCreate, listDiscount } from "@/constants/secondaryConstants";
+import { detailDiscount, discountCreate, discountUpdate, listDiscount } from "@/constants/secondaryConstants";
 import { detaiDiscount } from "@/types/actions/detailDiscount";
 import { callListDiscount, dataDiscount } from "@/types/actions/listDiscout";
 
@@ -7,6 +7,25 @@ import { callListDiscount, dataDiscount } from "@/types/actions/listDiscout";
 export const postCreateDiscount = (data:any) => {
     return {
         type: discountCreate.DISCOUNT_CREATE,
+        data
+    };
+};
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const updateDiscount = (discountId:string,data:any) => {
+    return {
+        type: discountUpdate.DISCOUNT_UPDATE,
+        data,
+        discountId
+    };
+};
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const updateStatusDiscount = (discountId:string,status:string,data:any) => {
+    return {
+        type: discountUpdate.DISCOUNT_UPDATE_STATUS,
+        status,
+        discountId,
         data
     };
 };

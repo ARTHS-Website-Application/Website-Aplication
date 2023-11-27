@@ -14,7 +14,7 @@ const SearchFilter = ({place,setAddSearch}: Props) => {
                 <input
                     type="text"
                     placeholder={place}
-                    className="w-full py-3 pl-3 pr-4 border rounded-md outline-none bg-white focus:border-gray-20"
+                    className="w-full py-3 pl-3 pr-4 border-2 rounded-md outline-none bg-white focus:border-gray-400"
                     onChange={(e) => {
                       if (searchTimeout) {
                         clearTimeout(searchTimeout);

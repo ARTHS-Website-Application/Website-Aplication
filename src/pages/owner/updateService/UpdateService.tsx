@@ -155,7 +155,7 @@ const UpdateService = () => {
             <div className="flex space-x-3 items-center text-[21px] font-semibold">
               <Link to="/manage-services" className="hover:text-main">Danh sách dịch vụ</Link>
               <ChevronRightIcon className="w-5 h-5" />
-              <h1 className=" text-main">Tạo mới dịch vụ</h1>
+              <h1 className=" text-main">Cập nhật dịch vụ</h1>
             </div>
             <div className="flex justify-center pt-5">
               <div className="bg-white w-[75%] p-5 rounded-md">
