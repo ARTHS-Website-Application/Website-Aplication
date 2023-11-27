@@ -1,7 +1,7 @@
-import { getRevenueFailed, getRevenueSuccess, getStaticsFailed, getStaticsSuccess } from "@/actions/revenue";
-import { listRevenue, listStatics } from "@/constants/mainConstants";
+import { getRevenueFailed, getRevenueSuccess } from "@/actions/revenue";
+import { listRevenue } from "@/constants/mainConstants";
 import { revenueService } from "@/services/revenueService";
-import { payloadRevenue, payloadStatics } from "@/types/revenue";
+import { payloadRevenue } from "@/types/revenue";
 import { AxiosResponse } from "axios";
 import { call, put, takeEvery } from "redux-saga/effects";
 

@@ -103,7 +103,7 @@ const RevenueChart = () => {
         ]
     });
 
-    const onChartClick = (event: any, elements: string | any[]) => {
+    const onChartClick = (_event: any, elements: string | any[]) => {
         if (elements.length === 0) return;
 
         const elementIndex = elements[0].index;
