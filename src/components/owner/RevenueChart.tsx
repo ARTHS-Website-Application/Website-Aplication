@@ -3,24 +3,29 @@ import { Bar, Pie } from 'react-chartjs-2';
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, ArcElement } from 'chart.js';
 import { useDispatch, useSelector } from 'react-redux';
 import { useEffect, useState } from 'react';
-import { itemRevenue, itemStatics, selectorRevenue, selectorStatics } from '@/types/revenue';
+import { itemRevenue, itemStatics, pagination, selectorRevenue, selectorStatics } from '@/types/revenue';
 import { getRevenue, getStatics } from '@/actions/revenue';
 import { formatDateFeedback } from '@/utils/formatDate';
 import { formatPrice } from '@/utils/formatPrice';
+import { selectorProduct } from '@/types/actions/product';
+import { typeActiveProduct } from '@/types/typeProduct';
+import { ShowProduct } from '@/actions/product';
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, ArcElement);
 
 const RevenueChart = () => {
     const dispatch = useDispatch();
+    const motorbikeProduct = useSelector((state: selectorProduct<string, number>) => state.productReducer?.productInfor);
     const revenueInfo = useSelector((state: selectorRevenue<string, number>) => state.revenueReducer?.revenueInfo);
     const staticsInfo: itemStatics<string, number>[] = useSelector((state: selectorStatics<string, number>) => state.staticsReducer?.staticsInfo);
+    const [productData, setProductData] = useState<pagination<number>>();
     const [staticsData, setStaticsData] = useState<itemStatics<string, number>[]>([]);
     const [revenueData, setRevenueData] = useState<itemRevenue<string, number>[]>([]);
     const [paginationNumber, setPaginationNumber] = useState<number>(0);
     const [selectedMonth, setSelectedMonth] = useState<number>(new Date().getMonth());
     const [modalContent, setModalContent] = useState<ModalContent>({ month: '', transactions: [] });
 
-    //console.log('statics', staticsData)
+    //console.log('product', motorbikeProduct.pagination.totalRow)
 
     interface ChartDataSet {
         label: string;
@@ -72,8 +77,16 @@ const RevenueChart = () => {
         return revenueByMonth;
     };
 
+    const calculateTotalAnnualRevenue = (revenueData: itemStatics<string, number>[]) => {
+        const monthlyRevenue = processRevenueData(revenueData);
+        const totalAnnualRevenue = monthlyRevenue.reduce((acc, total) => acc + total, 0);
+        //console.log('Doanh thu', totalAnnualRevenue)
+        return totalAnnualRevenue;
+    };
+
+
     const processPieChartData = (data: itemStatics<string, number>[]) => {
-        console.log('statics', data)
+        //console.log('statics', data)
 
         const totalsByType = data.reduce((acc: TotalsByType, item) => {
             acc[item.orderType] = (acc[item.orderType] || 0) + item.totalAmount;
@@ -139,6 +152,15 @@ const RevenueChart = () => {
     }, [revenueInfo.pagination?.totalRow]);
 
 
+    useEffect(()=>{
+        const data = {
+            number: paginationNumber,
+            status: typeActiveProduct.Active,
+        }
+        dispatch(ShowProduct(data));
+
+    },[dispatch, paginationNumber])
+
     useEffect(() => {
         const filters = {
             status: 'Thành công',
@@ -158,7 +180,8 @@ const RevenueChart = () => {
     useEffect(() => {
         setRevenueData(revenueInfo.data);
         setStaticsData(staticsInfo);
-    }, [revenueInfo.data, staticsInfo]);
+        setProductData(motorbikeProduct.pagination)
+    }, [revenueInfo.data, staticsInfo, motorbikeProduct.pagination]);
 
     useEffect(() => {
         if (staticsData && staticsData.length > 0) {
@@ -188,6 +211,8 @@ const RevenueChart = () => {
         }
     }, [staticsData, revenueData]);
 
+    
+    
 
     return (
         <>
@@ -198,15 +223,15 @@ const RevenueChart = () => {
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                         <div className="border border-gray-200 rounded-lg p-4">
                             <h3 className="text-xl font-semibold text-gray-800 mb-2">Tổng Doanh Thu</h3>
-                            <p className="text-gray-600">5.500.000</p>
+                            <p className="text-gray-600">{formatPrice(calculateTotalAnnualRevenue(staticsData)) }</p>
                         </div>
                         <div className="border border-gray-200 rounded-lg p-4">
                             <h3 className="text-xl font-semibold text-gray-800 mb-2">Tổng Đơn Hàng</h3>
-                            <p className="text-gray-600">1000</p>
+                            <p className="text-gray-600">{staticsData.length}</p>
                         </div>
                         <div className="border border-gray-200 rounded-lg p-4">
                             <h3 className="text-xl font-semibold text-gray-800 mb-2">Tổng Sản Phẩm</h3>
-                            <p className="text-gray-600">1250</p>
+                            <p className="text-gray-600">{productData?.totalRow}</p>
                         </div>
                     </div>
                 </div>
