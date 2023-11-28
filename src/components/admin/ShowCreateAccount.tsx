@@ -1,9 +1,11 @@
-import { createAccount } from '@/actions/userInfor';
+import { createAccount, resetError } from '@/actions/userInfor';
+import { showSuccessAlert } from '@/constants/chooseToastify';
 import { selectorCreateUpdateAccount } from '@/types/actions/createUpdateAccount';
 import { formatPhoneNumber } from '@/utils/formatPhone';
 import { Option, Select } from '@material-tailwind/react';
-import { useState,useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
+import LoadingCreateUpdate from '../LoadingCreateUpdate';
 
 type Props = {
     isVisible: boolean;
@@ -24,9 +26,11 @@ enum genderCreate {
 }
 const ShowCreateAccount = ({ isVisible, onClose }: Props) => {
     const dispatch = useDispatch();
-    const itemError: string|null|undefined = useSelector((state: selectorCreateUpdateAccount<string, number>) => state.createUpdateReducer.showError);
-    console.log("itemError",itemError)
-    const [showError,setShowError] = useState<string|null|undefined>(itemError)
+    const [isLoading, setIsLoading] = useState<boolean>(false);
+    const itemError: string | null = useSelector((state: selectorCreateUpdateAccount<string, number>) => state.createUpdateReducer.showError);
+    const showItem = useSelector((state: selectorCreateUpdateAccount<string, number>) => state.createUpdateReducer.accountInfor);
+    console.log("first", itemError, showItem);
+    const [showError, setShowError] = useState<string | null>(itemError)
     const [nameAccount, setNameAccount] = useState<string>("")
     const [phoneAccount, setPhoneAccount] = useState<string>("")
     const [genderAccount, setGenderAccount] = useState<genderCreate>(genderCreate.Other)
@@ -48,6 +52,7 @@ const ShowCreateAccount = ({ isVisible, onClose }: Props) => {
         }
     }
     const handleCreateAccount = () => {
+        setIsLoading(true);
         const data = {
             phoneNumber: phoneAccount,
             password: rePassAccount,
@@ -60,9 +65,24 @@ const ShowCreateAccount = ({ isVisible, onClose }: Props) => {
             alert("Hãy nhập đầy đủ các mục");
         }
     }
-    useEffect(()=>{
-        
-    },[onClose])
+    useEffect(() => {
+        if (itemError === null && showItem !== null) {
+            onClose();
+            showSuccessAlert('Tạo tài khoản thành công');
+            dispatch(resetError());
+            setIsLoading(false);
+            setNameAccount('');
+            setPhoneAccount('');
+            setPasswordAccount('');
+            setRePassAccount('');
+            setGenderAccount(genderCreate.Other);
+            setRoleAccount(roleCreate.Other)
+            setErrorPasswordAccount('')
+        } else {
+            setShowError(itemError);
+            setIsLoading(false);
+        }
+    }, [dispatch, itemError, onClose, showItem])
     if (!isVisible) {
         return null;
     }
@@ -202,14 +222,14 @@ const ShowCreateAccount = ({ isVisible, onClose }: Props) => {
                             {errorPasswordAccount ? <p className="text-red-800">{errorPasswordAccount}</p> : ""}
                         </div>
                     </div>
-                    {showError!==null?<p className="text-red-800 text-center">{showError}</p>:""}
+                    {showError !== null ? <p className="text-red-800 text-center">{showError}</p> : ""}
                     <div className="font-bold text-white flex flex-row-reverse justify-start space-x-5 space-x-reverse pt-[20px] px-[10px]">
                         <button
-                        type='button'
+                            type='button'
                             className={`
                         ${errorPasswordAccount ? "" : "hover:bg-blue-700"}
                         bg-gray-400 px-5 h-[40px]  rounded-md`}
-                            disabled={errorPasswordAccount? true : false}
+                            disabled={errorPasswordAccount ? true : false}
                             onClick={() => handleCreateAccount()}
                         >
                             Tạo tài khoản
@@ -217,7 +237,7 @@ const ShowCreateAccount = ({ isVisible, onClose }: Props) => {
                         <button
                             className=" bg-red-700 px-5 h-[40px]  rounded-md  "
                             onClick={() => {
-                                setShowError(null);
+                                dispatch(resetError());
                                 setNameAccount('');
                                 setPhoneAccount('');
                                 setPasswordAccount('');
@@ -233,7 +253,7 @@ const ShowCreateAccount = ({ isVisible, onClose }: Props) => {
                     </div>
                 </div>
             </div>
-
+            {isLoading ? <LoadingCreateUpdate /> : ""}
         </div>
     )
 }

@@ -14,48 +14,30 @@ const roleOwner = [
         to: '/manage-employees',
         name: 'Quản lý nhân viên',
     },
-    {
+    {   
+        to: "/manage-products",
         name: 'Quản lý sản phẩm',
-        subMenu: [
-            {
-                name:'Tạo sản phẩm',
-                to:'/create-product'
-            },
-            {
-                name: "Danh sách sản phẩm",
-                to: "/manage-products",
-            },
-        ],
     },
     {
-        to: '/manage-orders-owner',
         name: 'Quản lý đơn hàng',
-    },
-    {
-        name: 'Quản lý khuyến mãi',
         subMenu: [
             {
-                name:'Tạo khuyến mãi',
-                to:'/create-discount'
+                name:'Đơn hàng online',
+                to:'/online-order-owner'
             },
             {
-                name: "Danh sách khuyến mãi",
-                to: '/manage-discounts',
+                name: "Đơn hàng offline",
+                to: "/manage-orders-owner",
             },
         ],
     },
     {   
+        to: '/manage-discounts',
+        name: 'Quản lý khuyến mãi',
+    },
+    {   
+        to: '/manage-services',
         name: 'Quản lý dịch vụ',
-        subMenu: [
-            {
-                name:'Tạo dịch vụ',
-                to:'/create-service'
-            },
-            {
-                name: "Danh sách dịch vụ",
-                to: '/manage-services',
-            },
-        ],
     },
 ]
 const roleTeller = [

@@ -263,10 +263,10 @@ const BookingDetailModal = ({ booking, onClose }: { booking: itemBooking<string,
 
                             {/* Date and Time */}
 
-                            <div className="py-2 flex justify-center">
+                            <div className="py-2">
 
                                 <div className="flex flex-col space-y-2 text-xl font-bold text-gray-700 ">
-                                    <div className="flex justify-between items-center">
+                                    <div className=" flex justify-between items-center">
                                         <div>
                                             <h2 className="">Ngày Đến: {formatDate(localBooking?.dateBook)}</h2>
                                             <h2 className="">Thời gian: {checkTimeDisplay(new Date(localBooking?.dateBook || ''))}</h2>

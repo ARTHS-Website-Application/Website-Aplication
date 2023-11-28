@@ -35,6 +35,7 @@ const InforUser = ({ addProduct = [], addService = [], removeProduct, removeServ
     const [showService, setShowService] = useState<boolean[]>(Array(addProduct.length).fill(false));
     const [orderData, setOrderData] = useState<itemOrder<string, number>[]>([]);
     const [orderService, setOrderService] = useState<{ repairServiceId: string; }[]>([]);
+    console.log(orderService)
     const [showStaff, setShowStaff] = useState<boolean>(false);
     const axiosPrivate = userAxiosPrivate();
     const { bookingId } = useParams();
@@ -344,10 +345,8 @@ const InforUser = ({ addProduct = [], addService = [], removeProduct, removeServ
                     </div>
 
                 </div>
-                {phoneCustomer?.length === 10 && nameCustomer && orderData?.length > 0
-                    ?
-
-                    (
+                {phoneCustomer?.length === 10 && nameCustomer && ( orderData?.length > 0 || orderService?.length > 0 )
+                    ?(
                         <div className='w-full bg-white h-[10vh] flex justify-around items-center'>
                             <button className='w-[200px] h-[50px] bg-gray-200 hover:bg-red-900 hover:text-white font-semibold text-[18px] rounded-lg'
                                 onClick={() => {

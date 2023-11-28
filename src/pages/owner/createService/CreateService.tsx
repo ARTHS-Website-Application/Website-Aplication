@@ -23,7 +23,7 @@ const CreateService = () => {
   const [duration, setDuration] = useState<number>(0);
   const [reminderInterval, setReminderInterval] = useState<number>(0);
   const [addDiscount, setAddDiscount] = useState<string>("");
-  const [addWarranty, setAddWarranty] = useState<number>(0);
+  const [addWarranty, setAddWarranty] = useState<number | null>(null);
   const [images, setImages] = useState<File[]>([]);
 
   useEffect(() => {
@@ -62,11 +62,13 @@ const CreateService = () => {
   const handleDescription = (value: string) => {
     setDescriptionProduct(value);
   }
-  const handleAddWarranty = (e: string | undefined) => {
-    if (e) {
-      setAddWarranty(parseInt(e))
+  const handleAddWarranty = (inputValue: number) => {
+    const matchingWarranty = warrantyChoose?.find(item => item.duration === inputValue);
+
+    if (!isNaN(inputValue) && matchingWarranty) {
+      setAddWarranty(matchingWarranty.duration);
     }
-  }
+  };
 
   const handleAddDiscount = (e: string | undefined) => {
     if (e) {
@@ -186,26 +188,32 @@ const CreateService = () => {
               </div>
               <div className="flex justify-between py-5 text-[#6B7280] text-[19px] px-3">
                 <div className="flex flex-col space-y-3">
-                  <p>Thời gian bảo hành </p>
-                  <div className="w-[250px] text-[18px]">
-                    <Select
-                      className="px-3 h-[50px] bg-gray-50"
-                      label="Chọn thời gian bảo hành"
-                      onChange={handleAddWarranty}
-                    >
-                      {warrantyChoose && warrantyChoose.length > 0
-                        ? warrantyChoose?.map((item, index) => (
-                          <Option
-                            value={item?.duration.toString()}
-                            key={index}
-                            className="text-[18px]"
-                          >{item?.duration} tháng</Option>
-                        ))
-                        : ""
-                      }
-                    </Select>
+                  <div className="flex space-x-1">
+                    <p>Thời gian bảo hành(tối đa {warrantyChoose?.length} tháng) </p>
+                    <p className="text-red-800">*</p>
                   </div>
-
+                  <div className="w-full flex space-x-3 items-center">
+                    <input
+                      type="number"
+                      placeholder="Nhập thời gian bảo hành"
+                      className="text-[18px] w-[250px] h-[50px] bg-gray-50 border-2 border-blue-gray-200 rounded-lg p-2"
+                      value={addWarranty !== null ? addWarranty : ''}
+                      max={36} min={1}
+                      onChange={(e) => {
+                        if (0 < parseInt(e.target.value) && parseInt(e.target.value) <= 36) {
+                          handleAddWarranty(parseInt(e.target.value))
+                        } else {
+                          if (parseInt(e.target.value) < 0) {
+                            handleAddWarranty(1)
+                          }
+                          if (parseInt(e.target.value) > 100) {
+                            handleAddWarranty(100)
+                          }
+                        }
+                      }}
+                    />
+                    <p>THÁNG</p>
+                  </div>
                 </div>
                 <div className="flex flex-col space-y-3">
                   <p className="pl-1">Khuyến mãi</p>

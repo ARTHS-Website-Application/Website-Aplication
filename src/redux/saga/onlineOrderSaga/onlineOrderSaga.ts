@@ -1,4 +1,4 @@
-import { getDetailOnlineOrderSuccess, getOnlineOrderCanceledSuccess, getOnlineOrderConfirmSuccess, getOnlineOrderFailed, getOnlineOrderFinishedSuccess, getOnlineOrderPaidSuccess, getOnlineOrderSuccess, getOnlineOrderTransportSuccess, onlineOrderUpdate } from "@/actions/onlineOrder";
+import { getDetailOnlineOrderSuccess, getOnlineOrderCanceledSuccess, getOnlineOrderConfirmSuccess, getOnlineOrderFailed, getOnlineOrderFinishedSuccess, getOnlineOrderPaidSuccess, getOnlineOrderSuccess, getOnlineOrderTransportSuccess, onlineOrderUpdate, postTransportFailed, postTransportSuccess } from "@/actions/onlineOrder";
 import { getDetailOrderFailed } from "@/actions/order";
 import { createOrderTransport, detailOnlineOrder, listOnlineOrderConstant, updateOnlineOrder } from "@/constants/mainConstants";
 import { onlineOrderService } from "@/services/onlineOrderService";
@@ -73,16 +73,15 @@ function* postOrderTransport(payload:payloadTranSport<string,number>){
     try {
         const resp: AxiosResponse = yield call(onlineOrderService.createOrderTransport,payload.data);
         const { status, data } = resp;
-        console.log("d123",data)
         if (data && status === 200) {
+            yield put(postTransportSuccess(data));
             yield put(onlineOrderUpdate( payload.data.orderId,payload.statusOnline));
-        } else {
-            yield put(getDetailOrderFailed(data));
+            
         }
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
-        const msg: string = error.message;
-        yield put(getDetailOrderFailed(msg));
+        const msg: string = error.response.data.Message;
+        yield put(postTransportFailed(msg));
     }
 }
 

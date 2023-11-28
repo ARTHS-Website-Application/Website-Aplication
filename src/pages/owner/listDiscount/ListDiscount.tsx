@@ -5,9 +5,10 @@ import SearchFilter from '@/components/SearchFilter'
 import TableDiscount from '@/components/owner/TableDiscount'
 import { dataDiscount, itemDiscount, selectorDiscount } from '@/types/actions/listDiscout'
 import { StatusDiscount } from '@/types/typeDiscount'
+import { PlusIcon } from '@heroicons/react/24/solid'
 import { useState, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 
 const ListDiscount = () => {
   const dispatch = useDispatch();
@@ -67,6 +68,11 @@ const ListDiscount = () => {
         <SearchFilter
           place={'Tìm kiếm sản phẩm'} setAddSearch={setAddSearch}
         />
+        <Link to={'/create-discount'} className="p-3 bg-main hover:bg-[#d68669] text-white font-semibold rounded-lg flex space-x-3 items-center "
+        >
+          <p>Tạo khuyến mãi</p>
+          <PlusIcon className="w-7 h-7" />
+        </Link>
       </div>
       <div className="">
         {isLoading

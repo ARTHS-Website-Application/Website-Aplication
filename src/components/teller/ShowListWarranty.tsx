@@ -1,5 +1,5 @@
 import { inStoreOrderDetails } from '@/types/actions/detailOrder';
-import { formatDateSeven } from '@/utils/formatDate';
+import { formatDateTime } from '@/utils/formatDate';
 import { XMarkIcon } from '@heroicons/react/24/solid';
 
 type Props = {
@@ -62,7 +62,7 @@ const ShowListWarranty = ({ onClose, isVisible, itemOrder }: Props) => {
 
                                     </td>
                                     <td className="">
-                                        {formatDateSeven(item.repairDate.toString())}
+                                        {formatDateTime(item.repairDate.toString())}
                                     </td>
                                     <td className="">
                                         {item?.productQuantity}

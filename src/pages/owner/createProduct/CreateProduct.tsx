@@ -24,13 +24,13 @@ const CreateProduct = () => {
   const vehicleProduct: itemVehicleProduct<string>[] = useSelector((state: selectorVehicleProduct<string>) => state.vehicleProductReducer.vehicleProduct);
   const createVehicleProduct: itemVehicleProduct<string> = useSelector((state: selectorVehicleProduct<string>) => state.vehicleProductReducer.createVehicleProduct);
   const [nameProduct, setNameProduct] = useState<string>('');
-  const [quantityProduct, setQuantityProduct] = useState<number>(1);
   const [priceProduct, setPriceProduct] = useState<number>(0);
   const [priceInstallationFee, setPriceInstallationFee] = useState<number>(0)
   const [descriptionProduct, setDescriptionProduct] = useState<string>('');
   const [addCategory, setAddCategory] = useState<string>("");
   const [addDiscount, setAddDiscount] = useState<string>("");
   const [addWarranty, setAddWarranty] = useState<string>("");
+  const [selectedDuration, setSelectedDuration] = useState<number | null>(null);
   const [createAddVehicle, setCreateAddVehicle] = useState<string>("");
   const [errorVehicleProduct, setErrorVehicleProduct] = useState<string>("");
   const [createDataVehicle, setCreateDataVehicle] = useState<itemVehicleProduct<string>[]>([]);
@@ -88,11 +88,15 @@ const CreateProduct = () => {
     }
   }
 
-  const handleAddWarranty = (e: string | undefined) => {
-    if (e) {
-      setAddWarranty(e)
+  const handleAddWarranty = (inputValue: number) => {
+    const matchingWarranty = warrantyChoose?.find(item => item.duration === inputValue);
+
+    if (!isNaN(inputValue) && matchingWarranty) {
+      setAddWarranty(matchingWarranty.id);
+      setSelectedDuration(inputValue);
     }
-  }
+  };
+  console.log(addWarranty, selectedDuration, warrantyChoose)
 
   const handleAddDiscount = (e: string | undefined) => {
     if (e) {
@@ -142,7 +146,7 @@ const CreateProduct = () => {
     const dataCreate = {
       name: nameProduct,
       priceCurrent: priceProduct,
-      quantity: quantityProduct,
+      quantity: 10000,
       description: descriptionProduct,
       installationFee: priceInstallationFee,
       discountId: addDiscount,
@@ -151,7 +155,7 @@ const CreateProduct = () => {
       vehiclesId: [...addVehicle, ...createDataVehicle.map(item => item.id)],
       images: images
     }
-    if (nameProduct && priceProduct && quantityProduct && priceInstallationFee && descriptionProduct && addWarranty && addCategory && addVehicle && images) {
+    if (nameProduct && priceProduct && priceInstallationFee && descriptionProduct && addWarranty && addCategory && addVehicle && images) {
       dispatch(postCreateProduct(dataCreate))
     } else {
       alert('Hãy nhập đầy đủ các mục có dấu *')
@@ -166,7 +170,6 @@ const CreateProduct = () => {
   const handleClear = () => {
     setNameProduct('');
     setPriceProduct(0);
-    setQuantityProduct(1);
     setPriceInstallationFee(0);
     setDescriptionProduct('');
     setAddDiscount("");
@@ -175,7 +178,7 @@ const CreateProduct = () => {
     setAddVehicle([]);
     setImages([]);
     setCreateAddVehicle('');
-    if(createDataVehicle){
+    if (createDataVehicle) {
       createDataVehicle.forEach(item => {
         dispatch(deleteVehicle(item.id));
       });
@@ -259,22 +262,25 @@ const CreateProduct = () => {
                 <div className="flex justify-between pt-7">
                   <div className="flex items-center space-x-3">
                     <div className="flex space-x-1">
-                      <p>Số lượng </p>
+                      <p>Giá lắp đặt</p>
                       <p className="text-red-800">*</p>
                     </div>
-                    <input type="number"
-                      min={1}
-                      value={quantityProduct}
-                      placeholder="Nhập số sản phẩm"
-                      className='outline-none p-2 border-2 border-[#E5E7EB] bg-gray-50 rounded-xl'
-                      onChange={(e) => {
-                        if(parseInt(e.target.value)>1){
-                          setQuantityProduct(parseInt(e.target.value))
-                        }else{
-                          setQuantityProduct(1)
-                        }
-                      }}
-                    />
+                    <div className="flex items-center space-x-2">
+                      <input type="number"
+                        min={1}
+                        value={priceInstallationFee === 0 ? "" : priceInstallationFee}
+                        placeholder="Nhập số tiền"
+                        className='outline-none p-2 border-2 border-[#E5E7EB] bg-gray-50 rounded-xl'
+                        onChange={(e) => {
+                          if (parseInt(e.target.value) > 0) {
+                            setPriceInstallationFee(parseInt(e.target.value))
+                          } else {
+                            setPriceInstallationFee(1)
+                          }
+                        }}
+                      />
+                      <p>VNĐ</p>
+                    </div>
                   </div>
                   <div className="flex items-center space-x-3">
                     <div className="flex space-x-1">
@@ -288,9 +294,9 @@ const CreateProduct = () => {
                         placeholder="Nhập số tiền"
                         className='outline-none p-2 border-2 border-[#E5E7EB] bg-gray-50 rounded-xl'
                         onChange={(e) => {
-                          if(parseInt(e.target.value)>0){
+                          if (parseInt(e.target.value) > 0) {
                             setPriceProduct(parseInt(e.target.value))
-                          }else{
+                          } else {
                             setPriceProduct(1)
                           }
                         }}
@@ -302,26 +308,31 @@ const CreateProduct = () => {
                 <div className="flex justify-between pt-7">
                   <div className="flex flex-col space-y-3">
                     <div className="flex space-x-1">
-                      <p>Thời gian bảo hành </p>
+                      <p>Thời gian bảo hành(tối đa {warrantyChoose?.length} tháng) </p>
                       <p className="text-red-800">*</p>
                     </div>
-                    <Select
-                      className="text-[18px] h-[50px] bg-gray-50"
-                      size="lg"
-                      label="Lựa thời gian bảo hành"
-                      onChange={handleAddWarranty}
-                    >
-                      {warrantyChoose && warrantyChoose.length > 0
-                        ? warrantyChoose?.map((item, index) => (
-                          <Option
-                            value={item?.id}
-                            key={index}
-                            className="text-[18px]"
-                          >{item?.duration} tháng</Option>
-                        ))
-                        : ""
-                      }
-                    </Select>
+                    <div className="w-full flex space-x-3 items-center">
+                      <input
+                        type="number"
+                        placeholder="Nhập thời gian bảo hành"
+                        className="text-[18px] w-[250px] h-[50px] bg-gray-50 border-2 border-blue-gray-200 rounded-lg p-2"
+                        value={selectedDuration !== null ? selectedDuration : ''}
+                        max={36} min={1}
+                        onChange={(e) => {
+                          if (0 < parseInt(e.target.value) && parseInt(e.target.value) <= 36) {
+                            handleAddWarranty(parseInt(e.target.value))
+                          } else {
+                            if (parseInt(e.target.value) < 0) {
+                              handleAddWarranty(1)
+                            }
+                            if (parseInt(e.target.value) > 36) {
+                              handleAddWarranty(36)
+                            }
+                          }
+                        }}
+                      />
+                      <p>THÁNG</p>
+                    </div>
                   </div>
                   <div className="flex flex-col space-y-3">
                     <p className="pl-1">Khuyến mãi</p>
@@ -350,28 +361,6 @@ const CreateProduct = () => {
             <div className="bg-white w-[40%] p-5 rounded-md ">
               <p className="text-[21px] font-semibold">Thể loại</p>
               <div className="w-[97%] text-[#6B7280] text-[19px] py-5 space-y-5 ">
-                <div className="flex items-center space-x-3">
-                  <div className="flex space-x-1">
-                    <p>Giá lắp đặt sản phẩm</p>
-                    <p className="text-red-800">*</p>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <input type="number"
-                      min={1}
-                      value={priceInstallationFee === 0 ? "" : priceInstallationFee}
-                      placeholder="Nhập số tiền"
-                      className='outline-none p-2 border-2 border-[#E5E7EB] bg-gray-50 rounded-xl'
-                      onChange={(e) => {
-                        if(parseInt(e.target.value)>0){
-                          setPriceInstallationFee(parseInt(e.target.value))
-                        }else{
-                          setPriceInstallationFee(1)
-                        }
-                      }}
-                    />
-                    <p>VNĐ</p>
-                  </div>
-                </div>
                 <div className="flex flex-col space-y-3">
                   <div className="flex space-x-1">
                     <p>Loại sản phẩm </p>
@@ -473,9 +462,9 @@ const CreateProduct = () => {
                           <div className="flex items-center pt-3 space-x-3">
                             <p>Thương hiệu khác:</p>
                             <div className="space-x-3">
-                              <input type="text" 
-                              value={createAddVehicle||""}
-                              onChange={(e) => setCreateAddVehicle(e.target.value.trim())} className="w-[60%] outline-none border-b-2 border-gray-300 focus:border-black" />
+                              <input type="text"
+                                value={createAddVehicle || ""}
+                                onChange={(e) => setCreateAddVehicle(e.target.value.trim())} className="w-[60%] outline-none border-b-2 border-gray-300 focus:border-black" />
                               <button className="bg-blue-500 hover:bg-blue-900 p-2 text-white rounded-lg text-[14px] font-semibold"
                                 onClick={() => {
                                   handleCreateVehicle()

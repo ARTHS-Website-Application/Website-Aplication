@@ -19,6 +19,7 @@ import bookingReducer from './reducer/bookingReducer';
 import detailBookingReducer from './reducer/detailBookingReducer';
 import onlineOrderReducer from './reducer/onlineOrderReducer';
 import onlineOrderDetailReducer from './reducer/onlineOrderDetailReducer';
+import transportReducer from './reducer/transportReducer';
 import filterAccountReducer from './reducer/filterAccountReducer';
 import accountReducer from './reducer/accountReducer';
 import createUpdateReducer from './reducer/createUpdateReducer';
@@ -55,6 +56,7 @@ const allReducer = combineReducers({
   //onlineOrder
   onlineOrderReducer,
   onlineOrderDetailReducer,
+  transportReducer,
   //admin
   createUpdateReducer,
   accountReducer,

@@ -50,6 +50,8 @@ import ListNotDiscount from './pages/owner/listNotDiscount/ListNotDiscount';
 import DetailDiscount from './pages/owner/detailDiscount/DetailDiscount';
 import UpdateDiscount from './pages/owner/updateDiscount/UpdateDiscount';
 import ListPaidOrder from './pages/teller/listPaidOrder/ListPaidOrder';
+import ListRepairOrder from './pages/teller/listRepairOrder/ListRepairOrder';
+import ManageOrderOnline from './pages/owner/manageOrderOnline/ManageOrderOnline';
 import ListGhn from './pages/ghn/ListGhn';
 
 
@@ -91,6 +93,7 @@ function App() {
               <Route path="create-order/:bookingId" element={<CreateOrder />} />
               <Route path="list-all-order" element={<ListAllOrder />}>
                 <Route path="list-order" element={<ListOrder />} />
+                <Route path="repair-order" element={<ListRepairOrder />} />
                 <Route path="wait-paid-order" element={<ListWaitPaidOrder />} />
                 <Route path="paid-order" element={<ListPaidOrder />} />
                 <Route path="history-order" element={<HistoryOrder />} />
@@ -128,13 +131,20 @@ function App() {
               <Route path="update-product/:productId" element={<UpdateProduct />} />
             </Route>
 
-            <Route path="manage-orders-owner" element={<ManageOrderOwner />} />
+            <Route path="manage-orders-owner" element={<ManageOrderOwner />}>
+              <Route path="history-order" element={<HistoryOrder />} />
+            </Route>
+            <Route path="online-order-owner" element={<ManageOrderOnline />}>
+              <Route path="list-order-finish" element={<ListOrderFinished />} />
+              <Route path="list-order-canceled" element={<ListOrderCanceled />} />
+            </Route>
+
 
             <Route path="manage-discounts" element={<ManageDiscount />}>
-            <Route path="list-discount" element={<ListDiscount />} />
-            <Route path="list-not-discount" element={<ListNotDiscount />} />
-            <Route path=":discountId" element={<DetailDiscount/>} />
-            <Route path="update-discount/:discountId" element={<UpdateDiscount/>} />
+              <Route path="list-discount" element={<ListDiscount />} />
+              <Route path="list-not-discount" element={<ListNotDiscount />} />
+              <Route path=":discountId" element={<DetailDiscount />} />
+              <Route path="update-discount/:discountId" element={<UpdateDiscount />} />
             </Route>
 
             <Route path="create-service" element={<CreateService />} />

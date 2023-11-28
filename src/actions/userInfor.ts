@@ -1,9 +1,9 @@
-import { createAccounts, listFilterAccounts } from './../constants/secondaryConstants';
+import { createAccounts, listFilterAccounts, showResetError, updateAccount } from './../constants/secondaryConstants';
 import { userInfor } from "@/constants/mainConstants";
 import { listAccounts, listAllAccounts, listNotAccounts, listStaff } from "@/constants/secondaryConstants";
 import { callLCreateAccount } from '@/types/actions/createUpdateAccount';
 import { itemDetailAccount } from '@/types/actions/detailAccount';
-import {callListFilterAccount, dataAccount } from "@/types/actions/listAccount";
+import { callListFilterAccount, dataAccount } from "@/types/actions/listAccount";
 import { itemStaff } from "@/types/actions/listStaff";
 import { profileUser } from "@/types/actions/profile";
 import { itemPagination } from "@/types/pagination";
@@ -14,7 +14,7 @@ export const ShowProfile = () => {
     };
 };
 
-export const ShowProfileSuccess = (data:profileUser<string>) => {
+export const ShowProfileSuccess = (data: profileUser<string>) => {
     return {
         type: userInfor.GET_USER_INFO_SUCCESS,
         payload: {
@@ -22,7 +22,7 @@ export const ShowProfileSuccess = (data:profileUser<string>) => {
         },
     };
 };
-export const ShowProfileFailed = (error:string) => {
+export const ShowProfileFailed = (error: string) => {
     return {
         type: userInfor.GET_USER_INFO_FAIL,
         payload: {
@@ -37,7 +37,7 @@ export const selectStaff = () => {
     };
 };
 
-export const selectStaffSuccess = (data:itemStaff<string>[]) => {
+export const selectStaffSuccess = (data: itemStaff<string>[]) => {
     return {
         type: listStaff.LIST_STAFF_SUCCESS,
         payload: {
@@ -45,7 +45,7 @@ export const selectStaffSuccess = (data:itemStaff<string>[]) => {
         },
     };
 };
-export const selectStaffFailed = (error:string) => {
+export const selectStaffFailed = (error: string) => {
     return {
         type: listStaff.LIST_STAFF_FAIL,
         payload: {
@@ -55,30 +55,44 @@ export const selectStaffFailed = (error:string) => {
 };
 
 //admin
-export const createAccount = (role:string, data:callLCreateAccount<string>)=>{
+export const createAccount = (role: string, data: callLCreateAccount<string>) => {
     return {
-        type:createAccounts.CREATE_ACCOUNT,
+        type: createAccounts.CREATE_ACCOUNT,
         data,
         role
     }
 }
-export const createAccountSuccess = (data:itemDetailAccount<string,number>)=>{
+export const createAccountSuccess = (data: itemDetailAccount<string, number>) => {
     return {
-        type:createAccounts.CREATE_ACCOUNT_SUCCESS,
+        type: createAccounts.CREATE_ACCOUNT_SUCCESS,
         payload: {
             data,
         },
     }
 }
 
-export const createAccountFailed = (showError:string)=>{
+export const createAccountFailed = (showError: string) => {
     return {
-        type:createAccounts.CREATE_ACCOUNT_FAIL,
+        type: createAccounts.CREATE_ACCOUNT_FAIL,
         payload: {
             showError,
         },
     }
 }
+export const updateStatusAccount = (idAccount:string,role:string,status:string,data:callListFilterAccount<string, number>) => {
+    return {
+        type: updateAccount.UPDATE_ACCOUNT,
+        status,
+        role,
+        idAccount,
+        data
+    };
+};
+export const resetError = () => {
+    return {
+        type: showResetError.RESET_ERROR,
+    };
+};
 
 export const getAllAccount = () => {
     return {
@@ -86,7 +100,7 @@ export const getAllAccount = () => {
     };
 };
 
-export const getAllAccountSuccess = (data:itemPagination<number>) => {
+export const getAllAccountSuccess = (data: itemPagination<number>) => {
     return {
         type: listAllAccounts.LIST_ALL_ACCOUNT_SUCCESS,
         payload: {
@@ -95,14 +109,14 @@ export const getAllAccountSuccess = (data:itemPagination<number>) => {
     };
 };
 
-export const getAccount = (status:string) => {
+export const getAccount = (status: string) => {
     return {
         type: listAccounts.LIST_ACCOUNT,
         status
     };
 };
 
-export const getAccountSuccess = (data:itemPagination<number>) => {
+export const getAccountSuccess = (data: itemPagination<number>) => {
     return {
         type: listAccounts.LIST_ACCOUNT_SUCCESS,
         payload: {
@@ -111,14 +125,14 @@ export const getAccountSuccess = (data:itemPagination<number>) => {
     };
 };
 
-export const getNotAccount = (status:string) => {
+export const getNotAccount = (status: string) => {
     return {
         type: listNotAccounts.LIST_NOT_ACCOUNT,
         status
     };
 };
 
-export const getNotAccountSuccess = (data:itemPagination<number>) => {
+export const getNotAccountSuccess = (data: itemPagination<number>) => {
     return {
         type: listNotAccounts.LIST_NOT_ACCOUNT_SUCCESS,
         payload: {
@@ -127,21 +141,21 @@ export const getNotAccountSuccess = (data:itemPagination<number>) => {
     };
 };
 
-export const getFilterAccount = (data: callListFilterAccount<string,number>) => {
+export const getFilterAccount = (data: callListFilterAccount<string, number>) => {
     return {
         type: listFilterAccounts.LIST_FILTER_ACCOUNT,
         data
     };
 };
 
-export const getFilterNotAccount = (data: callListFilterAccount<string,number>) => {
+export const getFilterNotAccount = (data: callListFilterAccount<string, number>) => {
     return {
         type: listFilterAccounts.LIST_FILTER_NOT_ACCOUNT,
         data
     };
 };
 
-export const getFilterAccountSuccess = (data:dataAccount<number>) => {
+export const getFilterAccountSuccess = (data: dataAccount<number>) => {
     return {
         type: listFilterAccounts.LIST_FILTER_ACCOUNT_SUCCESS,
         payload: {
@@ -150,7 +164,7 @@ export const getFilterAccountSuccess = (data:dataAccount<number>) => {
     };
 };
 
-export const getFilterNotAccountSuccess = (data:dataAccount<number>) => {
+export const getFilterNotAccountSuccess = (data: dataAccount<number>) => {
     return {
         type: listFilterAccounts.LIST_FILTER_NOT_ACCOUNT_SUCCESS,
         payload: {
@@ -160,7 +174,7 @@ export const getFilterNotAccountSuccess = (data:dataAccount<number>) => {
 };
 
 
-export const getAccountFailed = (error:string) => {
+export const getAccountFailed = (error: string) => {
     return {
         type: listAccounts.LIST_ACCOUNT_FAIL,
         payload: {

@@ -223,7 +223,7 @@ const RevenueChart = () => {
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                         <div className="border border-gray-200 rounded-lg p-4">
                             <h3 className="text-xl font-semibold text-gray-800 mb-2">Tổng Doanh Thu</h3>
-                            <p className="text-gray-600">{formatPrice(calculateTotalAnnualRevenue(staticsData))}</p>
+                            <p className="text-gray-600">{formatPrice(calculateTotalAnnualRevenue(staticsData))} VNĐ</p>
                         </div>
                         <div className="border border-gray-200 rounded-lg p-4">
                             <h3 className="text-xl font-semibold text-gray-800 mb-2">Số lượng giao dịch</h3>
@@ -257,16 +257,16 @@ const RevenueChart = () => {
             {modalContent && modalContent.transactions && modalContent.transactions.length > 0 && (
                 <div className="mt-5">
                     <h3 className="text-xl font-semibold mb-2">Chi Tiết Doanh Thu - {modalContent.month}</h3>
-                    <div className="overflow-auto max-h-[400px]">
-                    <table className="min-w-full bg-white divide-y divide-gray-200 table-fixed text-center shadow-md rounded-lg overflow-hidden">
-                            <thead>
-                            <tr className="text-sm font-medium uppercase tracking-wider bg-gray-600 text-white text-center">
-                                    <th className="py-3 px-6">Ngày giao dịch</th>
-                                    <th className="py-3 px-6">Mã đơn hàng</th>
-                                    <th className="py-3 px-6">Loại Giao Dịch</th>
-                                    <th className="py-3 px-6">Số Tiền</th>
-                                    <th className="py-3 px-6">Phương Thức Thanh Toán</th>
-                                    <th className="py-3 px-6">Loại</th>
+                    <div className="overflow-auto max-h-[400px] bg-white"> {/* Adjust max height as needed */}
+                        <table className="w-full text-sm text-left text-gray-900">
+                            <thead className="text-xs text-white uppercase bg-main dark:bg-gray-700 dark:text-gray-400">
+                                <tr>
+                                    <th scope="col" className="py-3 px-6">Ngày giao dịch</th>
+                                    <th scope="col" className="py-3 px-6">Mã đơn hàng</th>
+                                    <th scope="col" className="py-3 px-6">Loại Giao Dịch</th>
+                                    <th scope="col" className="py-3 px-6">Số Tiền</th>
+                                    <th scope="col" className="py-3 px-6">Phương Thức Thanh Toán</th>
+                                    <th scope="col" className="py-3 px-6">Loại</th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-gray-200 text-gray-700">

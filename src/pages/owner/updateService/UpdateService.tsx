@@ -21,7 +21,6 @@ const UpdateService = () => {
   const navigate = useNavigate();
   const getDetailService: itemService<string, number> = useSelector((state: selectorDetailService<string, number>) => state.serviceDetailReducer.serviceDetail);
   const warrantyChoose: itemWarrantyProduct<string, number>[] = useSelector((state: selectorWarrantyProduct<string, number>) => state.warrantyReducer.warrantyProduct);
-  const [dataWarranty,setDataWarranty] = useState<itemWarrantyProduct<string, number>[]>([]);
   const discountProduct: dataDiscount<string, number> = useSelector((state: selectorDiscount<string, number>) => state.discountReducer.discountInfor);
   const [dataDiscount, setDataDiscount] = useState<itemDiscount<string, number>[]>([])
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -53,10 +52,6 @@ const UpdateService = () => {
       dispatch(detailService(serviceId));
       setIsLoading(true);
     }
-    if(warrantyChoose){
-      setDataWarranty(warrantyChoose)
-      setIsLoading(true);
-    }
   }, [dispatch, serviceId, warrantyChoose]);
   //getDetailService
   useEffect(() => {
@@ -67,13 +62,18 @@ const UpdateService = () => {
       setImagesUrl(getDetailService.images);
       setDuration(getDetailService.duration);
       setReminderInterval(getDetailService.reminderInterval);
-      // setAddDiscount;
+      if (getDetailService.discountAmount) {
+        const idWarranty = dataDiscount?.find(warranty => warranty.discountAmount === getDetailService.discountAmount);
+        if (idWarranty) {
+          setAddDiscount(idWarranty.id)
+        }
+      }
       setAddWarranty(getDetailService.warrantyDuration);
       setTimeout(() => {
         setIsLoading(false);
       }, 500)
     }
-  }, [dispatch, getDetailService, serviceId])
+  }, [dataDiscount, dispatch, getDetailService, serviceId])
 
   const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const fileList = event.target.files;
@@ -98,11 +98,13 @@ const UpdateService = () => {
   const handleDescription = (value: string) => {
     setDescriptionProduct(value);
   }
-  const handleAddWarranty = (e: string | undefined) => {
-    if (e) {
-      setAddWarranty(parseInt(e))
+  const handleAddWarranty = (inputValue: number) => {
+    const matchingWarranty = warrantyChoose?.find(item => item.duration === inputValue);
+
+    if (!isNaN(inputValue) && matchingWarranty) {
+      setAddWarranty(matchingWarranty.duration);
     }
-  }
+  };
 
   const handleAddDiscount = (e: string | undefined) => {
     if (e) {
@@ -143,7 +145,12 @@ const UpdateService = () => {
     setImagesUrl(getDetailService.images);
     setDuration(getDetailService.duration);
     setReminderInterval(getDetailService.reminderInterval);
-    // setAddDiscount;
+    if (getDetailService.discountAmount) {
+      const idWarranty = dataDiscount?.find(warranty => warranty.discountAmount === getDetailService.discountAmount);
+      if (idWarranty) {
+        setAddDiscount(idWarranty.id)
+      }
+    }
     setAddWarranty(getDetailService.warrantyDuration);
   }
   return (
@@ -230,28 +237,32 @@ const UpdateService = () => {
                 </div>
                 <div className="flex justify-between py-5 text-[#6B7280] text-[19px] px-3">
                   <div className="flex flex-col space-y-3">
-                    <p>Thời gian bảo hành </p>
-                    <div className="w-[250px] text-[18px]">
-                      <Select
-                        size="lg"
-                        className="px-3 h-[50px] bg-gray-50 text-[18px]"
-                        label="Chọn thời gian bảo hành"
-                        value={addWarranty>0?addWarranty.toString():""}
-                        onChange={handleAddWarranty}
-                      >
-                        {dataWarranty && dataWarranty?.length > 0
-                          ? dataWarranty?.map((item, index) => (
-                            <Option
-                              value={item?.duration.toString()}
-                              key={index}
-                              className="text-[18px]"
-                            >{item?.duration} tháng</Option>
-                          ))
-                          : ""
-                        }
-                      </Select>
+                    <div className="flex space-x-1">
+                      <p>Thời gian bảo hành(tối đa {warrantyChoose?.length} tháng) </p>
+                      <p className="text-red-800">*</p>
                     </div>
-
+                    <div className="w-full flex space-x-3 items-center">
+                      <input
+                        type="number"
+                        placeholder="Nhập thời gian bảo hành"
+                        className="text-[18px] w-[250px] h-[50px] bg-gray-50 border-2 border-blue-gray-200 rounded-lg p-2"
+                        value={addWarranty !== 0 ? addWarranty : ''}
+                        max={36} min={1}
+                        onChange={(e) => {
+                          if (0 < parseInt(e.target.value) && parseInt(e.target.value) <= 36) {
+                            handleAddWarranty(parseInt(e.target.value))
+                          } else {
+                            if (parseInt(e.target.value) < 0) {
+                              handleAddWarranty(1)
+                            }
+                            if (parseInt(e.target.value) > 100) {
+                              handleAddWarranty(100)
+                            }
+                          }
+                        }}
+                      />
+                      <p>THÁNG</p>
+                    </div>
                   </div>
                   <div className="flex flex-col space-y-3">
                     <p className="pl-1">Khuyến mãi</p>
@@ -259,6 +270,7 @@ const UpdateService = () => {
                       size="lg"
                       label="Lựa chọn khuyến mãi"
                       className="text-[20px] w-[250px] h-[50px] bg-gray-50"
+                      value={addDiscount}
                       onChange={handleAddDiscount}
                     >
                       {dataDiscount?.length > 0

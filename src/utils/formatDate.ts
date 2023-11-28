@@ -1,7 +1,6 @@
 export const formatDateSeven = (dataString: string) => {
-  return new Intl.DateTimeFormat('en-GB', {
-    timeZone: 'UTC'
-  }).format(new Date(Date.parse(dataString) + 7 * 60 * 60 * 1000));
+  return new Intl.DateTimeFormat('en-GB')
+  .format(new Date(Date.parse(dataString) + 7 * 60 * 60 * 1000));
 }
 
 export const formatDateTime = (dataString: string) => {

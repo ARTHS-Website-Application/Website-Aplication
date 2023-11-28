@@ -44,7 +44,7 @@ export class Private {
         formData.append('name', data.name);
         formData.append('price', data.price);
         formData.append('description', data.description);
-        // formData.append('discountId', data.discountId);
+        formData.append('discountId', data.discountId);
         formData.append('warrantyDuration', data.warrantyDuration);
         formData.append('duration', data.duration);
         formData.append('reminderInterval', data.reminderInterval);

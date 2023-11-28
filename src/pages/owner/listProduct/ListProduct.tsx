@@ -5,9 +5,10 @@ import SearchFilter from '@/components/SearchFilter'
 import TableProductOwner from '@/components/owner/TableProductOwner'
 import { item, itemProduct, selectorProduct } from '@/types/actions/product'
 import { typeActiveProduct } from '@/types/typeProduct'
+import { PlusIcon } from '@heroicons/react/24/solid'
 import { useState, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import {useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 
 const ListProduct = () => {
     const dispatch = useDispatch();
@@ -99,6 +100,11 @@ const ListProduct = () => {
                 <SearchFilter
                     place={'Tìm kiếm sản phẩm'} setAddSearch={setAddSearch}
                 />
+                <Link to={'/create-product'} className="p-3 bg-main hover:bg-[#d68669] text-white font-semibold rounded-lg flex space-x-3 items-center "
+                >
+                    <p>Tạo sản phẩm</p>
+                    <PlusIcon className="w-7 h-7" />
+                </Link>
             </div>
             <div className="">
                 {isLoading
