@@ -1,7 +1,12 @@
+import { createAccounts, listFilterAccounts } from './../constants/secondaryConstants';
 import { userInfor } from "@/constants/mainConstants";
-import { listStaff } from "@/constants/secondaryConstants";
+import { listAccounts, listAllAccounts, listNotAccounts, listStaff } from "@/constants/secondaryConstants";
+import { callLCreateAccount } from '@/types/actions/createUpdateAccount';
+import { itemDetailAccount } from '@/types/actions/detailAccount';
+import {callListFilterAccount, dataAccount } from "@/types/actions/listAccount";
 import { itemStaff } from "@/types/actions/listStaff";
 import { profileUser } from "@/types/actions/profile";
+import { itemPagination } from "@/types/pagination";
 
 export const ShowProfile = () => {
     return {
@@ -43,6 +48,121 @@ export const selectStaffSuccess = (data:itemStaff<string>[]) => {
 export const selectStaffFailed = (error:string) => {
     return {
         type: listStaff.LIST_STAFF_FAIL,
+        payload: {
+            error,
+        },
+    };
+};
+
+//admin
+export const createAccount = (role:string, data:callLCreateAccount<string>)=>{
+    return {
+        type:createAccounts.CREATE_ACCOUNT,
+        data,
+        role
+    }
+}
+export const createAccountSuccess = (data:itemDetailAccount<string,number>)=>{
+    return {
+        type:createAccounts.CREATE_ACCOUNT_SUCCESS,
+        payload: {
+            data,
+        },
+    }
+}
+
+export const createAccountFailed = (showError:string)=>{
+    return {
+        type:createAccounts.CREATE_ACCOUNT_FAIL,
+        payload: {
+            showError,
+        },
+    }
+}
+
+export const getAllAccount = () => {
+    return {
+        type: listAllAccounts.LIST_ALL_ACCOUNT,
+    };
+};
+
+export const getAllAccountSuccess = (data:itemPagination<number>) => {
+    return {
+        type: listAllAccounts.LIST_ALL_ACCOUNT_SUCCESS,
+        payload: {
+            data
+        },
+    };
+};
+
+export const getAccount = (status:string) => {
+    return {
+        type: listAccounts.LIST_ACCOUNT,
+        status
+    };
+};
+
+export const getAccountSuccess = (data:itemPagination<number>) => {
+    return {
+        type: listAccounts.LIST_ACCOUNT_SUCCESS,
+        payload: {
+            data
+        },
+    };
+};
+
+export const getNotAccount = (status:string) => {
+    return {
+        type: listNotAccounts.LIST_NOT_ACCOUNT,
+        status
+    };
+};
+
+export const getNotAccountSuccess = (data:itemPagination<number>) => {
+    return {
+        type: listNotAccounts.LIST_NOT_ACCOUNT_SUCCESS,
+        payload: {
+            data
+        },
+    };
+};
+
+export const getFilterAccount = (data: callListFilterAccount<string,number>) => {
+    return {
+        type: listFilterAccounts.LIST_FILTER_ACCOUNT,
+        data
+    };
+};
+
+export const getFilterNotAccount = (data: callListFilterAccount<string,number>) => {
+    return {
+        type: listFilterAccounts.LIST_FILTER_NOT_ACCOUNT,
+        data
+    };
+};
+
+export const getFilterAccountSuccess = (data:dataAccount<number>) => {
+    return {
+        type: listFilterAccounts.LIST_FILTER_ACCOUNT_SUCCESS,
+        payload: {
+            data
+        },
+    };
+};
+
+export const getFilterNotAccountSuccess = (data:dataAccount<number>) => {
+    return {
+        type: listFilterAccounts.LIST_FILTER_NOT_ACCOUNT_SUCCESS,
+        payload: {
+            data
+        },
+    };
+};
+
+
+export const getAccountFailed = (error:string) => {
+    return {
+        type: listAccounts.LIST_ACCOUNT_FAIL,
         payload: {
             error,
         },

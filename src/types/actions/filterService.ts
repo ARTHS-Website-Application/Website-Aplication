@@ -27,5 +27,6 @@ export interface getServiceDiscount<T,N>{
 export interface callServiceDiscount<T,N>{
     status:T;
     pageNumber:N;
-    name:T
+    name:T;
+    discountId:T|undefined;
 }

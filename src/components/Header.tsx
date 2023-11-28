@@ -49,7 +49,7 @@ const Header = ({ handleLogout ,handleNotification}: props) => {
 
           <div className='px-3'>
             <h2 className='text-[20px]'>{profile.fullName}</h2>
-            <p className='text-xs text-gray-500'>{roleText}</p>
+            <p className='text-xs text-gray-500'>{roleText==="Admin"?"Quản trị viên":`${roleText}`}</p>
           </div>
           <button onClick={handleLogout}>
             <ChevronDownIcon className='h-8 w-8' />

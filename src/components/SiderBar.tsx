@@ -47,7 +47,7 @@ const SiderBar = ({ role }: Props) => {
 
   return (
     <div className="w-full h-full py-5 flex flex-col items-center">
-      <h1 className="text-main text-[27px] font-semibold">Thanh Huy Store</h1>
+      <h1 className="text-main text-[27px] font-semibold pb-3">Thanh Huy Store</h1>
       <div className="pt-3 w-full">
         {chooseRole.map((item, index) => (
           <div key={index} className="w-full flex justify-center p-3 font-bold">

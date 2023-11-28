@@ -79,7 +79,7 @@ const ListOnlineOrder = () => {
             ) : (
                 <div>
                     {onlineOrderData?.length > 0
-                            ? (<div className={`${onlineOrderData?.length < 12 ? "h-[67vh]" : ""}`}>
+                            ? (<div className={`${onlineOrderData?.length < 12 ? "h-[65vh]" : ""}`}>
                                 <TableOnlineOrder data={onlineOrderData} />
                             </div>)
                             : (
@@ -88,7 +88,7 @@ const ListOnlineOrder = () => {
                                 </div>
                             )}
 
-                    <div className="pt-3">
+                    <div className="">
                         <Pagination
                             totalPosts={onlineOrderInfo.pagination?.totalRow}
                             postsPerPage={onlineOrderInfo.pagination?.pageSize}

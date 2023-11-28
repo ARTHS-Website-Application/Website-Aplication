@@ -1,13 +1,8 @@
 const roleAdmin = [
     {
         to: '/',
-        name: 'quan ly',
-        subMenu: [
-            {
-                name: "Submenu 3",
-                to: "/submenu-3",
-            },
-        ],
+        name: 'Trang chủ',
+        subMenu: undefined,
     },
 ];
 const roleOwner = [

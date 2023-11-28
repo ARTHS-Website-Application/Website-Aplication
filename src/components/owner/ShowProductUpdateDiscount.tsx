@@ -3,22 +3,24 @@ import Pagination from '../Pagination';
 import { itemCategoryProduct, selectorCategoryProduct } from '@/types/actions/categoryPr';
 import { useDispatch, useSelector } from 'react-redux';
 import { typeActiveProduct } from '@/types/typeProduct';
-import { item, itemProduct, selectorProduct } from '@/types/actions/product';
+import { itemProduct, selectorProduct } from '@/types/actions/product';
 import { CategoryProduct, FilterProductDiscount } from '@/actions/product';
 import LoadingPage from '../LoadingPage';
 import { CheckCircleIcon, MagnifyingGlassIcon, XMarkIcon } from '@heroicons/react/24/solid';
+import { motorbikeDiscount } from '@/types/actions/detailDiscount';
 
 type Props = {
     isVisible: boolean;
     onClose: () => void;
-    setDataProduct: React.Dispatch<React.SetStateAction<item<string, number>[]>>;
-    dataProduct: item<string, number>[]
+    setDataProduct: React.Dispatch<React.SetStateAction<motorbikeDiscount<string, number>[]>>;
+    dataProduct: motorbikeDiscount<string, number>[];
+    discountId:string|undefined;
 }
 
-const ShowProductDiscount = ({ isVisible, onClose, setDataProduct, dataProduct }: Props) => {
+const ShowProductUpdateDiscount = ({ isVisible, onClose, setDataProduct, dataProduct,discountId }: Props) => {
     const dispatch = useDispatch();
     const [isLoading, setIsLoading] = useState<boolean>(false);
-    const [productData, setProductData] = useState([] as item<string, number>[]);
+    const [productData, setProductData] = useState([] as motorbikeDiscount<string, number>[]);
 
     const [addCategory, setAddCategory] = useState<string>("");
     const [addSearch, setAddSearch] = useState<string>("");
@@ -27,8 +29,7 @@ const ShowProductDiscount = ({ isVisible, onClose, setDataProduct, dataProduct }
     const categoryProduct: itemCategoryProduct<string>[] = useSelector((state: selectorCategoryProduct<string>) => state.categoryProductReducer.categoryProduct);
     const productInfor: itemProduct<string, number> = useSelector((state: selectorProduct<string, number>) => state.productReducer.productInfor);
     const [hoveredItemIndex, setHoveredItemIndex] = useState<number | null>(null);
-    const [dataItem, setDataItem] = useState<item<string, number>[]>([]);
-    console.log(dataItem)
+    const [dataItem, setDataItem] = useState<motorbikeDiscount<string, number>[]>([]);
 
     const handleMouseEnter = (index: number) => {
         setHoveredItemIndex(index);
@@ -38,7 +39,7 @@ const ShowProductDiscount = ({ isVisible, onClose, setDataProduct, dataProduct }
         setHoveredItemIndex(null);
     };
 
-    const handleClick = (item: item<string, number>) => {
+    const handleClick = (item: motorbikeDiscount<string, number>) => {
         const isSelected = dataItem.includes(item);
 
         if (isSelected) {
@@ -50,8 +51,21 @@ const ShowProductDiscount = ({ isVisible, onClose, setDataProduct, dataProduct }
 
     const handleSelectAll = () => {
         const allItemIds = productInfor?.data?.map((item) => item) || [];
+        const dataUpdate: motorbikeDiscount<string, number>[] = allItemIds?.map((item) => {
+            const transData: motorbikeDiscount<string, number> = {
+                id: item?.id,
+                name: item?.name,
+                priceCurrent: item?.priceCurrent,
+                quantity: item?.quantity,
+                warrantyDuration: item?.warrantyDuration ?? 0,
+                status: item.status,
+                discountAmount: item?.discount?.discountAmount ?? 0,
+                imageUrl: item?.images[0].imageUrl,
+            }
+            return transData
+        })
 
-        setDataItem(allItemIds);
+        setDataItem(dataUpdate);
     };
 
     const handleDeselectAll = () => {
@@ -68,7 +82,20 @@ const ShowProductDiscount = ({ isVisible, onClose, setDataProduct, dataProduct }
         dispatch(CategoryProduct());
     }, [dispatch])
     useEffect(() => {
-        setProductData(productInfor.data);
+        const dataUpdate: motorbikeDiscount<string, number>[] = productInfor?.data?.map((item) => {
+            const transData: motorbikeDiscount<string, number> = {
+                id: item.id,
+                name: item.name,
+                priceCurrent: item.priceCurrent,
+                quantity: item.quantity,
+                warrantyDuration: item.warrantyDuration ?? 0,
+                status: item.status,
+                discountAmount: item?.discount?.discountAmount ?? 0,
+                imageUrl: item?.images[0].imageUrl,
+            }
+            return transData
+        })
+        setProductData(dataUpdate);
         setTimeout(() => {
             setIsLoading(false);
         }, 500)
@@ -89,11 +116,11 @@ const ShowProductDiscount = ({ isVisible, onClose, setDataProduct, dataProduct }
             category: addCategory,
             status: typeActiveProduct.Active,
             haveDiscount: false,
-            discountId:undefined,
+            discountId: discountId,
         }
         dispatch(FilterProductDiscount(data))
         setIsLoading(true);
-    }, [addCategory, addSearch, dispatch, paginationNumber])
+    }, [addCategory, addSearch, discountId, dispatch, paginationNumber])
     useEffect(() => {
         if (dataProduct) {
             setDataItem(dataProduct)
@@ -122,7 +149,7 @@ const ShowProductDiscount = ({ isVisible, onClose, setDataProduct, dataProduct }
                                 <select className='cursor-pointer w-[220px] font-semibold rounded-lg text-center text-main focus:outline-none capitalize drop-shadow-xl'
                                     value={addCategory}
                                     onChange={(e) => {
-                                        setAddCategory(e.target.value??"")
+                                        setAddCategory(e.target.value ?? "")
                                     }}
                                 >
                                     <option value=' ' className='text-gray-700'>Danh mục</option>
@@ -187,7 +214,7 @@ const ShowProductDiscount = ({ isVisible, onClose, setDataProduct, dataProduct }
                                                 onMouseLeave={handleMouseLeave}
                                                 onClick={() => handleClick(item)}
                                             >
-                                                <img src={item?.images[0]?.imageUrl} alt="" className='h-[90px] w-[100px] object-cover bg-white p-2 shadow-lg' />
+                                                <img src={item?.imageUrl} alt="" className='h-[90px] w-[100px] object-cover bg-white p-2 shadow-lg' />
                                                 <p className='text-center'>{item?.name}</p>
                                                 {(hoveredItemIndex === index || dataItem?.some(data => data.id === item.id)) && (
                                                     <button className='absolute bg-[#192038] bg-opacity-40 w-full h-[95%] top-0 rounded-lg flex justify-center items-end pb-5'
@@ -220,4 +247,4 @@ const ShowProductDiscount = ({ isVisible, onClose, setDataProduct, dataProduct }
     )
 }
 
-export default ShowProductDiscount
+export default ShowProductUpdateDiscount

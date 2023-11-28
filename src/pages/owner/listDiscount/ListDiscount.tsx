@@ -1,4 +1,4 @@
-import { getDiscount } from '@/actions/discount'
+import { getDiscount, updateStatusDiscount } from '@/actions/discount'
 import LoadingPage from '@/components/LoadingPage'
 import PaginationParam from '@/components/PaginationParam'
 import SearchFilter from '@/components/SearchFilter'
@@ -54,7 +54,7 @@ const ListDiscount = () => {
     if (item) {
       const shouldDelete = window.confirm(`Bạn có chắc chắn muốn xóa khuyến mãi này: ${item.title} ?`);
       if (shouldDelete) {
-        // dispatch(updateStatusProduct(item.id, StatusDiscount.Discontinued, data));
+        dispatch(updateStatusDiscount(item.id, StatusDiscount.Discontinued, data));
         setIsLoading(true)
       }
     }
