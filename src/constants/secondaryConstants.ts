@@ -122,3 +122,7 @@ export const createAccounts = {
     CREATE_ACCOUNT_SUCCESS: "create_account_success",
     CREATE_ACCOUNT_FAIL: "create_account_fail",
 }
+
+export const showResetError = {
+    RESET_ERROR:"reset_error",
+}

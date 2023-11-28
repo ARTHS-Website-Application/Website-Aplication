@@ -90,7 +90,7 @@ const ListOnlineFinished = () => {
               </div>
             )}
 
-          <div className="pt-3">
+          <div className="">
             <Pagination
               totalPosts={onlineOrderInfo.pagination?.totalRow}
               postsPerPage={onlineOrderInfo.pagination?.pageSize}

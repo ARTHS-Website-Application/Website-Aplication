@@ -5,8 +5,10 @@ import SearchFilter from '@/components/SearchFilter'
 import TableService from '@/components/owner/TableService'
 import { dataService, itemService, selectorService } from '@/types/actions/listService'
 import { typeService } from '@/types/typeService'
+import { PlusIcon } from '@heroicons/react/24/solid'
 import { useState, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
+import { Link } from 'react-router-dom'
 
 
 const ListService = () => {
@@ -98,6 +100,11 @@ const ListService = () => {
         <div className="w-full">
             <div className="flex justify-between items-center pb-5">
                 <SearchFilter place={'Tìm kiếm dịch vụ'} setAddSearch={setAddSearch} />
+                <Link to={'/create-service'} className="p-3 bg-main hover:bg-[#d68669] text-white font-semibold rounded-lg flex space-x-3 items-center "
+                >
+                    <p>Tạo dịch vụ</p>
+                    <PlusIcon className="w-7 h-7" />
+                </Link>
             </div>
             <div className="">
                 {isLoading

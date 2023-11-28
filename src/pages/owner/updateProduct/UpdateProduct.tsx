@@ -1,7 +1,7 @@
 import { Select, Option } from "@material-tailwind/react";
 import { CategoryProduct, WarrantyProduct, getDetailProduct, getVehicleProduct, updateProduct } from '@/actions/product';
 import { itemCategoryProduct, selectorCategoryProduct } from '@/types/actions/categoryPr';
-import { ChevronDownIcon, MagnifyingGlassIcon, PhotoIcon } from '@heroicons/react/24/solid'
+import { ChevronDownIcon, ChevronRightIcon, MagnifyingGlassIcon, PhotoIcon } from '@heroicons/react/24/solid'
 import { useEffect, useState } from 'react';
 import * as React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -10,7 +10,7 @@ import { getDiscountChoose } from "@/actions/discount";
 import { dataDiscount, selectorDiscount } from "@/types/actions/listDiscout";
 import { item } from "@/types/actions/product";
 import { selectorDetailProduct } from "@/types/actions/detailProduct";
-import { useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import Description from "@/components/Description";
 import { images } from "@/types/images";
 import { itemWarrantyProduct, selectorWarrantyProduct } from "@/types/actions/listWarranty";
@@ -30,10 +30,12 @@ const UpdateProduct = () => {
     const [nameProduct, setNameProduct] = useState<string>(detailProduct?.name);
     const [quantityProduct, setQuantityProduct] = useState<number>(1);
     const [priceProduct, setPriceProduct] = useState<number>(0);
+    const [priceInstallationFee, setPriceInstallationFee] = useState<number>(0)
     const [descriptionProduct, setDescriptionProduct] = useState<string>('');
     const [addCategory, setAddCategory] = useState<string>("");
     const [addDiscount, setAddDiscount] = useState<string>("");
     const [addWarranty, setAddWarranty] = useState<string>("");
+    const [selectedDuration, setSelectedDuration] = useState<number | null>(null);
     const [checkedVehicles, setCheckedVehicles] = useState<itemVehicleProduct<string>[]>([]);
     const [addVehicle, setAddVehicle] = useState<string[]>([]);
     const [images, setImages] = useState<File[]>([]);
@@ -61,6 +63,7 @@ const UpdateProduct = () => {
             setNameProduct(detailProduct.name);
             setQuantityProduct(detailProduct.quantity);
             setPriceProduct(detailProduct.priceCurrent);
+            setPriceInstallationFee(detailProduct.installationFee)
             setDescriptionProduct(detailProduct.description);
 
             if (detailProduct.category) {
@@ -71,6 +74,7 @@ const UpdateProduct = () => {
                 setAddDiscount(detailProduct.discount.id);
             }
             if (detailProduct.warrantyDuration) {
+                setSelectedDuration(detailProduct.warrantyDuration)
                 const idWarranty = warrantyChoose?.find(warranty => warranty.duration === detailProduct.warrantyDuration);
                 if (idWarranty) {
                     setAddWarranty(idWarranty.id)
@@ -98,9 +102,9 @@ const UpdateProduct = () => {
         setIsLoading(true)
     }, [dispatch])
 
-    useEffect(()=>{
+    useEffect(() => {
         dispatch(getVehicleProduct())
-    },[dispatch])
+    }, [dispatch])
 
     const handleShowVehicle = () => {
         setShowVehicle(!showVehicle);
@@ -111,11 +115,15 @@ const UpdateProduct = () => {
         }
     }
 
-    const handleAddWarranty = (e: string | undefined) => {
-        if (e) {
-            setAddWarranty(e)
+    const handleAddWarranty = (inputValue: number) => {
+        const matchingWarranty = warrantyChoose?.find(item => item.duration === inputValue);
+
+        if (!isNaN(inputValue) && matchingWarranty) {
+            setAddWarranty(matchingWarranty.id);
+            setSelectedDuration(inputValue);
         }
-    }
+    };
+    console.log(addWarranty, selectedDuration, warrantyChoose)
 
     const handleAddDiscount = (e: string | undefined) => {
         if (e) {
@@ -163,15 +171,21 @@ const UpdateProduct = () => {
             priceCurrent: priceProduct,
             quantity: quantityProduct,
             description: descriptionProduct,
+            installationFee: priceInstallationFee,
             discountId: addDiscount,
             warrantyId: addWarranty,
             categoryId: addCategory,
             vehiclesId: addVehicle,
             images: images
         }
-        dispatch(updateProduct(detailProduct.id, dataCreate))
-        navigate(`/manage-products/${productId}`)
-        showSuccessAlert("Cập nhật thành công");
+        if (nameProduct && priceProduct && priceInstallationFee && descriptionProduct && addWarranty && addCategory && addVehicle) {
+            dispatch(updateProduct(detailProduct.id, dataCreate))
+            navigate(`/manage-products/${productId}`)
+            showSuccessAlert("Cập nhật thành công");
+        } else {
+            alert('Hãy nhập đầy đủ các mục có dấu *')
+        }
+
     }
     return (
         <div>
@@ -179,7 +193,11 @@ const UpdateProduct = () => {
                 ? <LoadingPage />
                 : (
                     <div>
-                        <h1 className="text-[25px] font-semibold text-main">Cập nhật sản phẩm</h1>
+                        <div className="flex space-x-3 items-center text-[21px] font-semibold">
+                            <Link to="/manage-products" className="hover:text-main">Danh sách sản phẩm</Link>
+                            <ChevronRightIcon className="w-5 h-5" />
+                            <h1 className=" text-main">Cập nhật sản phẩm</h1>
+                        </div>
                         <div className="flex space-x-[3%] pt-5">
                             <div className="bg-white w-[60%] p-5 rounded-md">
                                 <p className="text-[21px] font-semibold">Thông tin chung</p>
@@ -198,13 +216,26 @@ const UpdateProduct = () => {
                                     </div>
                                     <div className="flex justify-between pt-7">
                                         <div className="flex items-center space-x-3">
-                                            <p>Số lượng</p>
-                                            <input type="number"
-                                                value={quantityProduct ?? 1}
-                                                min={1}
-                                                className='outline-none p-2 border-2 border-[#E5E7EB] bg-gray-50 rounded-xl'
-                                                onChange={(e) => setQuantityProduct(parseInt(e.target.value))}
-                                            />
+                                            <div className="flex space-x-1">
+                                                <p>Giá lắp đặt</p>
+                                                <p className="text-red-800">*</p>
+                                            </div>
+                                            <div className="flex items-center space-x-2">
+                                                <input type="number"
+                                                    min={1}
+                                                    value={priceInstallationFee === 0 ? "" : priceInstallationFee}
+                                                    placeholder="Nhập số tiền"
+                                                    className='outline-none p-2 border-2 border-[#E5E7EB] bg-gray-50 rounded-xl'
+                                                    onChange={(e) => {
+                                                        if (parseInt(e.target.value) > 0) {
+                                                            setPriceInstallationFee(parseInt(e.target.value))
+                                                        } else {
+                                                            setPriceInstallationFee(1)
+                                                        }
+                                                    }}
+                                                />
+                                                <p>VNĐ</p>
+                                            </div>
                                         </div>
                                         <div className="flex items-center space-x-3">
                                             <p>Giá tiền</p>
@@ -222,25 +253,32 @@ const UpdateProduct = () => {
                                     </div>
                                     <div className="flex justify-between pt-7">
                                         <div className="flex flex-col space-y-3">
-                                            <p className="pl-1">Thời gian bảo hành</p>
-                                            <Select
-                                                className="text-[18px] h-[50px] bg-gray-50"
-                                                size="lg"
-                                                label="Lựa thời gian bảo hành"
-                                                onChange={handleAddWarranty}
-                                                value={addWarranty}
-                                            >
-                                                {warrantyChoose
-                                                    ? warrantyChoose?.map((item, index) => (
-                                                        <Option
-                                                            value={item?.id}
-                                                            key={index}
-                                                            className="text-[18px]"
-                                                        >{item?.duration} tháng</Option>
-                                                    ))
-                                                    : ""
-                                                }
-                                            </Select>
+                                            <div className="flex space-x-1">
+                                                <p>Thời gian bảo hành(tối đa {warrantyChoose?.length} tháng) </p>
+                                                <p className="text-red-800">*</p>
+                                            </div>
+                                            <div className="w-full flex space-x-3 items-center">
+                                                <input
+                                                    type="number"
+                                                    placeholder="Nhập thời gian bảo hành"
+                                                    className="text-[18px] w-[250px] h-[50px] bg-gray-50 border-2 border-blue-gray-200 rounded-lg p-2"
+                                                    value={selectedDuration !== null ? selectedDuration : ''}
+                                                    max={36} min={1}
+                                                    onChange={(e) => {
+                                                        if (0 < parseInt(e.target.value) && parseInt(e.target.value) <= 36) {
+                                                            handleAddWarranty(parseInt(e.target.value))
+                                                        } else {
+                                                            if (parseInt(e.target.value) < 0) {
+                                                                handleAddWarranty(1)
+                                                            }
+                                                            if (parseInt(e.target.value) > 36) {
+                                                                handleAddWarranty(36)
+                                                            }
+                                                        }
+                                                    }}
+                                                />
+                                                <p>THÁNG</p>
+                                            </div>
                                         </div>
                                         <div className="flex flex-col space-y-3">
                                             <p className="pl-1">Khuyến mãi</p>

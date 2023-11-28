@@ -5,9 +5,10 @@ import { EyeIcon, EyeSlashIcon} from "@heroicons/react/24/solid";
 
 
 type Props = {
-    data: itemAccount[]
+    data: itemAccount[];
+    handleRemove: (item: itemAccount) => void;
 }
-const TableAccount = ({ data }: Props) => {
+const TableAccount = ({ data,handleRemove }: Props) => {
     return (
         <div className="pt-3">
             <table className="min-w-full bg-white divide-y divide-gray-200 table-fixed text-center">
@@ -49,10 +50,10 @@ const TableAccount = ({ data }: Props) => {
                                 {item.status === typeAccount.Busy || item.role === roleAccount.Admin ? "" : (
                                     (
                                         <button
-                                        onClick={()=>""}
+                                        onClick={()=>handleRemove(item)}
                                         >
-                                            {item.status === typeAccount.Active ? <EyeSlashIcon className="w-7 h-7"/>
-                                            :item.status === typeAccount.InActive?<EyeIcon className="w-7 h-7"/>:"" }
+                                            {item.status === typeAccount.Active ? <EyeSlashIcon className="w-7 h-5"/>
+                                            :item.status === typeAccount.InActive?<EyeIcon className="w-7 h-5"/>:"" }
                                         </button>
                                     )
                                 )}

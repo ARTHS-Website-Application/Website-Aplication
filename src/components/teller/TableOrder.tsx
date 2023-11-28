@@ -30,9 +30,9 @@ const TableOrder = ({ data }: Props) => {
                             Số điện thoại
                         </th>
 
-                        <th scope="col" className=" ">
+                        {/* <th scope="col" className=" ">
                             Loại đơn
-                        </th>
+                        </th> */}
                         <th scope="col" className=" ">
                             Tổng tiền (VND)
                         </th>
@@ -58,9 +58,9 @@ const TableOrder = ({ data }: Props) => {
                             <td className="">
                                 {item.customerPhoneNumber}
                             </td>
-                            <td className="">
+                            {/* <td className="">
                                 {item.orderType}
-                            </td>
+                            </td> */}
                             <td className="">
                                 {formatPrice(item.totalAmount)}
                             </td>

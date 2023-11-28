@@ -45,17 +45,18 @@ export class Private {
             }
             return await axiosPrivate.post(`/${checkRole}s`, dataCustomer)
 
-        }else{
+        } else {
             return await axiosPrivate.post(`/${checkRole}s`, data)
         }
     }
 
-    // updateAccount = async (accountId: string,role:string, data: itemStaffProduct<string,number>) => {
-    //     const axiosPrivate = userAxiosPrivate();
-    //         return await axiosPrivate.put(`/orders/offline/${accountId}`, data)
-
-
-
+    updateAccount = async (idAccount: string, role: string, status: string) => {
+        const axiosPrivate = userAxiosPrivate();
+        const checkRole = role.toLowerCase();
+        const data={
+            status:status
+        }
+        return await axiosPrivate.put(`/${checkRole}s/${idAccount}`,data)
+    }
 }
-
 export const adminService = new Private();

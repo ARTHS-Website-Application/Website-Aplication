@@ -223,7 +223,7 @@ const RevenueChart = () => {
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                         <div className="border border-gray-200 rounded-lg p-4">
                             <h3 className="text-xl font-semibold text-gray-800 mb-2">Tổng Doanh Thu</h3>
-                            <p className="text-gray-600">{formatPrice(calculateTotalAnnualRevenue(staticsData)) }</p>
+                            <p className="text-gray-600">{formatPrice(calculateTotalAnnualRevenue(staticsData))} VNĐ</p>
                         </div>
                         <div className="border border-gray-200 rounded-lg p-4">
                             <h3 className="text-xl font-semibold text-gray-800 mb-2">Tổng Đơn Hàng</h3>
@@ -257,9 +257,9 @@ const RevenueChart = () => {
             {modalContent.transactions.length > 0 && (
                 <div className="mt-5">
                     <h3 className="text-xl font-semibold mb-2">Chi Tiết Doanh Thu - {modalContent.month}</h3>
-                    <div className="overflow-auto max-h-[400px]"> {/* Adjust max height as needed */}
+                    <div className="overflow-auto max-h-[400px] bg-white"> {/* Adjust max height as needed */}
                         <table className="w-full text-sm text-left text-gray-900">
-                            <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                            <thead className="text-xs text-white uppercase bg-main dark:bg-gray-700 dark:text-gray-400">
                                 <tr>
                                     <th scope="col" className="py-3 px-6">Ngày giao dịch</th>
                                     <th scope="col" className="py-3 px-6">Mã đơn hàng</th>

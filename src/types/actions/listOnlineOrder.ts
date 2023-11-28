@@ -42,7 +42,8 @@ export interface listOnlineOrder<T, N> {
 export interface itemOnlineOrder<T, N> {
     id: T,
     shippingMoney: N,
-    customerPhoneNumber:N,
+    shippingCode: T
+    customerPhoneNumber: N,
     customer: {
         accountId: T,
         phoneNumber: T,
@@ -99,10 +100,10 @@ export interface callUpdateOnlineOrder<T> {
     cancellationReason: T
 }
 
-export interface payloadTranSport<T,N> {
+export interface payloadTranSport<T, N> {
     type: "create_transport",
-    data: callTranSport<T,N>,
-    statusOnline:callUpdateOnlineOrder<T>
+    data: callTranSport<T, N>,
+    statusOnline: callUpdateOnlineOrder<T>
 }
 export interface callTranSport<T, N> {
     orderId: T,
@@ -112,4 +113,39 @@ export interface callTranSport<T, N> {
     length: N,
     width: N,
     height: N
+}
+
+export interface selectorTransport {
+    transportReducer: {
+        transportInfor:dataTransport
+        showError: string | null;
+    }
+}
+
+export interface storeTransport {
+    showError: string | null;
+    transportInfor:dataTransport|null
+}
+export interface transportSaga {
+    showError: string | null,
+    data: dataTransport
+}
+export interface dataTransport {
+    order_code: string
+    sort_code: string
+    trans_type: string
+    ward_encode: string
+    district_encode: string
+    fee: {
+        main_service: number
+        insurance: number
+        station_do: number
+        station_pu: number
+        return: number
+        r2s: number
+        coupon: number
+        cod_failed_fee: number
+    }
+    total_fee: string
+    expected_delivery_time: Date
 }

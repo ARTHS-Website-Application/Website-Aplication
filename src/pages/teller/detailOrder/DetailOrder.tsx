@@ -177,11 +177,14 @@ const DetailOrder = () => {
                   ) : data?.status === statusOrder.Paid ?
                     (
                       <Link to="/manage-order/list-all-order/paid-order" className="hover:text-main">Danh sách đơn đã thanh toán</Link>
+                    ): data?.status === statusOrder.Repairing ?
+                    (
+                      <Link to="/manage-order/list-all-order/paid-order" className="hover:text-main">Danh sách đơn đang sửa</Link>
                     ) : (
                       <Link to="/manage-order/list-all-order/history-order" className="hover:text-main">Lịch sử đơn hàng</Link>
                     )}
-              <ChevronRightIcon className="w-5 h-5" />
-              <p>Chi tiết đơn hàng</p>
+              <ChevronRightIcon className="w-5 h-5 " />
+              <p className='text-main'>Chi tiết đơn hàng</p>
             </div>
             {/* Thông tin người dùng */}
             <div className='flex space-x-5 py-3'>
@@ -190,6 +193,7 @@ const DetailOrder = () => {
                     ${data?.status === statusOrder.Paid ? "bg-[#E7F4EE] text-[#0D894F]" :
                     data?.status === statusOrder.Finished ? "bg-[#E7F4EE] text-[#083b0db5]" :
                       data?.status === statusOrder.Processing ? "bg-[#bac5e9] text-blue-500" :
+                      data?.status === statusOrder.Repairing ? "bg-[#d8e0c0] text-[#6b6921b5]" :
                         data?.status === statusOrder.WaitForPay ? "bg-[#FBEABC] text-[#90530C]" :
                           data?.status === statusOrder.Canceled ? "bg-[#f2a8a9] text-[#900c0c]" :
                             ""}`}>
@@ -437,7 +441,7 @@ const DetailOrder = () => {
                             <div className="w-[11%] text-center">
                               <p>{formatPrice(item?.repairService?.price)}</p>
                             </div>
-                            {detailOrder?.status === statusOrder.Finished &&
+                            {detailOrder?.status === statusOrder.Finished && item?.motobikeProduct?.installationFee>0 &&
                               (item?.warrantyEndDate !== null && (new Date(Date.parse(item.warrantyEndDate.toString()) + 7 * 60 * 60 * 1000)) >= new Date()
                                 || item?.warrantyHistories?.length > 0) && (
                                 <div className="w-[5%] flex items-center justify-center relative">

@@ -1,48 +1,37 @@
-import { postTransport } from '@/actions/onlineOrder';
-import { statusOrder } from '@/types/typeOrder';
-import { useState } from 'react'
+import { resetError } from '@/actions/userInfor';
 import { useDispatch } from 'react-redux';
+import LoadingCreateUpdate from '../LoadingCreateUpdate';
 
 type Props = {
     onClose: () => void;
     isVisible: boolean;
-    idOrder: string;
+    isLoading:boolean,
+    showCheckError:string|null
+    showError:string
+    setShowError:React.Dispatch<React.SetStateAction<string>>,
+    addNote:string,
+    setAddNote:React.Dispatch<React.SetStateAction<string>>,
+    addContent:string, 
+    setAddContent:React.Dispatch<React.SetStateAction<string>>,
+    addWeight:number,
+    setAddWeight:React.Dispatch<React.SetStateAction<number>>,
+    addLength:number,
+    setAddLength:React.Dispatch<React.SetStateAction<number>>,
+    addWidth:number,
+    setAddWidth:React.Dispatch<React.SetStateAction<number>>,
+    addHeight:number,
+    setAddHeight:React.Dispatch<React.SetStateAction<number>>,
+    handleCreateTransport:()=>void,
+
 }
 
-const CreateTransport = ({ isVisible, onClose, idOrder }: Props) => {
-    const dispatch = useDispatch();
-    const [showError, setShowError] = useState<string>('');
-    const [addNote, setAddNote] = useState<string>('');
-    const [addContent, setAddContent] = useState<string>('');
-    const [addWeight, setAddWeight] = useState<number>(0);
-    const [addLength, setAddLength] = useState<number>(0);
-    const [addWidth, setAddWidth] = useState<number>(0);
-    const [addHeight, setAddHeight] = useState<number>(0);
+const CreateTransport = ({ isVisible, onClose,isLoading,showCheckError,showError,setShowError,
+    setAddNote,setAddContent,setAddLength,setAddWidth,setAddWeight,setAddHeight,handleCreateTransport
 
+}: Props) => {
+    const dispatch = useDispatch();
     if (!isVisible) {
         return null;
-    }
-    const handleCreateTransport = () => {
-        const data = {
-            orderId: idOrder,
-            note: addNote,
-            content: addContent,
-            weight: addWeight,
-            length: addLength,
-            width: addWidth,
-            height: addHeight
-        }
-        console.log("data",data);
-        const status = {
-            status: statusOrder.Transport,
-            cancellationReason: "",
-        }
-        if (addNote && addContent && addLength && addWidth && addHeight && addWeight) {
-            dispatch(postTransport(data, status))
-            setShowError('')
-        } else {
-            setShowError('Không được bỏ trống')
-        }
     }
     return (
         <div className="fixed inset-0 bg-black bg-opacity-25 backdrop-blur-sm flex justify-center items-center">
@@ -73,7 +62,7 @@ const CreateTransport = ({ isVisible, onClose, idOrder }: Props) => {
                     </div>
                     <div className='grid grid-cols-2 justify-items-center gap-3 '>
                         <div className='flex items-center space-x-3 pt-3 font-semibold '>
-                            <p className='text-[17px]'>Cân nặng(kg):</p>
+                            <p className='text-[17px]'>Cân nặng(g):</p>
                             <input type="number"
                                 className='w-[50px] outline-none border-b-2 border-gray-600 text-center text-[15px]'
                                 min={1}
@@ -126,7 +115,7 @@ const CreateTransport = ({ isVisible, onClose, idOrder }: Props) => {
                         <p className='text-red-700 text-center text-[18px] font-semibold pt-3'>{showError}</p>
                     ) : ""}
                 </div>
-
+                {showCheckError !== null ? <p className="text-red-800 text-center">Đã có lỗi, hãy kiểm tra lại thông tin đơn hàng</p> : ""}
 
                 <div className="font-bold text-white flex flex-row-reverse justify-center space-x-5 space-x-reverse pt-[10px]">
 
@@ -142,12 +131,14 @@ const CreateTransport = ({ isVisible, onClose, idOrder }: Props) => {
                         onClick={() => {
                             onClose();
                             setShowError('');
+                            dispatch(resetError());
                         }}
                     >
                         Hủy
                     </button>
                 </div>
             </div>
+            {isLoading ? <LoadingCreateUpdate /> : ""}
         </div>
     )
 }

@@ -6,6 +6,10 @@ const linkRole = [
     name: "Danh sách đơn mới"
   },
   {
+    to: '/manage-order/list-all-order/repair-order',
+    name: "Danh sách đơn đang sửa"
+  },
+  {
     to: '/manage-order/list-all-order/wait-paid-order',
     name: "Danh sách đơn chờ thanh toán"
   },

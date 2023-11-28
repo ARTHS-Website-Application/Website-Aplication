@@ -2,13 +2,12 @@ import { call, put, takeEvery } from 'redux-saga/effects';
 import { userInfor } from '../../../constants/mainConstants';
 import { privateService } from '@/services/privateService';
 import { AxiosResponse } from 'axios';
-import { ShowProfileFailed, ShowProfileSuccess, createAccountFailed, getAccount, getAccountFailed, getAccountSuccess, getAllAccount, getAllAccountSuccess, getFilterAccount, getFilterAccountSuccess, getFilterNotAccountSuccess, getNotAccountSuccess, selectStaffFailed, selectStaffSuccess } from '@/actions/userInfor';
-import { createAccounts, listAccounts, listAllAccounts, listFilterAccounts, listNotAccounts, listStaff } from '@/constants/secondaryConstants';
+import { ShowProfileFailed, ShowProfileSuccess, createAccountFailed, createAccountSuccess, getAccount, getAccountFailed, getAccountSuccess, getAllAccount, getAllAccountSuccess, getFilterAccount, getFilterAccountSuccess, getFilterNotAccount, getFilterNotAccountSuccess, getNotAccount, getNotAccountSuccess, selectStaffFailed, selectStaffSuccess } from '@/actions/userInfor';
+import { createAccounts, listAccounts, listAllAccounts, listFilterAccounts, listNotAccounts, listStaff, updateAccount } from '@/constants/secondaryConstants';
 import { payloadFilterAccount, payloadFilterNotAccount, payloadListAccount, payloadListNotAccount } from '@/types/actions/listAccount';
 import { adminService } from '@/services/adminService';
-import { payloadCreateAccount } from '@/types/actions/createUpdateAccount';
+import { payloadCreateAccount, payloadUpdateAccount } from '@/types/actions/createUpdateAccount';
 import { typeAccount } from '@/types/typeAuth';
-import { showSuccessAlert } from '@/constants/chooseToastify';
 
 function* userProfile() {
     try {
@@ -45,29 +44,46 @@ function* getListStaff() {
 
 function* postAccount(payload: payloadCreateAccount<string>) {
     try {
-        const resp: AxiosResponse = yield call(adminService.postAccount,payload.role, payload.data);
+        const resp: AxiosResponse = yield call(adminService.postAccount, payload.role, payload.data);
         const { status, data } = resp;
         if (data && status === 201) {
             yield put(getAllAccount());
             yield put(getAccount(typeAccount.InActive));
-            const data = {
+            const dataFilter = {
                 pageNumber: 0,
                 status: typeAccount.InActive,
                 fullName: "",
             }
-            yield put(getFilterAccount(data));
-            showSuccessAlert('Cập nhật thành công');
+            yield put(getFilterAccount(dataFilter));
+            yield put(createAccountSuccess(data));
         } else {
-            console.log("data",data)
             yield put(createAccountFailed(data));
         }
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
         const msg: string = error.response.data.Message;
-        console.log("msg",msg);
+        console.log("msg", msg);
         yield put(createAccountFailed(msg));
     }
+}
 
+function* putAccount(payload: payloadUpdateAccount<string,number>) {
+    try {
+        const resp: AxiosResponse = yield call(adminService.updateAccount, payload.idAccount,payload.role,payload.status);
+        const { status, data } = resp;
+        if (data && status === 201) {
+            yield put(getAllAccount());
+            yield put(getAccount(typeAccount.InActive));
+            yield put(getNotAccount(typeAccount.InActive));
+            yield put(getFilterAccount(payload.data));
+            yield put(getFilterNotAccount(payload.data));
+        }
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
+        const msg: string = error.response.data.Message;
+        console.log("msg", msg);
+        yield put(createAccountFailed(msg));
+    }
 }
 
 
@@ -161,6 +177,7 @@ export function* lookupUser() {
     yield takeEvery(userInfor.GET_USER_INFO, userProfile);
     yield takeEvery(listStaff.LIST_STAFF, getListStaff);
     yield takeEvery(createAccounts.CREATE_ACCOUNT, postAccount);
+    yield takeEvery(updateAccount.UPDATE_ACCOUNT, putAccount);
     yield takeEvery(listAllAccounts.LIST_ALL_ACCOUNT, getListAllAccount);
     yield takeEvery(listAccounts.LIST_ACCOUNT, getListAccount);
     yield takeEvery(listNotAccounts.LIST_NOT_ACCOUNT, getListNotAccount);
