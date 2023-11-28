@@ -10,10 +10,10 @@ const roleOwner = [
         to: '/owner',
         name: 'Trang chủ',
     },
-    {
-        to: '/manage-employees',
-        name: 'Quản lý nhân viên',
-    },
+    // {
+    //     to: '/manage-employees',
+    //     name: 'Quản lý nhân viên',
+    // },
     {   
         to: "/manage-products",
         name: 'Quản lý sản phẩm',
@@ -23,11 +23,11 @@ const roleOwner = [
         subMenu: [
             {
                 name:'Đơn hàng online',
-                to:'/online-order-owner'
+                to:'/manage-orders-owner/online-order'
             },
             {
                 name: "Đơn hàng offline",
-                to: "/manage-orders-owner",
+                to: "/manage-orders-owner/offline-order/history-order",
             },
         ],
     },
@@ -41,10 +41,10 @@ const roleOwner = [
     },
 ]
 const roleTeller = [
-    {
-        to: '/teller',
-        name: 'Trang chủ',
-    },
+    // {
+    //     to: '/teller',
+    //     name: 'Trang chủ',
+    // },
     {
         name: 'Quản lý đơn hàng',
         subMenu: [

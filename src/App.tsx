@@ -53,6 +53,12 @@ import ListPaidOrder from './pages/teller/listPaidOrder/ListPaidOrder';
 import ListRepairOrder from './pages/teller/listRepairOrder/ListRepairOrder';
 import ManageOrderOnline from './pages/owner/manageOrderOnline/ManageOrderOnline';
 import ListGhn from './pages/ghn/ListGhn';
+import ManageOrderOffline from './pages/owner/manageOrderOffline/ManageOrderOffline';
+import DetailOfflineOrder from './pages/owner/detailOfflineOrder/DetailOfflineOrder';
+import DetailOnlineOrderOwner from './pages/owner/detailOnlineOrderOwner/DetailOnlineOrderOwner';
+import CanceledOrderOwner from './pages/owner/canceledOrderOwner/CanceledOrderOwner';
+import FinishedOrderOwner from './pages/owner/finishedOrderOwner/FinishedOrderOwner';
+import HistoryOrderOwner from './pages/owner/historyOrderOwner/HistoryOrderOwner';
 
 
 const ROLES = {
@@ -79,8 +85,8 @@ function App() {
         {/* private router */}
 
         <Route element={<PersistLogin />}>
-        <Route>
-            <Route path="/ghn" element={<ListGhn/>} />
+          <Route>
+            <Route path="/ghn" element={<ListGhn />} />
           </Route>
           <Route element={<RequireAuth allowedRoles={ROLES.Admin} />}>
             <Route path="/" element={<Home />} />
@@ -130,16 +136,17 @@ function App() {
               <Route path=":productId" element={<ProductDetail />} />
               <Route path="update-product/:productId" element={<UpdateProduct />} />
             </Route>
-
             <Route path="manage-orders-owner" element={<ManageOrderOwner />}>
-              <Route path="history-order" element={<HistoryOrder />} />
+              <Route path="offline-order" element={<ManageOrderOffline />}>
+                <Route path="history-order" element={<HistoryOrderOwner />} />
+              </Route>
+              <Route path="online-order" element={<ManageOrderOnline />}>
+                <Route path="list-order-finish" element={<FinishedOrderOwner />} />
+                <Route path="list-order-canceled" element={<CanceledOrderOwner />} />
+              </Route>
+              <Route path=":orderId" element={<DetailOfflineOrder />} />
+              <Route path="online/:orderId" element={<DetailOnlineOrderOwner />} />
             </Route>
-            <Route path="online-order-owner" element={<ManageOrderOnline />}>
-              <Route path="list-order-finish" element={<ListOrderFinished />} />
-              <Route path="list-order-canceled" element={<ListOrderCanceled />} />
-            </Route>
-
-
             <Route path="manage-discounts" element={<ManageDiscount />}>
               <Route path="list-discount" element={<ListDiscount />} />
               <Route path="list-not-discount" element={<ListNotDiscount />} />

@@ -16,6 +16,7 @@ import { images } from "@/types/images";
 import { itemWarrantyProduct, selectorWarrantyProduct } from "@/types/actions/listWarranty";
 import LoadingPage from "@/components/LoadingPage";
 import { showSuccessAlert } from "@/constants/chooseToastify";
+import '../../../css/showDiscount.css';
 const UpdateProduct = () => {
     const { productId } = useParams();
     const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -286,7 +287,7 @@ const UpdateProduct = () => {
                                                 value={addDiscount}
                                                 size="lg"
                                                 label="Lựa chọn khuyến mãi"
-                                                className="text-[20px] w-[250px] h-[50px] bg-gray-50"
+                                                className="text-[20px] w-[250px] h-[50px] bg-gray-50 custom-truncate-class"
                                                 onChange={handleAddDiscount}
 
                                             >

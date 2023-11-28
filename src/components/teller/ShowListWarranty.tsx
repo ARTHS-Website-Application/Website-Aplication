@@ -38,9 +38,10 @@ const ShowListWarranty = ({ onClose, isVisible, itemOrder }: Props) => {
                                 <th scope="col" className=" ">
                                     Ngày tạo bảo hành
                                 </th>
-                                <th scope="col" className=" ">
-                                    Số lượng sản phẩm
-                                </th>
+                                {itemOrder?.motobikeProduct
+                                    ? (<th scope="col" className=" ">
+                                        Số lượng sản phẩm
+                                    </th>) : ""}
                                 <th scope="col" className=" ">
                                     Chi tiết sửa chữa
                                 </th>
@@ -53,7 +54,7 @@ const ShowListWarranty = ({ onClose, isVisible, itemOrder }: Props) => {
                             {itemOrder?.warrantyHistories && itemOrder?.warrantyHistories?.map((item, index) => (
                                 <tr key={index}>
                                     <td className="py-3 text-center">
-                                        <div className="flex items-center space-x-3 pl-3">
+                                        <div className="flex items-center justify-center space-x-3">
                                             <img src={item?.handledByNavigation.avatar ??
                                                 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQNL_ZnOTpXSvhf1UaK7beHey2BX42U6solRA&usqp=CAU'}
                                                 alt="" className="rounded-full w-auto h-12" />
@@ -64,11 +65,13 @@ const ShowListWarranty = ({ onClose, isVisible, itemOrder }: Props) => {
                                     <td className="">
                                         {formatDateTime(item.repairDate.toString())}
                                     </td>
+                                    {itemOrder?.motobikeProduct
+                                        ? (<td className="">
+                                            {item?.productQuantity}
+                                        </td>) : ""}
+
                                     <td className="">
-                                        {item?.productQuantity}
-                                    </td>
-                                    <td className="">
-                                        {item?.repairDetails}
+                                        {item?.repairDetails!==""?item?.repairDetails:"Không có gì để ghi"}
                                     </td>
                                     <td className="text-green-700 font-semibold">
                                         {item.status}

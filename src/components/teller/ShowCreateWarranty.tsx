@@ -27,7 +27,7 @@ const ShowCreateWarranty = ({ isVisible, onClose, itemOrder, idOrder, setIsLoadi
     }, [dispatch]);
     const handleCreateWarranty = () => {
         const data = {
-            orderDetailId: itemOrder?.motobikeProduct ? itemOrder?.id : "",
+            orderDetailId: itemOrder?.id ??"",
             handledBy: staffId,
             productQuantity: productQuantity,
             repairDetails: repairDetails,

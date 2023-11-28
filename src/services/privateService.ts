@@ -11,7 +11,8 @@ export class Private {
     }
     getListStaff = async () => {
         const axiosPrivate = userAxiosPrivate();
-        return await axiosPrivate.get(`/staffs`)
+        const endCodeStatus = encodeURIComponent("Đang hoạt động");
+        return await axiosPrivate.get(`/staffs?status=${endCodeStatus}`)
     }
 
     //service

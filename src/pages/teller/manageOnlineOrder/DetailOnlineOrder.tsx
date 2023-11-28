@@ -27,12 +27,12 @@ const DetailOnlineOrder = () => {
   const [showError, setShowError] = useState<boolean>(false);
   const [showCheckError, setShowCheckError] = useState<string | null>(null)
   const [showErrorTransport, setShowErrorTransport] = useState<string>('');
-    const [addNote, setAddNote] = useState<string>('');
-    const [addContent, setAddContent] = useState<string>('');
-    const [addWeight, setAddWeight] = useState<number>(0);
-    const [addLength, setAddLength] = useState<number>(0);
-    const [addWidth, setAddWidth] = useState<number>(0);
-    const [addHeight, setAddHeight] = useState<number>(0);
+  const [addNote, setAddNote] = useState<string>('');
+  const [addContent, setAddContent] = useState<string>('');
+  const [addWeight, setAddWeight] = useState<number>(0);
+  const [addLength, setAddLength] = useState<number>(0);
+  const [addWidth, setAddWidth] = useState<number>(0);
+  const [addHeight, setAddHeight] = useState<number>(0);
 
   console.log('id', orderId);
   useEffect(() => {
@@ -60,11 +60,11 @@ const DetailOnlineOrder = () => {
       showSuccessAlert('Gửi thông tin đơn hàng thành công');
       dispatch(resetError());
       setIsLoadingCreate(false)
-  } else {
+    } else {
       setShowCheckError(itemError);
       setIsLoadingCreate(false)
-  }
-}, [dispatch, itemError, showItem])
+    }
+  }, [dispatch, itemError, showItem])
 
   //chỉnh format tiền
   const formatPrice = (price: number) => {
@@ -82,32 +82,32 @@ const DetailOnlineOrder = () => {
       setIsLoading(true)
     }
   }
-    
-    const handleCreateTransport = () => {
-        if(data){
-          setIsLoadingCreate(true);
-          const dataTransport = {
-            orderId: data?.id,
-            note: addNote,
-            content: addContent,
-            weight: addWeight,
-            length: addLength,
-            width: addWidth,
-            height: addHeight
-        }
-        const status = {
-            status: statusOrder.Transport,
-            cancellationReason: "",
-        }
-        if (addNote && addContent && addLength && addWidth && addHeight && addWeight) {
-            dispatch(postTransport(dataTransport, status))
-            setShowErrorTransport('')
-        } else {
-          setShowErrorTransport('Không được bỏ trống')
-        }
-        }
+
+  const handleCreateTransport = () => {
+    if (data) {
+      setIsLoadingCreate(true);
+      const dataTransport = {
+        orderId: data?.id,
+        note: addNote,
+        content: addContent,
+        weight: addWeight,
+        length: addLength,
+        width: addWidth,
+        height: addHeight
+      }
+      const status = {
+        status: statusOrder.Transport,
+        cancellationReason: "",
+      }
+      if (addNote && addContent && addLength && addWidth && addHeight && addWeight) {
+        dispatch(postTransport(dataTransport, status))
+        setShowErrorTransport('')
+      } else {
+        setShowErrorTransport('Không được bỏ trống')
+      }
     }
-    
+  }
+
 
   return (
     <div>
@@ -142,8 +142,8 @@ const DetailOnlineOrder = () => {
                       data?.status === statusOrder.Transport ? "bg-[#e1a157] text-[#90530C]" :
                         data?.status === statusOrder.Confirm ? "bg-[#FBEABC] text-yellow-600" :
                           data?.status === statusOrder.Finished ? "bg-[#6fe46d] text-[#0d890f]" :
-                          data?.status === statusOrder.Canceled ? "bg-red-100 text-red-700" :
-                            ""}`}>
+                            data?.status === statusOrder.Canceled ? "bg-red-100 text-red-700" :
+                              ""}`}>
                   {data?.status}
                 </p>
                 <div className='pt-3 text-[18px] flex justify-between'>
@@ -160,13 +160,13 @@ const DetailOnlineOrder = () => {
                       <ArrowPathRoundedSquareIcon className='w-7 h-7 fill-gray-700' />
                       <p>Loại đơn</p>
                     </div>
-                    {data && data.shippingCode!==null ?(
+                    {data && data.shippingCode !== null ? (
                       <div className='flex space-x-3'>
-                      <LiaShippingFastSolid className='w-7 h-7 fill-gray-700' />
-                      <p>mã vận chuyển</p>
-                    </div>
-                    ):""}
-                    
+                        <LiaShippingFastSolid className='w-7 h-7 fill-gray-700' />
+                        <p>mã vận chuyển</p>
+                      </div>
+                    ) : ""}
+
                   </div>
                   <div className='text-[#1A1C21] font-semibold flex flex-col space-y-6 text-end'>
                     <div>
@@ -184,11 +184,11 @@ const DetailOnlineOrder = () => {
                     <div>
                       {data?.orderType}
                     </div>
-                    {data && data.shippingCode!==null ?(
+                    {data && data.shippingCode !== null ? (
                       <div>
                         {data?.shippingCode}
-                    </div>
-                    ):""}
+                      </div>
+                    ) : ""}
                   </div>
                 </div>
               </div>
@@ -198,7 +198,7 @@ const DetailOnlineOrder = () => {
                 </div>
                 <div className={`text-[18px] pt-3`}>
                   <div className='text-[#1A1C21] font-semibold space-y-7 '>
-                    <div className="flex justify-between items-center"> 
+                    <div className="flex justify-between items-center">
                       <div className='flex space-x-3 pr-3'>
                         <UserIcon className='w-7 h-7 fill-gray-700' />
                         <p>Khách hàng</p>
@@ -231,11 +231,11 @@ const DetailOnlineOrder = () => {
                   <h2 className='text-[20px]'>Danh sách sản phẩm</h2>
                   <h3 className='bg-[#E7F4EE] text-[#0D894F] w-[100px] py-1 text-center rounded-lg'>{data?.orderDetails?.length} sản phẩm</h3>
                 </div>
-                {data?.status === statusOrder.Canceled ?(
+                {data?.status === statusOrder.Canceled ? (
                   <button className="p-2 text-white bg-red-400 hover:bg-red-700 font-semibold rounded-lg"
-                  onClick={()=>setShowError(true)}
+                    onClick={() => setShowError(true)}
                   >Lý do hủy</button>
-                ):""}
+                ) : ""}
               </div>
 
               <div className='overflow-y-scroll h-[30vh] flex flex-col'>
@@ -281,9 +281,18 @@ const DetailOnlineOrder = () => {
 
               </div>
               {/*footer */}
-              <div className='flex justify-end pr-[115px] space-x-[20px] text-main'>
-                <p className='text-[19px] font-semibold'>Tổng cộng:</p>
-                <p className='font-semibold text-[19px]'>{formatPrice(data.totalAmount)} VNĐ</p>
+              <div className='flex justify-end pr-[115px] '>
+                <div className='space-y-3'>
+                  {data.totalAmount < 1000000
+                    ? (<div className="flex text-[15px] font-semibold space-x-[20px] pl-1">
+                      <p className=''>Giá tiền ship:</p>
+                      <p className=''>{formatPrice(20000)} VNĐ</p>
+                    </div>) : ""}
+                  <div className='flex text-main space-x-[20px]'>
+                    <p className='text-[19px] font-semibold'>Tổng cộng:</p>
+                    <p className='font-semibold text-[19px]'>{formatPrice(data.totalAmount)} VNĐ</p>
+                  </div>
+                </div>
               </div>
               {data?.status === statusOrder.Processing || data?.status === statusOrder.Paid ? (
                 <div className='flex justify-end pr-[90px] pt-2'>
@@ -308,15 +317,15 @@ const DetailOnlineOrder = () => {
               setShowError={setShowErrorTransport}
               addNote={addNote}
               setAddNote={setAddNote}
-              addContent={addContent} 
+              addContent={addContent}
               setAddContent={setAddContent}
               addWeight={addWeight}
               setAddWeight={setAddWeight}
-              addLength={addLength} 
+              addLength={addLength}
               setAddLength={setAddLength}
-              addWidth={addWidth} 
+              addWidth={addWidth}
               setAddWidth={setAddWidth}
-              addHeight={addHeight} 
+              addHeight={addHeight}
               setAddHeight={setAddHeight}
               handleCreateTransport={handleCreateTransport}
             />

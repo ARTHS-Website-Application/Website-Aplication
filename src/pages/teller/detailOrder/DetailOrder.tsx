@@ -43,6 +43,7 @@ const DetailOrder = () => {
       setShowDivIndex(-1);
     } else {
       setShowDivIndex(index);
+      setShowDivService(-1);
     }
   }
   const handleShowService = (index: number) => {
@@ -50,6 +51,7 @@ const DetailOrder = () => {
       setShowDivService(-1);
     } else {
       setShowDivService(index);
+      setShowDivIndex(-1);
     }
   }
   useEffect(() => {
@@ -374,7 +376,7 @@ const DetailOrder = () => {
                           <div className="w-[11%] text-center">
                             {formatPrice((item?.quantity * item?.price) + (item?.instUsed === true ? item?.motobikeProduct?.installationFee : 0))}
                           </div>
-                          {detailOrder?.status === statusOrder.Finished &&
+                          {detailOrder?.status === statusOrder.Finished&& item?.motobikeProduct?.installationFee>0 && 
                             (item?.warrantyEndDate !== null && (new Date(Date.parse(item.warrantyEndDate.toString()) + 7 * 60 * 60 * 1000)) >= new Date()
                               || item?.warrantyHistories?.length > 0) && (
                               <div className="w-[5%] flex items-center justify-center relative">
@@ -441,7 +443,7 @@ const DetailOrder = () => {
                             <div className="w-[11%] text-center">
                               <p>{formatPrice(item?.repairService?.price)}</p>
                             </div>
-                            {detailOrder?.status === statusOrder.Finished && item?.motobikeProduct?.installationFee>0 &&
+                            {detailOrder?.status === statusOrder.Finished &&
                               (item?.warrantyEndDate !== null && (new Date(Date.parse(item.warrantyEndDate.toString()) + 7 * 60 * 60 * 1000)) >= new Date()
                                 || item?.warrantyHistories?.length > 0) && (
                                 <div className="w-[5%] flex items-center justify-center relative">

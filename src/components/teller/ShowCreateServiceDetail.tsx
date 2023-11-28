@@ -30,7 +30,7 @@ const ShowCreateServiceDetail = ({ onClose, isVisible, itemDetail }: Props) => {
                 <div className="bg-gray-600 py-2 rounded-t-lg flex justify-between items-center pr-1">
                     <div className="w-full flex flex-row justify-between py-[5px] text-white ">
                         <p className="ml-2 mt-1 font-bold">
-                            Chi tiết sản phẩm
+                            Chi tiết dịch vụ
                         </p>
                     </div>
                     <button onClick={onClose}>
@@ -73,7 +73,7 @@ const ShowCreateServiceDetail = ({ onClose, isVisible, itemDetail }: Props) => {
                                 </div>
                                 <div className=' py-3 space-y-3'>
                                     <div className='space-y-3'>
-                                        <p className='font-semibold'>Giá sản phẩm:</p>
+                                        <p className='font-semibold'>Giá dịch vụ:</p>
                                         <div className='flex items-center space-x-3 text-[20px]'>
                                             <p className={`${data?.discountAmount !== 0 ? "line-through text-gray-400 text-[17px]" : "text-main"}`}>{formatPrice(data?.price)}VNĐ</p>
                                             {data?.discountAmount !== 0 && <p className='text-main'>{data?.discountAmount && data?.price ? formatPrice(data?.price * (1 - data?.discountAmount / 100)) : 0}VNĐ</p>}

@@ -11,7 +11,7 @@ import { dataDiscount, itemDiscount, selectorDiscount } from "@/types/actions/li
 import Description from "@/components/Description";
 import { itemWarrantyProduct, selectorWarrantyProduct } from "@/types/actions/listWarranty";
 import LoadingPage from "@/components/LoadingPage";
-
+import '../../../css/showDiscount.css';
 const CreateProduct = () => {
   const errorRef = useRef<HTMLParagraphElement | null>(null);
   const [showVehicle, setShowVehicle] = useState<boolean>(false);
@@ -339,7 +339,7 @@ const CreateProduct = () => {
                     <Select
                       size="lg"
                       label="Lựa chọn khuyến mãi"
-                      className="text-[20px] w-[250px] h-[50px] bg-gray-50"
+                      className="text-[20px] w-[250px] h-[50px] bg-gray-50 custom-truncate-class"
                       onChange={handleAddDiscount}
                     >
                       {dataDiscount

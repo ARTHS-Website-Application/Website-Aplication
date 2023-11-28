@@ -116,6 +116,7 @@ const RevenueChart = () => {
         ]
     });
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const onChartClick = (_event: any, elements: string | any[]) => {
         if (elements.length === 0) return;
 
@@ -255,18 +256,18 @@ const RevenueChart = () => {
 
             </div>
             {modalContent && modalContent.transactions && modalContent.transactions.length > 0 && (
-                <div className="mt-5">
-                    <h3 className="text-xl font-semibold mb-2">Chi Tiết Doanh Thu - {modalContent.month}</h3>
+                <div className="mt-5 mb-5 bg-white">
+                    <h3 className="text-xl font-semibold mb-2 px-2 py-3">Chi Tiết Doanh Thu - {modalContent.month}</h3>
                     <div className="overflow-auto max-h-[400px] bg-white"> {/* Adjust max height as needed */}
                         <table className="w-full text-sm text-left text-gray-900">
                             <thead className="text-xs text-white uppercase bg-main dark:bg-gray-700 dark:text-gray-400">
                                 <tr>
-                                    <th scope="col" className="py-3 px-6">Ngày giao dịch</th>
-                                    <th scope="col" className="py-3 px-6">Mã đơn hàng</th>
-                                    <th scope="col" className="py-3 px-6">Loại Giao Dịch</th>
-                                    <th scope="col" className="py-3 px-6">Số Tiền</th>
-                                    <th scope="col" className="py-3 px-6">Phương Thức Thanh Toán</th>
-                                    <th scope="col" className="py-3 px-6">Loại</th>
+                                    <th scope="col" className="py-3 px-6 border border-gray-300">Ngày giao dịch</th>
+                                    <th scope="col" className="py-3 px-6 border border-gray-300">Mã đơn hàng</th>
+                                    <th scope="col" className="py-3 px-6 border border-gray-300">Loại Giao Dịch</th>
+                                    <th scope="col" className="py-3 px-6 border border-gray-300">Số Tiền</th>
+                                    <th scope="col" className="py-3 px-6 border border-gray-300">Phương Thức Thanh Toán</th>
+                                    <th scope="col" className="py-3 px-6 border border-gray-300">Loại</th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-gray-200 text-gray-700">
