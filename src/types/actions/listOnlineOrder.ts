@@ -42,6 +42,7 @@ export interface listOnlineOrder<T, N> {
 export interface itemOnlineOrder<T, N> {
     id: T,
     shippingMoney: N,
+    shippingCode: T,
     customerPhoneNumber:N,
     customer: {
         accountId: T,
