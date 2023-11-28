@@ -126,7 +126,7 @@ const UpdateService = () => {
       price: priceProduct,
       description: descriptionProduct,
       duration: duration,
-      reminderInterval: reminderInterval,
+      reminderInterval: reminderInterval??"",
       discountId: addDiscount,
       warrantyDuration: addWarranty,
       images: images
@@ -201,7 +201,7 @@ const UpdateService = () => {
                 <div className="flex justify-between py-5 text-[#6B7280] text-[19px] px-3">
                   <div className="flex flex-col space-y-3">
                     <div className="flex space-x-1">
-                      <p>Thời gian làm dịch vụ</p>
+                      <p>Thời gian làm dịch vụ (phút)</p>
                       <p className="text-red-800">*</p>
                     </div>
                     <div className="flex items-center space-x-2">
