@@ -1,15 +1,15 @@
 import SearchFilter from '@/components/SearchFilter'
 import Pagination from '@/components/Pagination'
 import { useEffect, useState } from 'react'
-import TableOrder from '@/components/teller/TableOrder'
 import { useDispatch, useSelector } from 'react-redux'
 import { getFilterOrderPaid, getOrderPaid } from '@/actions/order'
 import { itemOrder, listOrder, selectorOrder } from '@/types/actions/listOrder'
 import { statusOrder } from '@/types/typeOrder'
 import LoadingPage from '@/components/LoadingPage'
+import TableOrderOwner from '@/components/owner/TableOrderOwner'
 
 
-const HistoryOrder = () => {
+const HistoryOrderOwner = () => {
     const dispatch = useDispatch()
     const orderPaidInfor: listOrder<string, number> = useSelector((state: selectorOrder<string, number>) => state.orderReducer.orderPaidInfor);
     const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -25,7 +25,7 @@ const HistoryOrder = () => {
     }, [orderPaidInfor.pagination?.totalRow]);
 
     useEffect(() => {
-        if (addSearch !=="") {
+        if (addSearch !== "") {
             if (chooseSelect === "name") {
                 const data = {
                     customerName: addSearch,
@@ -90,7 +90,7 @@ const HistoryOrder = () => {
                         {/* Table */}
                         {orderData?.length > 0
                             ? (<div className={`${orderData?.length < 12 ? "h-[67vh]" : ""}`}>
-                                <TableOrder data={orderData} />
+                                <TableOrderOwner data={orderData} />
                             </div>)
                             : (
                                 <div className='flex justify-center items-center h-[67vh]'>
@@ -112,4 +112,4 @@ const HistoryOrder = () => {
     )
 }
 
-export default HistoryOrder
+export default HistoryOrderOwner

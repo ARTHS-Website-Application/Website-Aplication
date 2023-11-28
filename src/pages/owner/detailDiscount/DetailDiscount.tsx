@@ -44,9 +44,9 @@ const DetailDiscount = () => {
         ? <LoadingPage />
         : (<div>
           <div className="flex justify-between py-5">
-            <div className="bg-white flex flex-col justify-center items-center rounded-lg py-3 w-[58%]">
+            <div className="bg-white flex flex-col shadow-lg justify-center items-center rounded-lg py-2 w-[58%]">
               {data?.imageUrl ? (
-                <div className='bg-white shadow-lg p-2 rounded-lg'>
+                <div className='  px-2 rounded-lg'>
                   <img
                     src={data?.imageUrl}
                     alt=""

@@ -15,6 +15,7 @@ import { Option, Select } from '@material-tailwind/react';
 import { itemWarrantyProduct, selectorWarrantyProduct } from '@/types/actions/listWarranty';
 import { dataDiscount, itemDiscount, selectorDiscount } from '@/types/actions/listDiscout';
 import { getDiscountChoose } from '@/actions/discount';
+import '../../../css/showDiscount.css';
 const UpdateService = () => {
   const { serviceId } = useParams();
   const dispatch = useDispatch();
@@ -269,7 +270,7 @@ const UpdateService = () => {
                     <Select
                       size="lg"
                       label="Lựa chọn khuyến mãi"
-                      className="text-[20px] w-[250px] h-[50px] bg-gray-50"
+                      className="text-[20px] w-[250px] h-[50px] bg-gray-50 custom-truncate-class"
                       value={addDiscount}
                       onChange={handleAddDiscount}
                     >

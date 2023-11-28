@@ -11,6 +11,7 @@ import { WarrantyProduct } from '@/actions/product';
 import { getDiscountChoose } from '@/actions/discount';
 import { Select, Option } from '@material-tailwind/react';
 import LoadingPage from '@/components/LoadingPage';
+import '../../../css/showDiscount.css';
 const CreateService = () => {
   const dispatch = useDispatch();
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -220,7 +221,7 @@ const CreateService = () => {
                   <Select
                     size="lg"
                     label="Lựa chọn khuyến mãi"
-                    className="text-[20px] w-[250px] h-[50px] bg-gray-50"
+                    className="text-[20px] w-[250px] h-[50px] bg-gray-50 custom-truncate-class"
                     onChange={handleAddDiscount}
                   >
                     {dataDiscount?.length > 0

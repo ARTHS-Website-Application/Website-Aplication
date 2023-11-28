@@ -1,30 +1,25 @@
 import { useEffect } from 'react'
-import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom'
-const linkRole = [
-    {
-        to: '/manage-orders-owner/online-order/list-order-finish',
-        name: "Lịch sử đơn hàng"
-    },
+import {Outlet, useLocation, useNavigate } from 'react-router-dom'
+// const linkRole = [
+//     {
+//         to: '/manage-orders-owner/offline-order/history-order',
+//         name: "Lịch sử đơn hàng"
+//     },
 
-    {
-        to: '/manage-orders-owner/online-order/list-order-canceled',
-        name: "Đơn hàng đã hủy"
-    }
+// ]
 
-]
-
-const ManageOrderOnline = () => {
+const ManageOrderOffline = () => {
     const location = useLocation();
     const navigate = useNavigate();
 
     useEffect(() => {
-        if (location.pathname === '/manage-orders-owner/online-order') {
-            navigate('/manage-orders-owner/online-order/list-order-finish');
+        if (location.pathname === '/manage-orders-owner/offline-order') {
+            navigate('/manage-orders-owner/offline-order/history-order');
         }
     }, [location.pathname, navigate]);
     return (
         <div className="w-full min-h-full">
-            <div className="flex space-x-4 font-bold">
+            {/* <div className="flex space-x-4 font-bold">
                 {linkRole.map((route, index) => (
                     <NavLink key={index} to={route.to}
                         className={({ isActive }) =>
@@ -37,7 +32,7 @@ const ManageOrderOnline = () => {
                         {route.name}
                     </NavLink>
                 ))}
-            </div>
+            </div> */}
             <div className='pt-5 w-full h-full'>
                 <Outlet />
             </div>
@@ -46,4 +41,4 @@ const ManageOrderOnline = () => {
     )
 }
 
-export default ManageOrderOnline
+export default ManageOrderOffline

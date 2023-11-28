@@ -352,6 +352,19 @@ const UpdateDiscount = () => {
                 onClick={handleCreateDiscount}
               >Cập nhật khuyến mãi</button>
               <button className='w-[200px] h-[60px] text-center bg-slate-300 text-[20px] rounded-lg text-white font-semibold bg-red-700'
+                onClick={() => {
+                  setNameDiscount(detailDiscountInfor?.title);
+                  setNumberDiscount(detailDiscountInfor?.discountAmount);
+                  setStartDate(new Date(detailDiscountInfor?.startDate));
+                  setEndDate(new Date(detailDiscountInfor?.endDate));
+                  if (new Date(detailDiscountInfor?.endDate) < new Date()) {
+                    setErrorDate('Ngày kết thúc hiện tại đã nhỏ hơn ngày hiện tại, hãy cập nhật lại.');
+                  }
+                  setImagesUrl(detailDiscountInfor?.imageUrl);
+                  setDataProduct(detailDiscountInfor?.motobikeProducts);
+                  setDataService(detailDiscountInfor?.repairService);
+                  setDescriptionProduct(detailDiscountInfor?.description);
+                }}
               >Hủy</button>
             </div>
           </div>
