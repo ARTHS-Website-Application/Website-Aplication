@@ -152,14 +152,14 @@ const RevenueChart = () => {
     }, [revenueInfo.pagination?.totalRow]);
 
 
-    useEffect(()=>{
+    useEffect(() => {
         const data = {
             number: paginationNumber,
             status: typeActiveProduct.Active,
         }
         dispatch(ShowProduct(data));
 
-    },[dispatch, paginationNumber])
+    }, [dispatch, paginationNumber])
 
     useEffect(() => {
         const filters = {
@@ -202,31 +202,31 @@ const RevenueChart = () => {
                     ],
                 };
             });
-            const currentMonthTransactions = revenueData.filter(item => new Date(item.transactionDate).getMonth() === currentMonth);
-            setModalContent({ month: `Tháng ${currentMonth + 1}`, transactions: currentMonthTransactions });
+            //const currentMonthTransactions = revenueData.filter(item => new Date(item.transactionDate).getMonth() === currentMonth);
+            setModalContent({ month: `Tháng ${currentMonth + 1}`, transactions: revenueData });
 
             const currentMonthStatics = staticsData.filter(item => new Date(item.transactionDate).getMonth() === currentMonth);
-            const pieData = processPieChartData(currentMonthStatics );
+            const pieData = processPieChartData(currentMonthStatics);
             setPieChartData(pieData);
         }
     }, [staticsData, revenueData]);
 
-    
-    
+
+
 
     return (
         <>
             <div className="p-3 bg-white shadow rounded-lg w-full flex flex-wrap justify-between mb-3">
                 {/* Thêm phần hiển thị thông tin tổng doanh thu, tổng đơn hàng và tổng sản phẩm ở đây */}
                 <div className="w-full mt-4 p-2">
-                    <h2 className="text-lg font-medium text-gray-800 mb-3">Thông Tin Tổng Hợp</h2>
+                    <h2 className="text-lg font-semibold text-gray-800 mb-3">Thông Tin Tổng Hợp của năm {new Date().getFullYear()}</h2>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                         <div className="border border-gray-200 rounded-lg p-4">
                             <h3 className="text-xl font-semibold text-gray-800 mb-2">Tổng Doanh Thu</h3>
                             <p className="text-gray-600">{formatPrice(calculateTotalAnnualRevenue(staticsData))} VNĐ</p>
                         </div>
                         <div className="border border-gray-200 rounded-lg p-4">
-                            <h3 className="text-xl font-semibold text-gray-800 mb-2">Tổng Đơn Hàng</h3>
+                            <h3 className="text-xl font-semibold text-gray-800 mb-2">Số lượng giao dịch</h3>
                             <p className="text-gray-600">{staticsData.length}</p>
                         </div>
                         <div className="border border-gray-200 rounded-lg p-4">
@@ -239,7 +239,7 @@ const RevenueChart = () => {
             <div className="p-3 bg-white shadow rounded-lg w-full flex flex-wrap justify-between items-center">
                 <div className='w-[65%] p-2'>
                     <div className="border border-gray-200 rounded-lg mb-4 p-2">
-                        <h2 className="text-lg font-medium text-gray-800 mb-3">Biểu Đồ Doanh Thu</h2>
+                        <h2 className="text-lg font-medium text-gray-800 mb-3">Biểu Đồ Doanh Thu Năm {new Date().getFullYear()}</h2>
                         <div className=" h-96"> {/* Set a fixed height */}
                             <Bar data={chartData} options={{ ...options, maintainAspectRatio: false }} />
                         </div>
@@ -247,14 +247,14 @@ const RevenueChart = () => {
                 </div>
 
                 <div className="border border-gray-200 rounded-lg w-full lg:w-1/3 mb-4 p-2">
-                    <h2 className="text-lg font-medium text-gray-800 mb-3">Phân Loại Giao Dịch</h2>
+                    <h2 className="text-lg font-medium text-gray-800 mb-3">Phân Loại Giao Dịch Tháng {selectedMonth + 1}</h2>
                     <div className="h-96"> {/* Set a fixed height */}
                         <Pie data={pieChartData} options={{ ...pieOptions, maintainAspectRatio: false }} />
                     </div>
                 </div>
 
             </div>
-            {modalContent.transactions.length > 0 && (
+            {modalContent && modalContent.transactions && modalContent.transactions.length > 0 && (
                 <div className="mt-5">
                     <h3 className="text-xl font-semibold mb-2">Chi Tiết Doanh Thu - {modalContent.month}</h3>
                     <div className="overflow-auto max-h-[400px] bg-white"> {/* Adjust max height as needed */}
@@ -267,18 +267,17 @@ const RevenueChart = () => {
                                     <th scope="col" className="py-3 px-6">Số Tiền</th>
                                     <th scope="col" className="py-3 px-6">Phương Thức Thanh Toán</th>
                                     <th scope="col" className="py-3 px-6">Loại</th>
-
                                 </tr>
                             </thead>
-                            <tbody>
+                            <tbody className="divide-y divide-gray-200 text-gray-700">
                                 {modalContent.transactions.map((transaction) => (
-                                    <tr key={transaction.id}>
-                                        <td className="py-4 px-6">{formatDateFeedback(transaction.transactionDate.toString())}</td>
-                                        <td className="py-4 px-6">{transaction.orderId}</td>
-                                        <td className="py-4 px-6">{transaction.type}</td>
-                                        <td className="py-4 px-6">{formatPrice(transaction.totalAmount)}</td>
-                                        <td className="py-4 px-6">{transaction.paymentMethod}</td>
-                                        <td className="py-4 px-6">{transaction.orderType}</td>
+                                    <tr key={transaction.id} className="hover:bg-gray-100 transition-all duration-200">
+                                        <td className="py-4 px-6 border border-gray-300">{formatDateFeedback(transaction.transactionDate?.toString())}</td>
+                                        <td className="py-4 px-6 border border-gray-300">{transaction.orderId}</td>
+                                        <td className="py-4 px-6 border border-gray-300">{transaction.type}</td>
+                                        <td className="py-4 px-6 border border-gray-300">{formatPrice(transaction.totalAmount)}</td>
+                                        <td className="py-4 px-6 border border-gray-300">{transaction.paymentMethod}</td>
+                                        <td className="py-4 px-6 border border-gray-300">{transaction.orderType}</td>
                                     </tr>
                                 ))}
                             </tbody>

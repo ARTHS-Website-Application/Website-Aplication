@@ -52,6 +52,7 @@ import UpdateDiscount from './pages/owner/updateDiscount/UpdateDiscount';
 import ListPaidOrder from './pages/teller/listPaidOrder/ListPaidOrder';
 import ListRepairOrder from './pages/teller/listRepairOrder/ListRepairOrder';
 import ManageOrderOnline from './pages/owner/manageOrderOnline/ManageOrderOnline';
+import ListGhn from './pages/ghn/ListGhn';
 
 
 const ROLES = {
@@ -78,7 +79,9 @@ function App() {
         {/* private router */}
 
         <Route element={<PersistLogin />}>
-
+        <Route>
+            <Route path="/ghn" element={<ListGhn/>} />
+          </Route>
           <Route element={<RequireAuth allowedRoles={ROLES.Admin} />}>
             <Route path="/" element={<Home />} />
           </Route>
