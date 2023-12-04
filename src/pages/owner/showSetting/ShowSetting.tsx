@@ -39,7 +39,7 @@ const ShowSetting = () => {
                     <div className='flex items-center space-x-5'>
                         <div className="flex justify-center items-center  border-2 border-white w-1/2 rounded-lg p-3">
                             <div className="flex space-x-5">
-                                <p>Thời gian tối đa sửa 1 xe:</p>
+                                <p>Thời gian làm của 1 nhân viên:</p>
                                 <p>{settingInfor?.workHours} tiếng</p>
                             </div>
                         </div>
