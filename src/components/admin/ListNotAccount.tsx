@@ -58,7 +58,7 @@ const ListNotAccount = () => {
     return (
         <div className="pt-3">
             <div className="flex justify-between items-center px-3">
-                <SearchFilterAccount place={'Tìm kiếm tài khoản'} setAddSearch={setAddSearch} />
+                <SearchFilterAccount place={'Tìm kiếm số điện thoại'} setAddSearch={setAddSearch} />
             </div>
             <div className="">
                 {isLoading

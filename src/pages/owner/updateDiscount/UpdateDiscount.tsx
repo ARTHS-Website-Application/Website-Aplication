@@ -12,29 +12,36 @@ import { detaiDiscount, motorbikeDiscount, repairDiscount, selectorDetailDiscoun
 import ShowProductUpdateDiscount from '@/components/owner/ShowProductUpdateDiscount';
 import ShowServiceUpdateDiscount from '@/components/owner/ShowServiceUpdateDiscount';
 import LoadingCreateUpdate from '@/components/LoadingCreateUpdate';
+import { utcToZonedTime } from 'date-fns-tz';
+import { format } from 'date-fns';
 const UpdateDiscount = () => {
   const dispatch = useDispatch();
   const { discountId } = useParams();
   const [showLoading, setShowLoading] = useState<boolean>(false);
   const detailDiscountInfor: detaiDiscount<string, number> = useSelector((state: selectorDetailDiscount<string, number>) => state.detailDiscountReducer.detailDiscountInfor)
   const [startDate, setStartDate] = useState<Date>(new Date());
-  const [endDate, setEndDate] = useState<Date>();
+  const [endDate, setEndDate] = useState<Date|null>();
   const [errorDate, setErrorDate] = useState<string>('');
   const [showProduct, setShowProduct] = useState<boolean>(false);
   const [showService, setShowService] = useState<boolean>(false);
   const [dataProduct, setDataProduct] = useState<motorbikeDiscount<string, number>[]>([]);
   const [dataService, setDataService] = useState<repairDiscount<string, number>[]>([]);
-  // const formattedStartDate: string | null = startDate ? startDate.toISOString() : null;
-  // const formattedEndDate: string | null = endDate ? endDate.toISOString() : null;
-  const [nameDiscount, setNameDiscount] = useState<string>('');
-  const [numberDiscount, setNumberDiscount] = useState<number>(1);
   const formattedStartDate: string | null = startDate
-    ? new Date(startDate.setUTCHours(0, 0, 0, 0) + 7 * 60 * 60 * 1000).toISOString()
+    ? format(utcToZonedTime(startDate, 'UTC'), "yyyy-MM-dd'T'00:00:00.000'Z'")
     : null;
 
   const formattedEndDate: string | null = endDate
-    ? new Date(endDate.setUTCHours(0, 0, 0, 0) + 7 * 60 * 60 * 1000).toISOString()
+    ? format(utcToZonedTime(endDate, 'Asia/Ho_Chi_Minh'), 'yyyy-MM-dd\'T\'HH:mm:ss.SSS\'Z\'')
     : null;
+  const [nameDiscount, setNameDiscount] = useState<string>('');
+  const [numberDiscount, setNumberDiscount] = useState<number>(1);
+  // const formattedStartDate: string | null = startDate
+  //   ? new Date(startDate.setUTCHours(0, 0, 0, 0) + 7 * 60 * 60 * 1000).toISOString()
+  //   : null;
+
+  // const formattedEndDate: string | null = endDate
+  //   ? new Date(endDate.setUTCHours(0, 0, 0, 0) + 7 * 60 * 60 * 1000).toISOString()
+  //   : null;
   const [images, setImages] = useState<File | null>(null);
   const [imagesUrl, setImagesUrl] = useState<string>("");
   const [descriptionProduct, setDescriptionProduct] = useState<string>('');
@@ -47,8 +54,8 @@ const UpdateDiscount = () => {
       } else {
         setErrorDate('');
         setStartDate(date);
-        if (endDate && date > endDate) {
-          setEndDate(undefined);
+        if (endDate && date >= endDate) {
+          setEndDate(null);
         }
       }
     }

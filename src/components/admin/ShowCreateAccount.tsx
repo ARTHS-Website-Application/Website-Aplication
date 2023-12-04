@@ -59,9 +59,11 @@ const ShowCreateAccount = ({ isVisible, onClose }: Props) => {
             fullName: nameAccount,
             gender: genderAccount,
         }
-        if (phoneAccount && rePassAccount && passwordAccount && nameAccount && genderAccount !== genderCreate.Other && roleAccount !== roleCreate.Other) {
-            dispatch(createAccount(roleAccount, data))
+        if (phoneAccount.length===10 && rePassAccount && passwordAccount && nameAccount && genderAccount !== genderCreate.Other && roleAccount !== roleCreate.Other) {
+            dispatch(createAccount(roleAccount, data));
+            setIsLoading(false)
         } else {
+            setIsLoading(false)
             alert("Hãy nhập đầy đủ các mục");
         }
     }

@@ -9,6 +9,7 @@ import { Link } from "react-router-dom";
 const BookingDetailModal = ({ booking, onClose }: { booking: itemBooking<string, number> | null, onClose: () => void }) => {
     const [showEditForm, setShowEditForm] = useState(false);
     const [showCancelModal, setShowCancelModal] = useState(false);
+    const [showBooked,setShowBooked] = useState<boolean>(false);
     const [cancelReason, setCancelReason] = useState('');
     const [newDate, setNewDate] = useState<string>('');
     const [newTime, setNewTime] = useState<string>('');
@@ -65,9 +66,8 @@ const BookingDetailModal = ({ booking, onClose }: { booking: itemBooking<string,
             timeBook: newTime,
             dateBook: newDate
         }
-        dispatch(putBooking(localBooking?.id, updateData))
-        setIsLoading(true);
-
+        dispatch(putBooking(localBooking?.id, updateData));
+        onClose();
     };
 
     const handleConfirmCameBooking = async () => {
@@ -160,7 +160,10 @@ const BookingDetailModal = ({ booking, onClose }: { booking: itemBooking<string,
             return null;
         } else {
             return <button className="bg-indigo-500 text-white font-semibold px-2 py-2 rounded-md hover:bg-indigo-600 transition duration-200 ease-in-out transform hover:scale-105"
-                onClick={toggleEditForm}
+                onClick={()=>{
+                    toggleEditForm();
+                    setShowBooked(!showBooked);
+                }}
             >
                 Chỉnh sửa
             </button>;
@@ -210,10 +213,9 @@ const BookingDetailModal = ({ booking, onClose }: { booking: itemBooking<string,
 
     if (!localBooking) return null;
     return (
-        <div>
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-60" onClick={onClose}>
             {isLoading ? <LoadingPage /> : (
-                <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-60" onClick={onClose}>
-
+                <div >
                     <div className="bg-white w-full max-w-4xl p-8 rounded-lg flex space-x-8" onClick={stopPropagation}>
                         {/* Customer Information */}
                         <div className="flex-none w-2/5 space-y-6 rounded-lg p-4 shadow-lg">
@@ -229,27 +231,27 @@ const BookingDetailModal = ({ booking, onClose }: { booking: itemBooking<string,
                                 </div>
                             </div>
                             <div className="space-y-9 rounded-lg p-1 shadow-md">
-                                <div className="flex items-center space-x-5 text-md">
+                                <div className="flex items-start space-x-5 text-md">
                                     <div className="w-10 h-10 bg-blue-400 rounded-full border-4 border-gray"></div>
                                     <div>
-                                        <div>Số điện thoại</div>
+                                        <div className="font-semibold">Số điện thoại</div>
                                         <div>{formatPhoneNumber(localBooking.customer.phoneNumber)}</div>
                                     </div>
                                 </div >
-                                <div className="flex items-center space-x-5 text-md">
+                                <div className="flex items-start space-x-5 text-md">
                                     <div className="w-10 h-10 bg-blue-400 rounded-full border-4 border-gray"></div>
                                     <div>
-                                        <div>Giới tính</div>
+                                        <div className="font-semibold">Giới tính</div>
                                         <div>{localBooking.customer.gender}</div>
                                     </div>
                                 </div >
-                                <div className="flex items-center space-x-5 text-md">
+                                <div className="flex items-start space-x-5 text-md">
                                     <div className="w-10 h-10 bg-blue-400 rounded-full border-4 border-gray"></div>
-                                    <div>
-                                        <div>Địa chỉ</div>
+                                    <div className="w-[70%]">
+                                        <div className="font-semibold">Địa chỉ</div>
                                         <div>{localBooking.customer.address}</div>
                                     </div>
-                                </div  >
+                                </div>
                             </div>
                         </div>
 
@@ -320,7 +322,8 @@ const BookingDetailModal = ({ booking, onClose }: { booking: itemBooking<string,
                                     className="border-2 border-indigo-300 focus:border-indigo-500 rounded px-4 py-2 transition duration-200 ease-in-out transform focus:scale-105"
                                 />
                                 {localBooking.status !== statusBooking.WaitForConfirm ?
-                                    (<button className="bg-green-600 text-white px-6 py-2 rounded-md hover:bg-green-700 transition duration-200 ease-in-out transform hover:scale-105" onClick={handleUpdateDateBook}>Cập nhật</button>)
+                                    (<button className="bg-green-600 text-white px-6 py-2 rounded-md hover:bg-green-700 transition duration-200 ease-in-out transform hover:scale-105" 
+                                    onClick={handleUpdateDateBook}>Cập nhật</button>)
                                     : null}
                             </div>
 
@@ -363,6 +366,12 @@ const BookingDetailModal = ({ booking, onClose }: { booking: itemBooking<string,
                             </div>
                         </div>
                     </div>
+                    {showBooked?(
+                        <div className="bg-white">
+                        hello
+                    </div>
+                    ):""}
+                    
                 </div>
             )}
         </div>

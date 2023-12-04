@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import vi from 'date-fns/locale/vi';
@@ -11,52 +11,69 @@ import { itemService } from '@/types/actions/listService';
 import ShowServiceDiscount from '@/components/owner/ShowServiceDiscount';
 import { postCreateDiscount } from '@/actions/discount';
 import { useDispatch } from 'react-redux';
+import { utcToZonedTime, zonedTimeToUtc } from 'date-fns-tz';
+import { format } from 'date-fns';
 const CreateDiscount = () => {
   const dispatch = useDispatch();
-  const [startDate, setStartDate] = useState<Date>(new Date());
-  const [endDate, setEndDate] = useState<Date>();
+  const [startDate, setStartDate] = useState<Date>();
+  const [endDate, setEndDate] = useState<Date | null>();
   const [errorDate, setErrorDate] = useState<string>('');
   const [showProduct, setShowProduct] = useState<boolean>(false);
   const [showService, setShowService] = useState<boolean>(false);
   const [dataProduct, setDataProduct] = useState<item<string, number>[]>([]);
   const [dataService, setDataService] = useState<itemService<string, number>[]>([]);
-  // const formattedStartDate: string | null = startDate ? startDate.toISOString() : null;
-  // const formattedEndDate: string | null = endDate ? endDate.toISOString() : null;
-  const [nameDiscount, setNameDiscount] = useState<string>('');
-  const [numberDiscount, setNumberDiscount] = useState<number>(1);
   const formattedStartDate: string | null = startDate
-    ? new Date(startDate.setUTCHours(0, 0, 0, 0) + 7 * 60 * 60 * 1000).toISOString()
+    ? format(utcToZonedTime(startDate, 'UTC'), "yyyy-MM-dd'T'00:00:00.000'Z'")
     : null;
 
   const formattedEndDate: string | null = endDate
-    ? new Date(endDate.setUTCHours(0, 0, 0, 0) + 7 * 60 * 60 * 1000).toISOString()
+    ? format(utcToZonedTime(endDate, 'Asia/Ho_Chi_Minh'), 'yyyy-MM-dd\'T\'HH:mm:ss.SSS\'Z\'')
     : null;
+  console.log("first", formattedStartDate)
+  console.log("second", formattedEndDate)
+  const [nameDiscount, setNameDiscount] = useState<string>('');
+  const [numberDiscount, setNumberDiscount] = useState<number>(1);
+  // const formattedStartDate: string | null = startDate
+  //   ? new Date(startDate.setUTCHours(0, 0, 0, 0) + 7 * 60 * 60 * 1000).toISOString()
+  //   : null;
+
+  // const formattedEndDate: string | null = endDate
+  //   ? new Date(endDate.setUTCHours(0, 0, 0, 0) + 7 * 60 * 60 * 1000).toISOString()
+  //   : null;
   const [images, setImages] = useState<File | null>(null);
   const [descriptionProduct, setDescriptionProduct] = useState<string>('');
-
-  console.log("format", startDate, endDate)
+  // console.log("format",startDate, endDate)
   const handleStartDateChange = (date: Date | null) => {
+    // console.log("first1", date);
     if (date) {
       if (date < new Date()) {
         setStartDate(new Date());
       } else {
         setErrorDate('');
-        setStartDate(date);
-        if (endDate && date > endDate) {
-          setEndDate(undefined);
+        const utcDate = zonedTimeToUtc(date, 'Asia/Ho_Chi_Minh');
+        setStartDate(utcDate);
+        if (endDate && date >= endDate) {
+          setEndDate(null);
         }
       }
     }
   };
 
   const handleEndDateChange = (date: Date | null) => {
-    if (date && date > startDate) {
-      setEndDate(date);
+    if (date && startDate && date > startDate) {
+      // Convert to UTC before setting the state
+      const utcDate = zonedTimeToUtc(date, 'Asia/Ho_Chi_Minh');
+      setEndDate(utcDate);
       setErrorDate('');
     } else {
-      setErrorDate('Thời gian kết thúc lớn hơn Thời gian bắt đầu')
+      setErrorDate('Thời gian kết thúc lớn hơn Thời gian bắt đầu');
     }
   };
+  useEffect(() => {
+    // Set default values in the timezone of Vietnam
+    const defaultStartDate = utcToZonedTime(new Date(), 'Asia/Ho_Chi_Minh');
+    setStartDate(defaultStartDate);
+  }, []);
 
   const handleClick = (item: item<string, number>) => {
     const isSelected = dataProduct.includes(item);
@@ -92,7 +109,7 @@ const CreateDiscount = () => {
       repairServiceId: dataService?.map((item) => item.id),
     }
     console.log(data)
-    if (nameDiscount && numberDiscount > 0 && formattedStartDate && formattedEndDate && (descriptionProduct || (dataProduct?.length > 0 && dataService?.length > 0))  && images) {
+    if (nameDiscount && numberDiscount > 0 && formattedStartDate && formattedEndDate && (descriptionProduct || (dataProduct?.length > 0 && dataService?.length > 0)) && images) {
       dispatch(postCreateDiscount(data))
     } else {
       alert('Hãy nhập đầy đủ các mục')
@@ -103,7 +120,7 @@ const CreateDiscount = () => {
     setNameDiscount('');
     setNumberDiscount(1);
     setStartDate(new Date());
-    setEndDate(undefined);
+    setEndDate(null);
     setImages(null);
     setDataProduct([]);
     setDataService([]);

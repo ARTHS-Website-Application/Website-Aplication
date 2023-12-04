@@ -8,7 +8,7 @@ const linkRole = [
     },
     {
         to: '/manage-booking/list/history-booking',
-        name: "Đã xác nhận"
+        name: "Lịch sử đặt lịch"
     }
 
 ]

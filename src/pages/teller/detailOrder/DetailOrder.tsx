@@ -21,9 +21,11 @@ import { showSuccessAlert } from '@/constants/chooseToastify';
 import { RxDotsHorizontal } from 'react-icons/rx';
 import ShowCreateWarranty from '@/components/teller/ShowCreateWarranty';
 import ShowListWarranty from '@/components/teller/ShowListWarranty';
+import LoadingCreateUpdate from '@/components/LoadingCreateUpdate';
 
 const DetailOrder = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isLoadingCreate,setIsLoadingCreate] = useState<boolean>(false);
   const { orderId } = useParams();
   const dispatch = useDispatch();
   const detailOrder: itemDetailOrder<string, number> = useSelector((state: selectorDetailOrder<string, number>) => state.orderDetailReducer.orderDetail);
@@ -101,19 +103,21 @@ const DetailOrder = () => {
 
   const handleCreateBill = async () => {
     if(data?.id){
+      setIsLoadingCreate(true);
       try {
         const response = await axiosPrivate.get(`/orders/generate-invoice/${data?.id}`)
         if (response.status === 200) {
+          setIsLoadingCreate(false)
           window.open(response.data, '')
           dispatch(updateStatusOrder(data?.id, statusOrder.Finished));
           setIsLoading(true);
           showSuccessAlert('Đơn hàng đang xuất bill');
-          
         } else {
           console.log('Lỗi');
         }
       } catch (error) {
-        console.log(error)
+        console.log(error);
+        setIsLoadingCreate(false)
       }
     }
 
@@ -563,6 +567,7 @@ const DetailOrder = () => {
               isVisible={showLisWarranty}
               onClose={() => setShowLisWarranty(false)}
             />
+            {isLoadingCreate?<LoadingCreateUpdate/>:""}
           </div>
         )
       }

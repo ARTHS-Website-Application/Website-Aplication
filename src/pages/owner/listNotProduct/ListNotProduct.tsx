@@ -21,7 +21,7 @@ const ListNotProduct = () => {
     const [sortAsc, setSortAsc] = useState<boolean | undefined>();
     const [sortAscPrice, setSortAscPrice] = useState<boolean | undefined>();
     useEffect(() => {
-        const checkStatus = productInfor?.data?.every((item) => item.status === typeActiveProduct.InActive);
+        const checkStatus = productInfor?.data?.every((item) => item.status === typeActiveProduct.Discontinued);
         if (checkStatus && productInfor) {
             setProductData(productInfor.data);
             setTimeout(() => {
@@ -46,7 +46,7 @@ const ListNotProduct = () => {
                 sortByAsc: sortAsc,
                 name: addSearch,
                 pageNumber: paginationNumber,
-                status: typeActiveProduct.InActive,
+                status: typeActiveProduct.Discontinued,
             }
             setSortAscPrice(undefined)
             dispatch(SortProduct(data));
@@ -57,7 +57,7 @@ const ListNotProduct = () => {
                 sortByAsc: sortAscPrice,
                 name: addSearch,
                 pageNumber: paginationNumber,
-                status: typeActiveProduct.InActive,
+                status: typeActiveProduct.Discontinued,
             }
             setSortAsc(undefined)
             dispatch(SortProduct(data));
@@ -68,7 +68,7 @@ const ListNotProduct = () => {
                 sortByAsc: sortAscPrice,
                 name: addSearch,
                 pageNumber: paginationNumber,
-                status: typeActiveProduct.InActive,
+                status: typeActiveProduct.Discontinued,
             }
             setSortAsc(undefined)
             dispatch(SortProduct(data));
@@ -81,7 +81,7 @@ const ListNotProduct = () => {
             sortByAsc: sortValue === 'price' ? sortAscPrice : sortAsc,
             name: addSearch,
             pageNumber: paginationNumber,
-            status: typeActiveProduct.Active,
+            status: typeActiveProduct.Discontinued,
         };
         if (item) {
             const shouldDelete = window.confirm(`Bạn có chắc chắn muốn khôi phục lại sản phẩm: ${item.name} ?`);

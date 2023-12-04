@@ -104,6 +104,7 @@ const DetailOnlineOrder = () => {
         setShowErrorTransport('')
       } else {
         setShowErrorTransport('Không được bỏ trống')
+        setIsLoadingCreate(false);
       }
     }
   }

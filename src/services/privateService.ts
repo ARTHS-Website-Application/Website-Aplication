@@ -1,5 +1,6 @@
 import userAxiosPrivate from "@/hooks/useAxiosPrivate"
 import { serviceFilter, sortService } from "@/types/actions/filterService";
+import { callListFilterEmployee } from "@/types/actions/listEmployee";
 import { callService } from "@/types/actions/listService";
 
 
@@ -11,12 +12,25 @@ export class Private {
     }
     getListStaff = async () => {
         const axiosPrivate = userAxiosPrivate();
-        const endCodeStatus = encodeURIComponent("Đang hoạt động");
-        return await axiosPrivate.get(`/staffs?status=${endCodeStatus}`)
+        const endCodeStatus = encodeURIComponent("Không hoạt động");
+        return await axiosPrivate.get(`/staffs?excludeStatus=${endCodeStatus}`)
+    }
+
+    getListEmployees = async (role: string, data: callListFilterEmployee<string>) => {
+        const checkRole = role.toLowerCase();
+        const axiosPrivate = userAxiosPrivate();
+        const encodeStatus = encodeURIComponent(data?.status);
+        const encodeName = encodeURIComponent(data.fullName);
+        return await axiosPrivate.get(`/${checkRole}s?fullName=${encodeName}&excludeStatus=${encodeStatus}`)
+    }
+
+    getDetailEmployees = async (role: string, employeeId:string) => {
+        const checkRole = role.toLowerCase();
+        const axiosPrivate = userAxiosPrivate();
+        return await axiosPrivate.get(`/${checkRole}s/${employeeId}`)
     }
 
     //service
-
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     createService = async (data: any) => {
         const formData = new FormData();
@@ -39,7 +53,7 @@ export class Private {
     }
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    updateService = async (serviceId:string, data: any) => {
+    updateService = async (serviceId: string, data: any) => {
         const formData = new FormData();
         const axiosPrivate = userAxiosPrivate();
         formData.append('name', data.name);
@@ -58,7 +72,7 @@ export class Private {
             },
         })
     }
-    updateServiceStatus = async (idService:string,status: string) => {
+    updateServiceStatus = async (idService: string, status: string) => {
         const formData = new FormData();
         const axiosPrivate = userAxiosPrivate();
         formData.append('status', status);
