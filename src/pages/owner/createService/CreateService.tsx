@@ -159,7 +159,7 @@ const CreateService = () => {
                   <div className="flex items-center space-x-2">
                     <input type="number"
                       min={1}
-                      value={duration === 0 ? "" : duration}
+                      value={duration <= 0 ? "" : duration}
                       placeholder="Nhập số phút"
                       className='outline-none p-2 border-2 border-[#E5E7EB] bg-gray-50 rounded-xl'
                       onChange={(e) => setDuration(parseInt(e.target.value))}
@@ -207,8 +207,8 @@ const CreateService = () => {
                           if (parseInt(e.target.value) < 0) {
                             handleAddWarranty(1)
                           }
-                          if (parseInt(e.target.value) > 100) {
-                            handleAddWarranty(100)
+                          if (parseInt(e.target.value) > 36) {
+                            handleAddWarranty(36)
                           }
                         }
                       }}

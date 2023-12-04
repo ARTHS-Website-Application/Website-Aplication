@@ -13,15 +13,14 @@ const useLogout = () => {
             const response = await axiosPrivate('/auth/logout', {
                 withCredentials: true
             });
-            if (response) {
-                setAuth({});
-                localStorage.removeItem('auth');
-                
-            }
+            response;
+
 
         } catch (error) {
             console.error(error);
         }
+        setAuth({});
+        localStorage.removeItem('auth');
 
     }
     return logout;

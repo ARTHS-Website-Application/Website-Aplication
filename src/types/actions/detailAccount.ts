@@ -1,5 +1,30 @@
 
+export interface selectorDetailAccount<T, N> {
+    detailAccountReducer: {
+        detailAccountInfor:itemDetailAccount<T, N>,
+        showError: string | null;
+    }
+}
 
+export interface storeDetailAccount<T, N> {
+    showError: string | null;
+    detailAccountInfor:itemDetailAccount<T, N>|null,
+}
+
+export interface detailAccountSaga<T, N> {
+    showError: string,
+    data: itemDetailAccount<T, N>
+}
+
+export interface payloadDetailAccount<T> {
+    type: "detail_employee",
+    role: T,
+    employeeId:T
+}
+
+export interface dataDetailAccount<T, N> {
+    data: itemDetailAccount<T, N>;
+}
 
 export interface itemDetailAccount<T, N> {
     accountId: T;

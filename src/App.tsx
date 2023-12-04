@@ -59,6 +59,12 @@ import DetailOnlineOrderOwner from './pages/owner/detailOnlineOrderOwner/DetailO
 import CanceledOrderOwner from './pages/owner/canceledOrderOwner/CanceledOrderOwner';
 import FinishedOrderOwner from './pages/owner/finishedOrderOwner/FinishedOrderOwner';
 import HistoryOrderOwner from './pages/owner/historyOrderOwner/HistoryOrderOwner';
+import ListStaff from './pages/owner/listStaff/ListStaff';
+import ListTeller from './pages/owner/listTeller/ListTeller';
+import DetailEmployee from './pages/owner/detailEmployee/DetailEmployee';
+import DetailTeller from './pages/owner/detailEmployee/DetailTeller';
+import ShowSetting from './pages/owner/showSetting/ShowSetting';
+import DateMaintenance from './pages/teller/dateMaintenance/DateMaintenance';
 
 
 const ROLES = {
@@ -122,13 +128,18 @@ function App() {
               </Route>
               <Route path="list-booking" element={<ListBooking />} />
             </Route>
-
+            <Route path="manage-maintenance" element={<DateMaintenance />}/>
           </Route>
           {/* Page của Owner */}
           <Route element={<RequireAuth allowedRoles={ROLES.Owner} />}>
             <Route path="owner" index element={<HomeOwner />} />
-            <Route path="manage-employees" element={<ManageEmployee />} />
-
+            <Route path="setting" index element={<ShowSetting />} />
+            <Route path="manage-employees" element={<ManageEmployee />}>
+              <Route path="list-staff" index element={<ListStaff />} />
+              <Route path="list-teller" index element={<ListTeller />} />
+              <Route path=":employeeId" index element={<DetailEmployee />} />
+              <Route path="teller/:employeeId" index element={<DetailTeller />} />
+            </Route>
             <Route path="create-product" element={<CreateProduct />} />
             <Route path="manage-products" element={<ManageProduct />}>
               <Route path="list-product" element={<ListProduct />} />

@@ -2,6 +2,7 @@ import { getBooking } from "@/actions/booking";
 import Pagination from "@/components/Pagination";
 import TableBooking from "@/components/teller/TableBooking";
 import { listBooking, selectorBooking, itemBooking } from "@/types/listBooking";
+import { statusBooking } from "@/types/typeBooking";
 import { useEffect, useState } from "react";
 import { FaCalendarAlt, FaSearch, FaTimes } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
@@ -22,9 +23,11 @@ const HistoryBooking = () => {
 
   useEffect(() => {
     const filters = {
+      pageSize: 9,
+      excludeBookingStatus: statusBooking.WaitForConfirm,
     }
     dispatch(getBooking(paginationNumber, filters));
-  }, [dispatch]);
+  }, [dispatch, paginationNumber]);
 
   useEffect(() => {
 
@@ -44,6 +47,7 @@ const HistoryBooking = () => {
     <div className="w-full min-h-full p-5">
       <h1 className="font-semibold text-[24px] mb-5">Lịch sử đặt lịch</h1>
       <div className="flex items-center space-x-4 mb-5">
+      {bookingData?.length>0 ?(
         <div className="flex items-center bg-white border border-gray-200 rounded-full px-3 py-2 w-1/2">
           <FaSearch className="text-gray-400" />
           <input
@@ -64,7 +68,8 @@ const HistoryBooking = () => {
               <FaTimes />
             </button>
           )}
-        </div>
+        </div>)
+        :""}
         <div className="flex items-center bg-white border border-gray-200 rounded-full px-4 py-2">
           <FaCalendarAlt className="text-gray-400" />
           <input
@@ -81,13 +86,21 @@ const HistoryBooking = () => {
         </div>
 
       </div>
-      <TableBooking data={bookingData} />
-      <Pagination
-        totalPosts={bookingInfo.pagination?.totalRow}
-        postsPerPage={bookingInfo.pagination?.pageSize}
-        setCurrentPage={setPaginationNumber}
-        currentPage={paginationNumber}
-      />
+      {bookingData?.length > 0 ? (
+        <div>
+          <TableBooking data={bookingData} />
+          <Pagination
+            totalPosts={bookingInfo.pagination?.totalRow}
+            postsPerPage={bookingInfo.pagination?.pageSize}
+            setCurrentPage={setPaginationNumber}
+            currentPage={paginationNumber}
+          />
+        </div>
+      ) : (
+        <div className='h-[70vh] flex justify-center items-center'>
+          <p className="text-[25px] font-semibold">Không có đơn đặt lịch</p>
+        </div>
+      )}
     </div>
   )
 }

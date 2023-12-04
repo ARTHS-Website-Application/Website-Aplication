@@ -87,7 +87,7 @@ const ListProduct = () => {
         if (item) {
             const shouldDelete = window.confirm(`Bạn có chắc chắn muốn xóa sản phẩm: ${item.name} ?`);
             if (shouldDelete) {
-                dispatch(updateStatusProduct(item.id, typeActiveProduct.InActive, data));
+                dispatch(updateStatusProduct(item.id, typeActiveProduct.Discontinued, data));
                 setIsLoading(true)
             }
         }

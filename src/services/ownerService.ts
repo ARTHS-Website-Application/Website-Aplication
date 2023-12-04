@@ -1,6 +1,7 @@
 import userAxiosPrivate from "@/hooks/useAxiosPrivate";
 import {itemFilterDiscount } from "@/types/actions/filterCreate";
 import { callServiceDiscount } from "@/types/actions/filterService";
+import { itemUpdateSetting } from "@/types/actions/typeSetting";
 
 export class Private {
     getServiceDiscount = async (data:callServiceDiscount<string,number>) => {
@@ -42,6 +43,16 @@ export class Private {
     getDiscountCreate = async (pageSize: number) => {
         const axiosPrivate = userAxiosPrivate();
         return await axiosPrivate.get(`/discounts?status=Applying&pageSize=${pageSize}`)
+    }
+
+    getSetting = async ()=>{
+        const axiosPrivate = userAxiosPrivate();
+        return await axiosPrivate.get(`/configurations`)
+    }
+
+    updateSetting = async (data:itemUpdateSetting)=>{
+        const axiosPrivate = userAxiosPrivate();
+        return await axiosPrivate.put(`/configurations`,data)
     }
 }
 

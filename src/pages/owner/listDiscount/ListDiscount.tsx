@@ -1,4 +1,6 @@
-import { getDiscount, updateStatusDiscount } from '@/actions/discount'
+import { getDiscount, 
+  // updateStatusDiscount 
+} from '@/actions/discount'
 import LoadingPage from '@/components/LoadingPage'
 import PaginationParam from '@/components/PaginationParam'
 import SearchFilter from '@/components/SearchFilter'
@@ -46,22 +48,20 @@ const ListDiscount = () => {
     setIsLoading(true);
 
   }, [addSearch, dispatch, paginationNumber])
-  const handleRemove = (item: itemDiscount<string, number>) => {
-    const data = {
-      title: addSearch,
-      pageNumber: paginationNumber,
-      status: StatusDiscount.Active,
-    };
-    if (item) {
-      const shouldDelete = window.confirm(`Bạn có chắc chắn muốn xóa khuyến mãi này: ${item.title} ?`);
-      if (shouldDelete) {
-        dispatch(updateStatusDiscount(item.id, StatusDiscount.Discontinued, data));
-        setIsLoading(true)
-      }
-    }
-
-
-  }
+  // const handleRemove = (item: itemDiscount<string, number>) => {
+  //   const data = {
+  //     title: addSearch,
+  //     pageNumber: paginationNumber,
+  //     status: StatusDiscount.Active,
+  //   };
+  //   if (item) {
+  //     const shouldDelete = window.confirm(`Bạn có chắc chắn muốn xóa khuyến mãi này: ${item.title} ?`);
+  //     if (shouldDelete) {
+  //       dispatch(updateStatusDiscount(item.id, StatusDiscount.Discontinued, data));
+  //       setIsLoading(true)
+  //     }
+  //   }
+  // }
   return (
     <div className="w-full">
       <div className="flex justify-between items-center pb-5">
@@ -81,7 +81,7 @@ const ListDiscount = () => {
             <div>
               <div className="min-h-[70vh]">
                 <TableDiscount
-                  handleRemove={handleRemove}
+                  // handleRemove={handleRemove}
                   productData={productData} />
               </div>
               <PaginationParam

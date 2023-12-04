@@ -140,3 +140,11 @@ export const listStatics = {
     LIST_STATICS_SUCCESS: "list_statics_success",
     LIST_STATICS_FAIL: "list_statics_fail",
 }
+
+//dateMaintenance
+export const listMaintenance = {
+    POST_MAINTENANCE: "post_maintenance",
+    LIST_MAINTENANCE: "list_maintenance",
+    LIST_MAINTENANCE_SUCCESS: "list_maintenance_success",
+    LIST_MAINTENANCE_FAIL: "list_maintenance_fail",
+}

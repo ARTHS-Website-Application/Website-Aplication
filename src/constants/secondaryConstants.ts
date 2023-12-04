@@ -123,6 +123,30 @@ export const createAccounts = {
     CREATE_ACCOUNT_FAIL: "create_account_fail",
 }
 
+export const listEmployee = {
+    GET_EMPLOYEE: "get_employee",
+    GET_EMPLOYEE_STAFF_SUCCESS: "get_employee_staff_success",
+    GET_EMPLOYEE_TELLER_SUCCESS: "get_employee_teller_success",
+    GET_EMPLOYEE_FAIL: "get_employee_fail",
+}
+
+export const detailEmployee = {
+    DETAIL_EMPLOYEE: "detail_employee",
+    DETAIL_EMPLOYEE_STAFF_SUCCESS: "detail_employee_success",
+    DETAIL_EMPLOYEE_FAIL: "detail_employee_fail",
+}
+
+export const showSetting = {
+    SHOW_SETTING: "show_setting",
+    SHOW_SETTING_SUCCESS: "show_setting_success",
+    SHOW_SETTING_FAIL: "show_setting_fail",
+}
+
+export const updateSetting = {
+    UPDATE_SETTING: "update_setting",
+}
+
+
 export const showResetError = {
     RESET_ERROR:"reset_error",
 }

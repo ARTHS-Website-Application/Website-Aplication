@@ -11,6 +11,7 @@ const TableBooking = ({ data }: Props) => {
 
   //popup
   const [showModal, setShowModal] = useState(false);
+  console.log(showModal)
   const [selectedBooking, setSelectedBooking] = useState<itemBooking<string, number> | null>(null);
 
   const handleDetailClick = (booking: itemBooking<string, number>) => {
@@ -78,10 +79,10 @@ const TableBooking = ({ data }: Props) => {
             {data && data?.map((item: itemBooking<string, number>, index) => (
               <tr key={index} className="hover:bg-gray-100 transition-all duration-200" onClick={() => handleDetailClick(item)}>
                 <td className="px-6 py-4">{item.customer.fullName}</td>
-                <td className="px-6 py-4">{formatPhoneNumber(item.customer.phoneNumber)}</td>
-                <td className="px-6 py-4">{formatDate(item.dateBook)}</td>
-                <td className="px-6 py-4">{renderStatus(item.status)}</td>
-                <td className="px-6 py-4">{item.cancellationReason}</td>
+                <td className="">{formatPhoneNumber(item.customer.phoneNumber)}</td>
+                <td className="">{formatDate(item.dateBook)}</td>
+                <td className="">{renderStatus(item.status)}</td>
+                <td className="">{item.cancellationReason}</td>
 
               </tr>
             ))}

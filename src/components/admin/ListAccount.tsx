@@ -59,7 +59,7 @@ const ListAccount = () => {
     return (
         <div className="pt-3">
             <div className="flex justify-between items-center px-3">
-                <SearchFilterAccount place={'Tìm kiếm tài khoản'} setAddSearch={setAddSearch} />
+                <SearchFilterAccount place={'Tìm kiếm số điện thoại'} setAddSearch={setAddSearch} />
                 <button className="p-3 bg-main hover:bg-[#d68669] text-white font-semibold rounded-lg flex space-x-3 items-center "
                     onClick={() => setShowCreate(true)}
                 >

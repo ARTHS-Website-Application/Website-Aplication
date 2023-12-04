@@ -139,7 +139,7 @@ const ProductDetail = () => {
                                     </div>
                                     <div className='space-y-5 flex flex-col text-end'>
                                         <p>{data?.category?.categoryName}</p>
-                                        {data?.installationFee && <p>{data?.installationFee} VNĐ</p>}
+                                        {data?.installationFee && <p>{formatPrice(data?.installationFee)} VNĐ</p>}
                                         <p>{formatPrice(data?.priceCurrent)}VNĐ</p>
                                         {data?.warrantyDuration !== 0 && (<p>{data?.warrantyDuration} tháng</p>)}
                                         <p>{data?.discount ? "Có" : "Không"}</p>

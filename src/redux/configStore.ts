@@ -25,6 +25,10 @@ import accountReducer from './reducer/accountReducer';
 import createUpdateReducer from './reducer/createUpdateReducer';
 import revenueReducer from './reducer/revenueReducer';
 import staticsReducer from './reducer/staticsReducer';
+import listEmployeeReducer from './reducer/listEmployeeReducer';
+import detailAccountReducer from './reducer/detailAccountReducer';
+import detailSettingReducer from './reducer/detailSettingReducer';
+import maintenanceReducer from './reducer/maintenanceReducer';
 
 const middleSaga = createMiddleWareSaga();
 const allReducer = combineReducers({
@@ -65,6 +69,16 @@ const allReducer = combineReducers({
   //revenue
   revenueReducer,
   staticsReducer,
+
+  //employee
+  listEmployeeReducer,
+  detailAccountReducer,
+
+  //setting
+  detailSettingReducer,
+
+  //maintenance
+  maintenanceReducer,
   
   });
 

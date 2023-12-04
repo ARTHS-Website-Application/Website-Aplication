@@ -45,11 +45,10 @@ function* putBooking(payload: payloadUpdateBooking<string>) {
     } catch (error: any) {
         console.log('error', error);
         const axiosError = error as AxiosError<ErrorResponse>;
-        const msg: string = error.message;
-        yield put(putUpdateFailed(msg));
         if (axiosError.response) {
             if (axiosError.response.status === 409) {
                 showWarningAlert(axiosError.response.data.Message);
+                yield put(putUpdateFailed(axiosError.response.data.Message));
 
             } else {
                 showErrorAlert('Đã xảy ra lỗi khi cập nhật thông tin. Vui lòng thử lại.');

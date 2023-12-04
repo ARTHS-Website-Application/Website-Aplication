@@ -1,13 +1,19 @@
+import { payloadUpdateSetting } from './../../../types/actions/typeSetting';
 import { call, put, takeEvery } from 'redux-saga/effects';
 import { userInfor } from '../../../constants/mainConstants';
 import { privateService } from '@/services/privateService';
 import { AxiosResponse } from 'axios';
 import { ShowProfileFailed, ShowProfileSuccess, createAccountFailed, createAccountSuccess, getAccount, getAccountFailed, getAccountSuccess, getAllAccount, getAllAccountSuccess, getFilterAccount, getFilterAccountSuccess, getFilterNotAccount, getFilterNotAccountSuccess, getNotAccount, getNotAccountSuccess, selectStaffFailed, selectStaffSuccess } from '@/actions/userInfor';
-import { createAccounts, listAccounts, listAllAccounts, listFilterAccounts, listNotAccounts, listStaff, updateAccount } from '@/constants/secondaryConstants';
-import { payloadFilterAccount, payloadFilterNotAccount, payloadListAccount, payloadListNotAccount } from '@/types/actions/listAccount';
+import { createAccounts, detailEmployee, listAccounts, listAllAccounts, listEmployee, listFilterAccounts, listNotAccounts, listStaff, showSetting, updateAccount, updateSetting } from '@/constants/secondaryConstants';
+import { itemAccount, payloadFilterAccount, payloadFilterNotAccount, payloadListAccount, payloadListNotAccount } from '@/types/actions/listAccount';
 import { adminService } from '@/services/adminService';
 import { payloadCreateAccount, payloadUpdateAccount } from '@/types/actions/createUpdateAccount';
-import { typeAccount } from '@/types/typeAuth';
+import { roleAccount, typeAccount } from '@/types/typeAuth';
+import { payloadListEmployee } from '@/types/actions/listEmployee';
+import { detailEmployeeFailed, detailEmployeeStaffSuccess, getEmployeeFailed, getEmployeeStaffSuccess, getEmployeeTellerSuccess } from '@/actions/employee';
+import { payloadDetailAccount } from '@/types/actions/detailAccount';
+import { ownerService } from '@/services/ownerService';
+import { getShowSetting, getShowSettingFailed, getShowSettingSuccess } from '@/actions/setting';
 
 function* userProfile() {
     try {
@@ -169,7 +175,68 @@ function* getListNotAccount(payload: payloadListNotAccount<string>) {
         const msg: string = error.message;
         yield put(getAccountFailed(msg));
     }
+}
 
+function* getEmployee(payload: payloadListEmployee<string>) {
+    try {
+        const resp: AxiosResponse = yield call(privateService.getListEmployees, payload.role,payload.data);
+        const { status, data } = resp;
+        if (data && status === 200) {
+            if(data.every((item:itemAccount) => item.role ===roleAccount.Teller)){
+                yield put(getEmployeeTellerSuccess(data));
+            }
+            if(data?.every((item:itemAccount)=> item.role ===roleAccount.Staff)){
+                yield put(getEmployeeStaffSuccess(data));
+            }
+        }
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
+        const msg: string = error.response.data.Message;
+        yield put(getEmployeeFailed(msg));
+    }
+
+}
+
+function* detailAccount(payload: payloadDetailAccount<string>) {
+    try {
+        const resp: AxiosResponse = yield call(privateService.getDetailEmployees, payload.role,payload.employeeId);
+        const { status, data } = resp;
+        if (data && status === 200) {
+                yield put(detailEmployeeStaffSuccess(data));
+        }
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
+        const msg: string = error.response.data.Message;
+        yield put(detailEmployeeFailed(msg));
+    }
+}
+
+function* getSetting() {
+    try {
+        const resp: AxiosResponse = yield call(ownerService.getSetting);
+        const { status, data } = resp;
+        if (data && status === 200) {
+                yield put(getShowSettingSuccess(data));
+        }
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
+        const msg: string = error.response.data.Message;
+        yield put(getShowSettingFailed(msg));
+    }
+}
+
+function* updateDataSetting(payload:payloadUpdateSetting) {
+    try {
+        const resp: AxiosResponse = yield call(ownerService.updateSetting,payload.data);
+        const { status, data } = resp;
+        if (data && status === 201) {
+                yield put(getShowSetting());
+        }
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
+        const msg: string = error.response.data.Message;
+        yield put(getShowSettingFailed(msg));
+    }
 }
 
 
@@ -183,4 +250,8 @@ export function* lookupUser() {
     yield takeEvery(listNotAccounts.LIST_NOT_ACCOUNT, getListNotAccount);
     yield takeEvery(listFilterAccounts.LIST_FILTER_ACCOUNT, getFilterListAccount);
     yield takeEvery(listFilterAccounts.LIST_FILTER_NOT_ACCOUNT, getFilterListNotAccount);
+    yield takeEvery(listEmployee.GET_EMPLOYEE, getEmployee);
+    yield takeEvery(detailEmployee.DETAIL_EMPLOYEE, detailAccount);
+    yield takeEvery(showSetting.SHOW_SETTING, getSetting);
+    yield takeEvery(updateSetting.UPDATE_SETTING, updateDataSetting);
 }

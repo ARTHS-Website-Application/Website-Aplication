@@ -7,7 +7,7 @@ const linkRole =[
   },
   {
     to:'list-not-product',
-    name:"Các sản phẩm ngừng hoạt động"
+    name:"Các sản phẩm ngừng kinh doanh"
   },
 ]
 

@@ -12,7 +12,7 @@ export class Private {
     getAccount = async (status: string) => {
         const axiosPrivate = userAxiosPrivate();
         const encodeStatus = encodeURIComponent(status);
-        return await axiosPrivate.get(`/accounts?excludeOrderStatus=${encodeStatus}`)
+        return await axiosPrivate.get(`/accounts?excludeStatus=${encodeStatus}`)
     }
     getNotAccount = async (status: string) => {
         const axiosPrivate = userAxiosPrivate();
@@ -23,13 +23,13 @@ export class Private {
         const axiosPrivate = userAxiosPrivate();
         const encodeStatus = encodeURIComponent(data?.status);
         const encodeName = encodeURIComponent(data.fullName);
-        return await axiosPrivate.get(`/accounts?fullName=${encodeName}&excludeOrderStatus=${encodeStatus}&pageSize=8&pageNumber=${data.pageNumber}`)
+        return await axiosPrivate.get(`/accounts?phoneNumber=${encodeName}&excludeStatus=${encodeStatus}&pageSize=8&pageNumber=${data.pageNumber}`)
     }
     getFilterNotAccount = async (data: callListFilterAccount<string, number>) => {
         const axiosPrivate = userAxiosPrivate();
         const encodeStatus = encodeURIComponent(data?.status);
         const encodeName = encodeURIComponent(data.fullName);
-        return await axiosPrivate.get(`/accounts?fullName=${encodeName}&status=${encodeStatus}&pageSize=8&pageNumber=${data.pageNumber}`)
+        return await axiosPrivate.get(`/accounts?phoneNumber=${encodeName}&status=${encodeStatus}&pageSize=8&pageNumber=${data.pageNumber}`)
     }
 
     postAccount = async (role: string, data: callLCreateAccount<string>) => {
