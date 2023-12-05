@@ -24,6 +24,8 @@ const RevenueChart = () => {
     const [paginationNumber, setPaginationNumber] = useState<number>(0);
     const [selectedMonth, setSelectedMonth] = useState<number>(new Date().getMonth());
     const [modalContent, setModalContent] = useState<ModalContent>({ month: '', transactions: [] });
+    const [selectedYear, setSelectedYear] = useState<number>(new Date().getFullYear());
+    
 
     //console.log('product', motorbikeProduct.pagination.totalRow)
 
@@ -57,7 +59,7 @@ const RevenueChart = () => {
         datasets: PieChartDataSet[];
     }
 
-    const [pieChartData, setPieChartData] = useState<PieChartData>({
+    const [orderTypePieChartData, setOrderTypePieChartData] = useState<PieChartData>({
         labels: [],
         datasets: [
             {
@@ -67,6 +69,18 @@ const RevenueChart = () => {
             },
         ],
     });
+
+    const [isOrderPieChartData, setIsOrderPieChartData] = useState<PieChartData>({
+        labels: [],
+        datasets: [
+            {
+                label: 'Doanh thu',
+                data: [],
+                backgroundColor: [],
+            },
+        ],
+    });
+    
     const processRevenueData = (revenueData: itemStatics<string, number>[]) => {
         const revenueByMonth = new Array(12).fill(0);
         revenueData.forEach(item => {
@@ -85,11 +99,29 @@ const RevenueChart = () => {
     };
 
 
-    const processPieChartData = (data: itemStatics<string, number>[]) => {
+    const processOrderTypePieChartData = (data: itemStatics<string, number>[]) => {
         //console.log('statics', data)
 
         const totalsByType = data.reduce((acc: TotalsByType, item) => {
             acc[item.orderType] = (acc[item.orderType] || 0) + item.totalAmount;
+            return acc;
+        }, {} as TotalsByType);
+
+        return {
+            labels: Object.keys(totalsByType),
+            datasets: [
+                {
+                    label: 'Doanh thu',
+                    data: Object.values(totalsByType),
+                    backgroundColor: Object.keys(totalsByType).map(() => `rgba(${Math.floor(Math.random() * 255)}, ${Math.floor(Math.random() * 255)}, ${Math.floor(Math.random() * 255)}, 0.5)`),
+                },
+            ],
+        };
+    };
+
+    const processIsOrderPieChartData = (data: itemStatics<string, number>[]) => {
+        const totalsByType = data.reduce((acc: TotalsByType, item) => {
+            acc[item.isOrder] = (acc[item.isOrder] || 0) + item.totalAmount;
             return acc;
         }, {} as TotalsByType);
 
@@ -128,13 +160,17 @@ const RevenueChart = () => {
         setModalContent({ month: `Tháng ${selectedMonthValue + 1}`, transactions: transactionsOfMonth });
 
         const staticOfMonth = staticsData.filter(item => new Date(item.transactionDate).getMonth() === selectedMonthValue);
-        const pieData = processPieChartData(staticOfMonth);
-        setPieChartData(pieData);
+        const pieData = processOrderTypePieChartData(staticOfMonth);
+        setOrderTypePieChartData(pieData);
+
+        const secondPieData = processIsOrderPieChartData(staticOfMonth)
+        setIsOrderPieChartData(secondPieData)
     };
 
     const pieOptions = {
         responsive: true,
         maintainAspectRatio: false,
+
     };
 
     const options = {
@@ -146,36 +182,33 @@ const RevenueChart = () => {
         onClick: onChartClick,
     };
 
+    const handleYearChange = (event: { target: { value: string; }; }) => {
+        const year = parseInt(event.target.value, 10);
+        setSelectedYear(year);
+    };
+
     useEffect(() => {
         if (revenueInfo.pagination?.totalRow) {
             setPaginationNumber(0);
         }
     }, [revenueInfo.pagination?.totalRow]);
 
-
-    useEffect(() => {
-        const data = {
-            number: paginationNumber,
-            status: typeActiveProduct.Active,
-        }
-        dispatch(ShowProduct(data));
-
-    }, [dispatch, paginationNumber])
-
     useEffect(() => {
         const filters = {
             status: 'Thành công',
             month: selectedMonth + 1,
+            year: selectedYear,
             pageSize: 100,
         };
+        const data = {
+            number: paginationNumber,
+            status: typeActiveProduct.Active,
+        }
+        // Fetch data for the selected year
+        dispatch(getStatics({ year: selectedYear }));
         dispatch(getRevenue(paginationNumber, filters));
-    }, [dispatch, paginationNumber, selectedMonth]);
-
-
-    useEffect(() => {
-        const currentYear = new Date().getFullYear();
-        dispatch(getStatics({ year: currentYear }));
-    }, [dispatch]);
+        dispatch(ShowProduct(data));
+    }, [dispatch, selectedYear, paginationNumber, selectedMonth]);
 
 
     useEffect(() => {
@@ -185,7 +218,7 @@ const RevenueChart = () => {
     }, [revenueInfo.data, staticsInfo, motorbikeProduct.pagination]);
 
     useEffect(() => {
-        if (staticsData && staticsData.length > 0) {
+        if (staticsData && staticsData.length >= 0) {
             const currentMonth = selectedMonth;
             const processedData = processRevenueData(staticsData);
             setChartData(prevState => {
@@ -205,10 +238,12 @@ const RevenueChart = () => {
             });
             //const currentMonthTransactions = revenueData.filter(item => new Date(item.transactionDate).getMonth() === currentMonth);
             setModalContent({ month: `Tháng ${currentMonth + 1}`, transactions: revenueData });
-
             const currentMonthStatics = staticsData.filter(item => new Date(item.transactionDate).getMonth() === currentMonth);
-            const pieData = processPieChartData(currentMonthStatics);
-            setPieChartData(pieData);
+            const pieData = processOrderTypePieChartData(currentMonthStatics);
+            setOrderTypePieChartData(pieData);
+
+            const secondPieData = processIsOrderPieChartData(currentMonthStatics)
+            setIsOrderPieChartData(secondPieData);
         }
     }, [staticsData, revenueData]);
 
@@ -217,10 +252,25 @@ const RevenueChart = () => {
 
     return (
         <>
+
             <div className="p-3 bg-white shadow rounded-lg w-full flex flex-wrap justify-between mb-3">
                 {/* Thêm phần hiển thị thông tin tổng doanh thu, tổng đơn hàng và tổng sản phẩm ở đây */}
                 <div className="w-full mt-4 p-2">
-                    <h2 className="text-lg font-semibold text-gray-800 mb-3">Thông Tin Tổng Hợp của năm {new Date().getFullYear()}</h2>
+                    <h2 className="text-lg font-bold text-gray-800 mb-3 flex items-center">
+                        Thông Tin Tổng Hợp của năm
+                        <select
+                            value={selectedYear}
+                            onChange={handleYearChange}
+                            className="ml-2 p-1 border border-gray-300 rounded-md"
+                        >
+                            {/* Generate options for the last 5 years (adjust as needed) */}
+                            {Array.from({ length: 5 }, (_, i) => new Date().getFullYear() - i).map((year) => (
+                                <option key={year} value={year}>
+                                    {year}
+                                </option>
+                            ))}
+                        </select>
+                    </h2>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                         <div className="border border-gray-200 rounded-lg p-4">
                             <h3 className="text-xl font-semibold text-gray-800 mb-2">Tổng Doanh Thu</h3>
@@ -237,24 +287,39 @@ const RevenueChart = () => {
                     </div>
                 </div>
             </div>
+
             <div className="p-3 bg-white shadow rounded-lg w-full flex flex-wrap justify-between items-center">
-                <div className='w-[65%] p-2'>
+                <div className="w-full mb-4 p-2">
                     <div className="border border-gray-200 rounded-lg mb-4 p-2">
-                        <h2 className="text-lg font-medium text-gray-800 mb-3">Biểu Đồ Doanh Thu Năm {new Date().getFullYear()}</h2>
-                        <div className=" h-96"> {/* Set a fixed height */}
+                        <h2 className="text-lg font-bold text-gray-800 mb-3">Biểu Đồ Doanh Thu Năm {selectedYear}</h2>
+                        <div className="w-full h-96">
                             <Bar data={chartData} options={{ ...options, maintainAspectRatio: false }} />
                         </div>
                     </div>
                 </div>
 
-                <div className="border border-gray-200 rounded-lg w-full lg:w-1/3 mb-4 p-2">
-                    <h2 className="text-lg font-medium text-gray-800 mb-3">Phân Loại Giao Dịch Tháng {selectedMonth + 1}</h2>
-                    <div className="h-96"> {/* Set a fixed height */}
-                        <Pie data={pieChartData} options={{ ...pieOptions, maintainAspectRatio: false }} />
+                <div className="w-full sm:w-full md:w-1/2 lg:w-1/2 xl:w-1/2 px-2 mb-4">
+                    <div className="border border-gray-200 rounded-lg p-2">
+                        <h2 className="text-lg font-medium text-gray-800 mb-3">Phân loại giao dịch tháng {selectedMonth + 1}</h2>
+                        <div className="h-96">
+                            {/* Set a fixed height */}
+                            <Pie data={orderTypePieChartData} options={{ ...pieOptions, maintainAspectRatio: false }} />
+                        </div>
                     </div>
                 </div>
 
+                <div className="w-full sm:w-full md:w-1/2 lg:w-1/2 xl:w-1/2 px-2 mb-4">
+                    <div className="border border-gray-200 rounded-lg p-2">
+                        <h2 className="text-lg font-medium text-gray-800 mb-3">Phân loại giao dịch tháng {selectedMonth + 1}</h2>
+                        <div className="h-96">
+                            {/* Set a fixed height */}
+                            <Pie data={isOrderPieChartData} options={{ ...pieOptions, maintainAspectRatio: false }} />
+                        </div>
+                    </div>
+                </div>
             </div>
+
+
             {modalContent && modalContent.transactions && modalContent.transactions.length > 0 && (
                 <div className="mt-5 mb-5 bg-white">
                     <h3 className="text-xl font-semibold mb-2 px-2 py-3">Chi Tiết Doanh Thu - {modalContent.month}</h3>

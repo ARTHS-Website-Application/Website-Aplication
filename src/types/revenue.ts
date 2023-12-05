@@ -49,6 +49,7 @@ export interface pagination<N> {
 export interface itemStatics<T,N> {
     transactionDate: Date,
     orderType: T,
+    isOrder: T,
     totalAmount: N
 }
 export interface listStatics<T,N>{
