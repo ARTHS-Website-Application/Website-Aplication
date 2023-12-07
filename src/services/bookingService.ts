@@ -10,6 +10,14 @@ export class Private{
     }
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    getChooseBooking = async (pageSize: number, filters: any) =>{
+        //console.log(filters);
+        const axiosPrivate = userAxiosPrivate();
+        const queryParams = new URLSearchParams({...filters , pageSize: pageSize.toString()});
+        return await axiosPrivate.get(`/repair-bookings?${queryParams}`);
+    }
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     updateBooking = async (bookingId: string, data: any) =>{
         const axiosPrivate = userAxiosPrivate();
         console.log('call api update nè');

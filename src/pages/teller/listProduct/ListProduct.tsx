@@ -20,6 +20,7 @@ const ListProduct = ({ data, onClickAdd, setShowDetail, setItemDetail }: Props) 
                     onClickAdd={() => onClickAdd(item)}
                     key={index}
                     _name={item.name}
+                    _quantity={item.quantity}
                     _priceCurrent={item.priceCurrent}
                     _discount={item.discount}
                     _imageUrl={item.images[0].imageUrl}

@@ -13,21 +13,32 @@ const HistoryBooking = () => {
   const [bookingData, setBookingData] = useState<itemBooking<string, number>[]>([]);
   const [paginationNumber, setPaginationNumber] = useState<number>(0);
   const [searchQuery, setSearchQuery] = useState<string>(""); // State to keep track of the search query
-  const [selectedDate, setSelectedDate] = useState<string | null>(null);
   const formatDateToISO = (date: Date): string => {
     const offset = -7; // Vietnam is UTC+7, but the offset is the negative
     const localTime = new Date(date.getTime() - (offset * 60 * 60 * 1000));
     return localTime.toISOString().split('T')[0];
   }
-
+  const [selectedDate, setSelectedDate] = useState<string|null>(null);
+  useEffect(() => {
+    if (bookingInfo.pagination?.totalRow) {
+      setPaginationNumber(0);
+    }
+  }, [bookingInfo.pagination?.totalRow]);
 
   useEffect(() => {
     const filters = {
       pageSize: 9,
+      bookingDate:selectedDate??"",
+      phoneNumber: searchQuery,
       excludeBookingStatus: statusBooking.WaitForConfirm,
     }
     dispatch(getBooking(paginationNumber, filters));
-  }, [dispatch, paginationNumber]);
+  }, [dispatch, paginationNumber, searchQuery, selectedDate]);
+  useEffect(() => {
+    if (bookingInfo) {
+      setBookingData(bookingInfo.data)
+    }
+  }, [bookingInfo])
 
   useEffect(() => {
 
@@ -47,29 +58,29 @@ const HistoryBooking = () => {
     <div className="w-full min-h-full p-5">
       <h1 className="font-semibold text-[24px] mb-5">Lịch sử đặt lịch</h1>
       <div className="flex items-center space-x-4 mb-5">
-      {bookingData?.length>0 ?(
-        <div className="flex items-center bg-white border border-gray-200 rounded-full px-3 py-2 w-1/2">
-          <FaSearch className="text-gray-400" />
-          <input
-            type="text"
-            placeholder="Số điện thoại"
-            className="flex-grow ml-2 outline-none bg-transparent"
-            value={searchQuery}
-            onChange={e => {
-              const value = e.target.value;
-              const isValid = /^[0-9]+$/.test(value) && value.length <= 10;
-              if (isValid || value === '') {
-                setSearchQuery(value);
-              }
-            }}
-          />
-          {searchQuery && (
-            <button onClick={() => setSearchQuery('')}>
-              <FaTimes />
-            </button>
-          )}
-        </div>)
-        :""}
+        {bookingData?.length > 0 ? (
+          <div className="flex items-center bg-white border border-gray-200 rounded-full px-3 py-2 w-1/2">
+            <FaSearch className="text-gray-400" />
+            <input
+              type="text"
+              placeholder="Số điện thoại"
+              className="flex-grow ml-2 outline-none bg-transparent"
+              value={searchQuery}
+              onChange={e => {
+                const value = e.target.value;
+                const isValid = /^[0-9]+$/.test(value) && value.length <= 10;
+                if (isValid || value === '') {
+                  setSearchQuery(value);
+                }
+              }}
+            />
+            {searchQuery && (
+              <button onClick={() => setSearchQuery('')}>
+                <FaTimes />
+              </button>
+            )}
+          </div>)
+          : ""}
         <div className="flex items-center bg-white border border-gray-200 rounded-full px-4 py-2">
           <FaCalendarAlt className="text-gray-400" />
           <input

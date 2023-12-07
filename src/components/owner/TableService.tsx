@@ -96,7 +96,7 @@ const TableService = ({ productData, setSortAsc, setSortValue, setSortAscPrice, 
                             </div>
 
                         </td>
-                        <td className="pr-7">
+                        <td className="pr-7 relative">
                             <button
                                 onClick={() => handleShowDiv(index)}
                             >
@@ -104,7 +104,8 @@ const TableService = ({ productData, setSortAsc, setSortValue, setSortAscPrice, 
                             </button>
 
                             {showDivIndex === index && (
-                                <div className="absolute flex flex-col items-center bg-white shadow-lg rounded-lg w-[140px] right-0 space-y-3 py-2 font-semibold text-[#667085]">
+                                <div className={`absolute z-10 flex flex-col items-center bg-white shadow-lg rounded-lg w-[140px] right-0 space-y-3 py-2 font-semibold text-[#667085]
+                                                ${index === 11 ? 'top-[-120px]' : ''}`}>
                                     <Link to={`/manage-services/${item.id}`} className="hover:text-main">Chi tiết</Link>
                                     {item?.status === typeService.Active && (
                                         <Link to={`/manage-services/update-service/${item.id}`} className='flex items-center space-x-1 hover:text-main hover:stroke-main'>

@@ -21,6 +21,12 @@ export const productInfor = {
     GET_PRODUCT_INFO_FAIL: "get_product_info_fail",
 }
 
+export const topProduct = {
+    GET_TOP_PRODUCT: "get_top_product",
+    GET_PRODUCT_TOP_SUCCESS: "get_product_top_success",
+    GET_PRODUCT_TOP_FAIL: "get_product_top_fail",
+}
+
 export const productFilter = {
     GET_PRODUCT_FILTER: "get_product_filter",
     GET_PRODUCT_FILTER_DISCOUNT: "get_product_filter_discount",
@@ -78,6 +84,12 @@ export const listBooking = {
     LIST_BOOKING: "list_booking",
     LIST_BOOKING_SUCCESS: "list_booking_success",
     LIST_BOOKING_FAIL: "list_booking_fail",
+}
+
+export const listChooseBooking = {
+    LIST_CHOOSE_BOOKING: "list_choose_booking",
+    LIST_CHOOSE_BOOKING_SUCCESS: "list_choose_booking_success",
+    LIST_CHOOSE_BOOKING_FAIL: "list_choose_booking_fail",
 }
 
 export const updateBooking = {

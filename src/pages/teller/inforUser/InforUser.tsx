@@ -35,7 +35,7 @@ const InforUser = ({ addProduct = [], addService = [], removeProduct, removeServ
     const [showService, setShowService] = useState<boolean[]>(Array(addProduct.length).fill(false));
     const [orderData, setOrderData] = useState<itemOrder<string, number>[]>([]);
     const [orderService, setOrderService] = useState<{ repairServiceId: string; }[]>([]);
-    console.log(orderService)
+    console.log(orderData)
     const [showStaff, setShowStaff] = useState<boolean>(false);
     const axiosPrivate = userAxiosPrivate();
     const { bookingId } = useParams();
@@ -281,12 +281,17 @@ const InforUser = ({ addProduct = [], addService = [], removeProduct, removeServ
                                                 <h3 className='font-semibold text-[10px]'>Số lượng:</h3>
                                                 <input
                                                     type="number"
-                                                    defaultValue={1}
+                                                    value={orderData?.find((checked) => checked.motobikeProductId === item?.id)?.productQuantity || 1}
                                                     min={1}
+                                                    max={item.quantity}
                                                     onChange={(e) => {
-                                                        handleQuantityChange(item.id, parseInt(e.target.value))
+                                                        if(parseInt(e.target.value)<item.quantity){
+                                                            handleQuantityChange(item.id, parseInt(e.target.value))
+                                                        }else{
+                                                            handleQuantityChange(item.id, item.quantity)
+                                                        }
                                                     }}
-                                                    className='w-[30px] border-b-2 border-black text-center focus:outline-none focus:border-b-2 focus:border-main'
+                                                    className='w-[50px] border-b-2 border-black text-center focus:outline-none focus:border-b-2 focus:border-main'
                                                 />
                                                 {item.installationFee > 0 && (
                                                     <button

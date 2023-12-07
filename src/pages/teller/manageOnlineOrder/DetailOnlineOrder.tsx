@@ -246,6 +246,11 @@ const DetailOnlineOrder = () => {
                       <th scope="col" className="py-3 flex justify-center items-center space-x-2">
                         <p>Tên sản phẩm</p>
                       </th>
+                      {data?.orderDetails?.some((item) => item?.discount) ? (
+                          <th scope="col" className="text-center">
+                            <p>Áp dụng khuyến mãi</p>
+                          </th>
+                        ) : ""}
                       <th scope="col" className="">
                         <p>Số lượng</p>
                       </th>
@@ -264,6 +269,11 @@ const DetailOnlineOrder = () => {
                           <img src={item?.motobikeProduct.image} alt="" className="h-11 mr-5" />
                           <p>{item?.motobikeProduct.name}</p>
                         </td>
+                        {data?.orderDetails?.some((item) => item?.discount) ? (
+                            <td className="w-[16%] text-center">
+                              {item?.discount ? `${item?.discount?.title} (${item?.discount?.discountAmount}%)` : "không"}
+                            </td>
+                          ):""}
                         <td className="">
                           {item?.quantity}
                         </td>

@@ -46,6 +46,8 @@ const ProductDetail = () => {
             <div className="font-semibold text-[20px] flex space-x-4 items-center pt-3">
                 {data?.status===typeActiveProduct.Active?(
                     <Link to="/manage-products" className="hover:text-main">Danh sách sản phẩm</Link>
+                ):data?.status===typeActiveProduct.OutOfStock?(
+                    <Link to="/manage-products" className="hover:text-main">Các sản phẩm hết hàng</Link>
                 ):(
                     <Link to="/manage-products/list-not-product" className="hover:text-main">Danh sách sản phẩm đã hủy</Link>
                 )}
@@ -87,8 +89,9 @@ const ProductDetail = () => {
                             <div className="bg-white p-5 text-[17px] rounded-lg">
                                 <div className='flex justify-between items-start'>
                                     <p className='font-semibold text-[20px] px-1'>{data?.name}</p>
-                                    <div className='flex min-w-[150px] space-x-2 p-2 items-center border-2 border-gray-200 rounded-lg'>
-                                        <div className={`w-2 h-2 rounded-full ${data?.status === typeActiveProduct.Active ? "bg-green-600" : "bg-red-600"}`}></div>
+                                    <div className='flex min-w-[150px] space-x-2 p-2 justify-center items-center border-2 border-gray-200 rounded-lg'>
+                                        <div className={`w-2 h-2 rounded-full ${data?.status === typeActiveProduct.Active ? "bg-green-600" 
+                                        :data?.status === typeActiveProduct.OutOfStock ? "bg-orange-700" : "bg-red-600"}`}></div>
                                         <p className='font-semibold text-[14px]'>
                                             {data?.status}
                                         </p>
@@ -130,8 +133,9 @@ const ProductDetail = () => {
                                 <div className='flex justify-between text-[#6B7280] items-center'>
                                     <div className='space-y-6'>
                                         <p>Loại sản phẩm</p>
-                                        {data?.installationFee && <p>Giá thay phụ kiện</p>}
+                                        {data?.installationFee ? <p>Giá thay phụ kiện</p>:""}
                                         <p>Giá bán</p>
+                                        <p>Số lượng</p>
                                         {data?.warrantyDuration !== 0 && <p>Bảo hành</p>}
                                         <p>Trạng thái giảm giá</p>
                                         <p>Phần trăm chiết khấu</p>
@@ -139,8 +143,9 @@ const ProductDetail = () => {
                                     </div>
                                     <div className='space-y-5 flex flex-col text-end'>
                                         <p>{data?.category?.categoryName}</p>
-                                        {data?.installationFee && <p>{formatPrice(data?.installationFee)} VNĐ</p>}
+                                        {data?.installationFee ? <p>{formatPrice(data?.installationFee)} VNĐ</p>:""}
                                         <p>{formatPrice(data?.priceCurrent)}VNĐ</p>
+                                        <p>{data && data?.quantity >0?data?.quantity:'Đã hết hàng'}</p>
                                         {data?.warrantyDuration !== 0 && (<p>{data?.warrantyDuration} tháng</p>)}
                                         <p>{data?.discount ? "Có" : "Không"}</p>
                                         <p>{data?.discount ? data?.discount.discountAmount : "0"}%</p>

@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import ListProduct from '../listProduct/ListProduct'
 import InforUser from '../inforUser/InforUser'
 import { useDispatch, useSelector } from 'react-redux'
-import { CategoryProduct, FilterProduct, ShowProduct } from '@/actions/product'
+import { CategoryProduct, FilterProduct} from '@/actions/product'
 import { item, itemProduct, selectorProduct } from '@/types/actions/product'
 import Pagination from '@/components/Pagination'
 import { showWarningAlert } from '@/constants/chooseToastify'
@@ -22,8 +22,8 @@ enum createShow {
 }
 const CreateOrder = () => {
     const [isLoading, setIsLoading] = useState<boolean>(false);
-    const [showDetail,setShowDetail] = useState<boolean>(false);
-    const [itemDetail,setItemDetail] = useState<item<string, number>>();
+    const [showDetail, setShowDetail] = useState<boolean>(false);
+    const [itemDetail, setItemDetail] = useState<item<string, number>>();
     const [showCreate, setShowCreate] = useState<createShow>(createShow.showProduct);
     const dispatch = useDispatch();
     const productInfor: itemProduct<string, number> = useSelector((state: selectorProduct<string, number>) => state.productReducer.productInfor);
@@ -45,10 +45,12 @@ const CreateOrder = () => {
 
     //hiển thị sản phẩm theo api
     useEffect(() => {
-        const activeProducts = productInfor.data?.filter((product) => product.status === typeActiveProduct.Active);
-        setProductData(activeProducts);
-        setIsLoading(false);
-    }, [productInfor.data]);
+        if (productInfor) {
+            setProductData(productInfor.data);
+            setIsLoading(false);
+        }
+
+    }, [productInfor]);
 
     //thêm sản phẩm và dịch vụ
     useEffect(() => {
@@ -80,7 +82,7 @@ const CreateOrder = () => {
                     paginationNumber: paginationNumber,
                     name: addSearch,
                     category: addCategory,
-                    status: typeActiveProduct.Active,
+                    status: typeActiveProduct.InActive,
                 }
                 setTimeout(() => {
                     dispatch(FilterProduct(data))
@@ -88,10 +90,12 @@ const CreateOrder = () => {
                 }, 200)
             } else {
                 const data = {
-                    status: typeActiveProduct.Active,
-                    number: paginationNumber
+                    category: "",
+                    name: "",
+                    status: typeActiveProduct.InActive,
+                    paginationNumber: paginationNumber
                 }
-                dispatch(ShowProduct(data));
+                dispatch(FilterProduct(data));
                 setIsLoading(true);
             }
         }
@@ -213,7 +217,7 @@ const CreateOrder = () => {
                                         <input
                                             type="text"
                                             placeholder="Tìm kiếm sản phẩm"
-                                            className="w-full py-3 pl-3 pr-4 text-gray-500 border rounded-md outline-none bg-gray-50 focus:bg-white focus:border-gray-20"
+                                            className="w-full py-3 pl-3 pr-4 text-black border rounded-md outline-none bg-gray-50 focus:bg-white focus:border-gray-20"
                                             onChange={(e) => {
                                                 if (searchTimeout) {
                                                     clearTimeout(searchTimeout);
@@ -235,7 +239,7 @@ const CreateOrder = () => {
                             {/* danh sách sản phẩm*/}
                             {isLoading ? (
                                 <Loading />
-                            ) : productData.length > 0 ? (
+                            ) : productData?.length > 0 ? (
                                 <div className='flex flex-col pt-5 space-y-3'>
                                     <div className=' w-full flex flex-col space-y-3'>
                                         <ListProduct

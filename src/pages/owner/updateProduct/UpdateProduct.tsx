@@ -29,8 +29,8 @@ const UpdateProduct = () => {
     const detailProduct: item<string, number> = useSelector((state: selectorDetailProduct<string, number>) => state.productDetailReducer.productDetail)
 
     const [nameProduct, setNameProduct] = useState<string>(detailProduct?.name);
-    const [quantityProduct, setQuantityProduct] = useState<number>(1);
-    const [priceProduct, setPriceProduct] = useState<number>(0);
+    const [quantityProduct, setQuantityProduct] = useState<number>(0);
+    const [priceProduct, setPriceProduct] = useState<number>(1);
     const [priceInstallationFee, setPriceInstallationFee] = useState<number>(0)
     const [descriptionProduct, setDescriptionProduct] = useState<string>('');
     const [addCategory, setAddCategory] = useState<string>("");
@@ -179,7 +179,7 @@ const UpdateProduct = () => {
             vehiclesId: addVehicle,
             images: images
         }
-        if (nameProduct && priceProduct && priceInstallationFee && descriptionProduct && addWarranty && addCategory && addVehicle) {
+        if (nameProduct && quantityProduct>0 && priceProduct && priceInstallationFee && descriptionProduct && addWarranty && addCategory && addVehicle) {
             dispatch(updateProduct(detailProduct.id, dataCreate))
             navigate(`/manage-products/${productId}`)
             showSuccessAlert("Cập nhật thành công");
@@ -243,7 +243,7 @@ const UpdateProduct = () => {
                                             <div className="flex items-center space-x-2">
                                                 <input type="number"
                                                     min={1}
-                                                    value={priceProduct ?? 0}
+                                                    value={priceProduct ?? 1}
                                                     placeholder="Nhập số tiền"
                                                     className='outline-none p-2 border-2 border-[#E5E7EB] bg-gray-50 rounded-xl'
                                                     onChange={(e) => setPriceProduct(parseInt(e.target.value))}
@@ -282,26 +282,22 @@ const UpdateProduct = () => {
                                             </div>
                                         </div>
                                         <div className="flex flex-col space-y-3">
-                                            <p className="pl-1">Khuyến mãi</p>
-                                            <Select
-                                                value={addDiscount}
-                                                size="lg"
-                                                label="Lựa chọn khuyến mãi"
-                                                className="text-[20px] w-[250px] h-[50px] bg-gray-50 custom-truncate-class"
-                                                onChange={handleAddDiscount}
-
-                                            >
-                                                {discountProduct?.data
-                                                    ? discountProduct?.data?.map((item, index) => (
-                                                        <Option
-                                                            value={item.id}
-                                                            key={index}
-                                                            className="text-[18px]"
-                                                        >{item.title}</Option>
-                                                    ))
-                                                    : ""
-                                                }
-                                            </Select>
+                                        <div className="flex space-x-1">
+                                                <p>Số lượng </p>
+                                                <p className="text-red-800">*</p>
+                                            </div>
+                                            <input type="number"
+                                                value={quantityProduct ?? 0}
+                                                min={1}
+                                                className='outline-none p-2 border-2 border-[#E5E7EB] bg-gray-50 rounded-xl'
+                                                onChange={(e) => {
+                                                    if(!isNaN(parseInt(e.target.value))){
+                                                        setQuantityProduct(parseInt(e.target.value))
+                                                    }else{
+                                                        setQuantityProduct(1)
+                                                    }
+                                                }}
+                                            />
                                         </div>
                                     </div>
                                 </div>
@@ -332,7 +328,27 @@ const UpdateProduct = () => {
                                                 }
                                             </Select>
                                         )}
-
+                                    </div>
+                                    <div className="flex flex-col space-y-3">
+                                        <p className="pl-1">Khuyến mãi</p>
+                                        <Select
+                                            value={addDiscount}
+                                            size="lg"
+                                            label="Lựa chọn khuyến mãi"
+                                            className="text-[20px] h-[50px] bg-gray-50 custom-truncate-class"
+                                            onChange={handleAddDiscount}
+                                        >
+                                            {discountProduct?.data
+                                                ? discountProduct?.data?.map((item, index) => (
+                                                    <Option
+                                                        value={item.id}
+                                                        key={index}
+                                                        className="text-[18px]"
+                                                    >{item.title}</Option>
+                                                ))
+                                                : ""
+                                            }
+                                        </Select>
                                     </div>
                                     <div className="space-y-3">
                                         <p className="pl-1">Thương hiệu xe</p>

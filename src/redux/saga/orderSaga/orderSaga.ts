@@ -1,4 +1,4 @@
-import { getDetailOrder, getDetailOrderFailed, getDetailOrderSuccess, getOrderFailed, getOrderPaidFailed, getOrderPaidSuccess, getOrderSuccess, updateCustomerOrderFailed, updateCustomerOrderSuccess, updateStatusOrderFailed, updateStatusOrderSuccess } from '@/actions/order';
+import { getDetailOrder, getDetailOrderFailed, getDetailOrderSuccess, getOrderFailed, getOrderPaidFailed, getOrderPaidSuccess, getOrderSuccess, updateCustomerOrderFailed, updateCustomerOrderSuccess, updateProductOrderFailed, updateProductOrderSuccess, updateStatusOrderFailed, updateStatusOrderSuccess } from '@/actions/order';
 import {listOrder, detailOrder, updateUserOrder, updateProductOrdered, payWithCash, listOrderPaid } from '@/constants/mainConstants';
 import { createWarranty } from '@/constants/secondaryConstants';
 import { orderService } from '@/services/orderService';
@@ -95,13 +95,12 @@ function* updateProductOrder(payload:payloadItemStaffProduct<string,number>){
         const { status, data } = resp;
         if (data && status === 201) {
             yield put(updateCustomerOrderSuccess(data));
-        } else {
-            yield put(updateCustomerOrderFailed(data));
+            yield put(updateProductOrderSuccess(data));
         }
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
-        const msg: string = error.message;
-        yield put(updateCustomerOrderFailed(msg));
+        const msg: string = error.response.data.Message;
+        yield put(updateProductOrderFailed(msg));
     }
 }
 

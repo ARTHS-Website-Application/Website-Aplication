@@ -1,12 +1,16 @@
 import { useState, useEffect } from 'react'
 import { addProductOrder, addProductService } from '@/types/actions/product'
 import { itemOrder } from '@/types/actions/createOrder';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { updateProductOrder } from '@/actions/order';
-import { showSuccessAlert } from '@/constants/chooseToastify';
+import { showSuccessAlert, showWarningAlert } from '@/constants/chooseToastify';
 import StaffSelect from './StaffSelect';
 import LoadingCreateUpdate from '../LoadingCreateUpdate';
 import { itemServiceOrder } from '@/types/actions/updateCustomerOrder';
+import { selectorDetailOrder } from '@/types/actions/detailOrder';
+import { resetError } from '@/actions/userInfor';
+import { typeActiveProduct } from '@/types/typeProduct';
+import { FilterProduct } from '@/actions/product';
 type Props = {
     addProduct?: addProductOrder<string, number>[];
     addService?: addProductService<string, number>[];
@@ -23,7 +27,9 @@ type Props = {
 
 const UpdateProduct = ({ addProduct = [], addService = [], removeProduct, onClose, setAddProduct,
     tranfomDataProduct, tranfomDataService, setAddService, removeService, idOrder, staffIdDetail }: Props) => {
-
+    const errorUpdate: string | null = useSelector((state: selectorDetailOrder<string, number>) => state.orderDetailReducer.showError);
+    console.log("first",errorUpdate)
+    const checkUpdate: boolean = useSelector((state: selectorDetailOrder<string, number>) => state.orderDetailReducer.checkUpdate);
     const dispatch = useDispatch();
     const [isLoading, setIsLoading] = useState(false);
     const [showStaff, setShowStaff] = useState<boolean>(false);
@@ -125,12 +131,22 @@ const UpdateProduct = ({ addProduct = [], addService = [], removeProduct, onClos
     };
 
     const handleQuantityChange = (itemId: string, value: number) => {
-        setProductQuantity((prevProductQuantity) => {
-            return {
-                ...prevProductQuantity,
-                [itemId]: value
-            };
-        });
+        if (value > 0 ) {
+            setProductQuantity((prevProductQuantity) => {
+                return {
+                    ...prevProductQuantity,
+                    [itemId]: value
+                };
+            });
+        } else {
+            setProductQuantity((prevProductQuantity) => {
+                return {
+                    ...prevProductQuantity,
+                    [itemId]: 1
+                };
+            });
+        }
+
         const savedData = JSON.parse(localStorage.getItem('updateOrderData') as string);
 
         // Tìm sản phẩm trong savedData dựa trên itemId
@@ -152,16 +168,36 @@ const UpdateProduct = ({ addProduct = [], addService = [], removeProduct, onClos
     };
     //gửi dispatch update
     const handleUpdateStaffProduct = () => {
+        setIsLoading(true);
         const data = {
-            staffId: (orderData.some((item) => item.instUsed === true) || orderService?.length > 0)? staffId:null,
+            staffId: (orderData.some((item) => item.instUsed === true) || orderService?.length > 0) ? staffId : null,
             orderDetailModel: [...orderData, ...orderService]
         };
         if (idOrder) {
             dispatch(updateProductOrder(idOrder, data))
-            showSuccessAlert("Cập nhật thành công")
-            onClose();
         }
     }
+    useEffect(() => {
+        if (errorUpdate === null && checkUpdate ===true) {
+            onClose();
+            showSuccessAlert("Cập nhật thành công")
+            dispatch(resetError());
+            setIsLoading(false);
+            const data = {
+                category: "",
+                name: "",
+                status: typeActiveProduct.InActive,
+                paginationNumber: 0
+            }
+            dispatch(FilterProduct(data));
+        } else {
+            if(errorUpdate){
+                showWarningAlert(errorUpdate);
+                setIsLoading(false);
+                dispatch(resetError());
+            }
+        }
+    }, [checkUpdate, dispatch, errorUpdate, onClose])
 
     const handleRemoveItemNotChange = (indexToRemove: number) => {
         if (indexToRemove >= 0 && indexToRemove < showService.length) {
@@ -173,18 +209,18 @@ const UpdateProduct = ({ addProduct = [], addService = [], removeProduct, onClos
         }
         if (indexToRemove >= 0 && indexToRemove < orderData.length) {
             const motobikeProductIdToRemove = orderData[indexToRemove].motobikeProductId;
-    
+
             // Cập nhật orderData bằng cách loại bỏ mục
             const updatedOrderData = orderData.filter((item) => item.motobikeProductId !== motobikeProductIdToRemove);
             setOrderData(updatedOrderData);
-    
+
             // Cập nhật productQuantity bằng cách loại bỏ motobikeProductId tương ứng
             setProductQuantity((prevProductQuantity) => {
                 // eslint-disable-next-line @typescript-eslint/no-unused-vars
                 const { [motobikeProductIdToRemove]: removedItem, ...rest } = prevProductQuantity;
                 return rest;
             });
-    
+
             // Cập nhật localStorage
             localStorage.setItem('updateOrderData', JSON.stringify(updatedOrderData));
         }
@@ -236,7 +272,7 @@ const UpdateProduct = ({ addProduct = [], addService = [], removeProduct, onClos
                                                     onChange={(e) => {
                                                         handleQuantityChange(item.idProduct, parseInt(e.target.value))
                                                     }}
-                                                    className='w-[30px] border-b-2 border-black text-center focus:outline-none focus:border-b-2 focus:border-main'
+                                                    className='w-[50px] border-b-2 border-black text-center focus:outline-none focus:border-b-2 focus:border-main'
                                                 />
                                                 {item.installationFee > 0 && (
                                                     <button
@@ -259,33 +295,33 @@ const UpdateProduct = ({ addProduct = [], addService = [], removeProduct, onClos
                         <div className="w-full h-[65vh] overflow-auto space-y-3 pl-2 pr-1">
                             {addService &&
                                 addService.map((item: addProductService<string, number>, index: number) => (
-                                        <div key={index} className='bg-white w-full rounded-lg flex justify-between py-2 shadow-lg px-2'>
-                                            <div className='flex pl-2'>
-                                                <div className='py-2 pr-1'>
-                                                    <img src={item?.image} className='min-w-[100px] h-[80px] object-cover' alt="" />
-                                                </div>
-                                                <div className='pl-2 flex flex-col justify-between'>
-                                                    <div className='font-semibold pt-1'>
-                                                        <p className='text-[13px]'>{item.name}</p>
-                                                        {item.discountAmount > 0 ? (
-                                                            <div>
-                                                                <p className='text-[#888888] text-[13px] line-through'>{item.price}đ</p>
-                                                                <p className='text-[#FE3A30] text-[13px]'>{item.price * (1 - item.discountAmount / 100)}đ</p>
-                                                            </div>
-                                                        ) : (
-                                                            <p className='text-[#FE3A30] text-[13px]'>{item.price}đ</p>
-                                                        )}
-
-                                                    </div>
-                                                </div>
-
+                                    <div key={index} className='bg-white w-full rounded-lg flex justify-between py-2 shadow-lg px-2'>
+                                        <div className='flex pl-2'>
+                                            <div className='py-2 pr-1'>
+                                                <img src={item?.image} className='min-w-[100px] h-[80px] object-cover' alt="" />
                                             </div>
-                                            <button className='text-red-700 h-[30px] font-semibold px-1'
-                                                onClick={() => {
-                                                    removeService(item.id)
-                                                }}>X</button>
+                                            <div className='pl-2 flex flex-col justify-between'>
+                                                <div className='font-semibold pt-1'>
+                                                    <p className='text-[13px]'>{item.name}</p>
+                                                    {item.discountAmount > 0 ? (
+                                                        <div>
+                                                            <p className='text-[#888888] text-[13px] line-through'>{item.price}đ</p>
+                                                            <p className='text-[#FE3A30] text-[13px]'>{item.price * (1 - item.discountAmount / 100)}đ</p>
+                                                        </div>
+                                                    ) : (
+                                                        <p className='text-[#FE3A30] text-[13px]'>{item.price}đ</p>
+                                                    )}
+
+                                                </div>
+                                            </div>
 
                                         </div>
+                                        <button className='text-red-700 h-[30px] font-semibold px-1'
+                                            onClick={() => {
+                                                removeService(item.id)
+                                            }}>X</button>
+
+                                    </div>
                                 ))
                             }
                         </div>

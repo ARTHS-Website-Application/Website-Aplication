@@ -37,8 +37,8 @@ const TableProductOwner = ({ productData, setSortAsc, setSortValue, setSortAscPr
         <table className="min-w-full bg-white divide-y divide-gray-200 table-fixed text-center">
             <thead>
                 <tr className="text-xs uppercase tracking-wider bg-gray-600 text-white text-center">
-                    <th scope="col" className="">
-                        <div className="flex items-center justify-center space-x-3 py-4">
+                    <th scope="col" className="py-3">
+                        <div className="flex items-center justify-center space-x-3">
                             <p>Tên sản phẩm</p>
                             <button
                                 onClick={handleSort}
@@ -63,12 +63,9 @@ const TableProductOwner = ({ productData, setSortAsc, setSortValue, setSortAscPr
                             </button>
                         </div>
                     </th>
-                    {productData?.some((item) => item.status === typeActiveProduct.Active) && (
                         <th scope="col" className=" ">
                             Trạng thái
                         </th>
-                    )}
-
                     <th scope="col" className="">
                     </th>
                 </tr>
@@ -96,17 +93,17 @@ const TableProductOwner = ({ productData, setSortAsc, setSortValue, setSortAscPr
 
 
                         </td>
-                        {productData?.some((item) => item.status === typeActiveProduct.Active) && (
-                            <td className="">
-                                <div className="flex items-center justify-center space-x-2">
-                                    <div className={`w-2 h-2 rounded-full ${item.status === typeActiveProduct.Active ? "bg-green-600" : "bg-red-600"} `}></div>
-                                    <p className={`${item.status === typeActiveProduct.Active ? "text-green-600" : "text-red-600"}  text-[14px]`}> {item.status}</p>
-                                </div>
+                        <td className="">
+                            <div className="flex items-center justify-center space-x-2">
+                                <div className={`w-2 h-2 rounded-full ${item.status === typeActiveProduct.Active ? "bg-green-600"
+                                    : item.status === typeActiveProduct.OutOfStock ? "bg-orange-700" : "bg-red-600"} `}></div>
+                                <p className={`${item.status === typeActiveProduct.Active ? "text-green-600"
+                                    : item.status === typeActiveProduct.OutOfStock ? "text-orange-700" : "text-red-600"}  text-[14px]`}> {item.status}</p>
+                            </div>
 
-                            </td>
-                        )}
+                        </td>
 
-                        <td className="pr-7">
+                        <td className="pr-7 relative">
                             <button
                                 onClick={() => handleShowDiv(index)}
                             >
@@ -114,17 +111,18 @@ const TableProductOwner = ({ productData, setSortAsc, setSortValue, setSortAscPr
                             </button>
 
                             {showDivIndex === index && (
-                                <div className="absolute flex flex-col items-center bg-white shadow-lg rounded-lg w-[140px] right-0 space-y-3 py-2 font-semibold text-[#667085]">
+                                <div className={`absolute z-10 flex flex-col items-center bg-white shadow-lg rounded-lg w-[140px] right-0 space-y-3 py-2 font-semibold text-[#667085]
+                                                ${index === 11 ? 'top-[-120px]' : ''}`}>
                                     <Link to={`/manage-products/${item.id}`} className="hover:text-main">Chi tiết</Link>
-                                    {productData?.some((item) => item.status === typeActiveProduct.Active) &&(
+                                    {productData?.some((item) => item.status === typeActiveProduct.Active || item.status === typeActiveProduct.OutOfStock) && (
                                         <Link to={`/manage-products/update-product/${item.id}`} className='flex items-center space-x-1 hover:text-main hover:stroke-main'
                                         >
                                             <PencilIcon className="w-5 h-5" />
                                             <p> Cập nhật</p>
                                         </Link>
                                     )}
-                                    
-                                    {item.status === typeActiveProduct.Active ? (
+
+                                    {item.status === typeActiveProduct.Active || item.status === typeActiveProduct.OutOfStock ? (
                                         <button className='flex items-center space-x-1 hover:text-main hover:fill-main'
                                             onClick={() => {
                                                 handleRemove(item)
@@ -134,7 +132,7 @@ const TableProductOwner = ({ productData, setSortAsc, setSortValue, setSortAscPr
                                             <TrashIcon className="w-5 h-5" />
                                             <p> Xóa</p>
                                         </button>
-                                    ):(
+                                    ) : (
                                         <button className='flex items-center space-x-1 hover:text-main hover:fill-main'
                                             onClick={() => {
                                                 handleRemove(item)

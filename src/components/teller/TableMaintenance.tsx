@@ -4,8 +4,9 @@ import { formatDateSeven } from "@/utils/formatDate";
 
 type Props = {
     data: itemMaintenance<string>[];
+    handlePost:(maintenanceId:string)=>void;
 }
-const TableMaintenance = ({ data }: Props) => {
+const TableMaintenance = ({ data,handlePost }: Props) => {
     return (
         <div className="pt-3">
             <table className="min-w-full bg-white divide-y divide-gray-200 table-fixed text-center">
@@ -37,10 +38,15 @@ const TableMaintenance = ({ data }: Props) => {
                             <td className="">{formatDateSeven(item?.nextMaintenanceDate.toString())}</td>
                             <td className="">{formatDateSeven(item?.reminderDate.toString())}</td>
                             <td className="w-[150px] px-2">
-                                <p className={`p-1 text-white rounded-lg 
-                                ${item.remiderSend ? "bg-[#0095FF]" : "bg-[#FF000F]"}`}>
-                                    {item.remiderSend ? "Đã gửi" : "Chưa gửi"}
-                                </p>
+                                <div className={`p-1 text-white rounded-lg 
+                                ${item.remiderSend ? "bg-[#0095FF]" : "bg-[#FF000F] hover:bg-main"}`}>
+                                    {item.remiderSend ? "Đã gửi" 
+                                    :(<button
+                                    onClick={()=>handlePost(item?.id)}
+                                    >
+                                    Chưa gửi
+                                    </button>)}
+                                </div>
                             </td>
                         </tr>
                     ))}

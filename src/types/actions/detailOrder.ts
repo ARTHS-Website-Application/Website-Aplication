@@ -7,12 +7,14 @@ export interface selectorDetailOrder<T, N> {
     orderDetailReducer: {
         orderDetail: itemDetailOrder<T, N>;
         showError: T | null;
+        checkUpdate: boolean;
     }
 }
 
 export interface storeOrderDetail<T, N> {
     showError: T | null,
     orderDetail: itemDetailOrder<T, N>[];
+    checkUpdate: boolean;
 }
 
 export interface orderDetailPayloadReducer<T, N> {
@@ -57,6 +59,16 @@ export interface inStoreOrderDetails<T, N> {
     warrantyStartDate: Date,
     warrantyEndDate: Date,
     createAt: T,
+    discount: {
+        id: T,
+        title: T,
+        discountAmount: N,
+        startDate: Date,
+        endDate: Date,
+        imageUrl: T,
+        description: T,
+        status: T
+    },
     motobikeProduct: {
         id: T,
         name: T,
@@ -94,9 +106,9 @@ export interface listWarranty {
 }
 
 export interface sagaCreateWarranty {
-    type:"create_warranty",
-    data:warrantyCreate,
-    idOrder:string
+    type: "create_warranty",
+    data: warrantyCreate,
+    idOrder: string
 }
 export interface warrantyCreate {
     orderDetailId: string

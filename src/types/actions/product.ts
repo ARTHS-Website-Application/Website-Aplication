@@ -36,6 +36,10 @@ export interface discountItem<T, N> {
     status: T;
 }
 
+export interface itemTopProduct<T,N>{
+    totalQuantitySold:N;
+    product:item<T, N>
+}
 export interface item<T, N> {
     id: T;
     name: T;
@@ -157,6 +161,3 @@ export interface addProductService<T,N>{
     image: T;
     discountAmount:N;
 }
-
-
-
