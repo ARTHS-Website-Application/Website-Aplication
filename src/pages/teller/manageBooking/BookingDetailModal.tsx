@@ -1,21 +1,25 @@
 import { itemBooking, listBooking, selectorBooking } from "@/types/listBooking";
 import { useEffect, useState } from "react";
-import { putBooking } from "@/actions/booking";
+import { getChooseBooking, putBooking } from "@/actions/booking";
 import { useDispatch, useSelector } from "react-redux";
 import { statusBooking } from "@/types/typeBooking";
 import LoadingPage from "@/components/LoadingPage";
 import { Link } from "react-router-dom";
+import { format } from "date-fns-tz";
+import { resetError } from "@/actions/userInfor";
 
 const BookingDetailModal = ({ booking, onClose }: { booking: itemBooking<string, number> | null, onClose: () => void }) => {
     const [showEditForm, setShowEditForm] = useState(false);
     const [showCancelModal, setShowCancelModal] = useState(false);
-    const [showBooked,setShowBooked] = useState<boolean>(false);
+    const [showBooked, setShowBooked] = useState<boolean>(false);
     const [cancelReason, setCancelReason] = useState('');
     const [newDate, setNewDate] = useState<string>('');
     const [newTime, setNewTime] = useState<string>('');
     const bookingInfo: listBooking<string, number> = useSelector((state: selectorBooking<string, number>) => state.bookingReducer?.bookingInfo);
+    const chooseBooking: listBooking<string, number> = useSelector((state: selectorBooking<string, number>) => state.bookingReducer?.chooseBooking);
+    const checkError: string | null = useSelector((state: selectorBooking<string, number>) => state.bookingReducer?.showError);
     const [localBooking, setLocalBooking] = useState<itemBooking<string, number> | null>(booking);
-    console.log(localBooking);
+    console.log(chooseBooking,newDate);
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const dispatch = useDispatch();
 
@@ -44,6 +48,7 @@ const BookingDetailModal = ({ booking, onClose }: { booking: itemBooking<string,
             status: statusBooking.Confirmed
         }
         dispatch(putBooking(localBooking?.id, updateData));
+        setShowBooked(false);
         setIsLoading(true);
     };
 
@@ -67,7 +72,8 @@ const BookingDetailModal = ({ booking, onClose }: { booking: itemBooking<string,
             dateBook: newDate
         }
         dispatch(putBooking(localBooking?.id, updateData));
-        onClose();
+        setShowBooked(false);
+        setIsLoading(true);
     };
 
     const handleConfirmCameBooking = async () => {
@@ -112,6 +118,26 @@ const BookingDetailModal = ({ booking, onClose }: { booking: itemBooking<string,
         const minutes = ("0" + d.getMinutes()).slice(-2);
         return `${hours}:${minutes}`;
     };
+    useEffect(() => {
+        if (checkError) {
+            setIsLoading(false);
+            dispatch(resetError());
+        }
+    }, [checkError, dispatch]);
+    useEffect(() => {
+        if (showBooked) {
+            setShowEditForm(true);
+        }
+    }, [showBooked]);
+    useEffect(() => {
+        const filters = {
+            bookingDate: newDate,
+            bookingStatus: statusBooking.Confirmed,
+        }
+        if(newDate){
+            dispatch(getChooseBooking(100, filters));
+        }
+    }, [dispatch, newDate])
 
     useEffect(() => {
         if (localBooking && localBooking.dateBook) {
@@ -160,7 +186,7 @@ const BookingDetailModal = ({ booking, onClose }: { booking: itemBooking<string,
             return null;
         } else {
             return <button className="bg-indigo-500 text-white font-semibold px-2 py-2 rounded-md hover:bg-indigo-600 transition duration-200 ease-in-out transform hover:scale-105"
-                onClick={()=>{
+                onClick={() => {
                     toggleEditForm();
                     setShowBooked(!showBooked);
                 }}
@@ -215,7 +241,7 @@ const BookingDetailModal = ({ booking, onClose }: { booking: itemBooking<string,
     return (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-60" onClick={onClose}>
             {isLoading ? <LoadingPage /> : (
-                <div >
+                <div className="flex justify-center space-x-3">
                     <div className="bg-white w-full max-w-4xl p-8 rounded-lg flex space-x-8" onClick={stopPropagation}>
                         {/* Customer Information */}
                         <div className="flex-none w-2/5 space-y-6 rounded-lg p-4 shadow-lg">
@@ -309,6 +335,7 @@ const BookingDetailModal = ({ booking, onClose }: { booking: itemBooking<string,
                                 <input
                                     type="date"
                                     name="newDate"
+                                    min={format(new Date(), 'yyyy-MM-dd')}
                                     value={newDate}
                                     onChange={handleInputChange}
                                     className="border-2 border-indigo-300 focus:border-indigo-500 rounded px-4 py-2 transition duration-200 ease-in-out transform focus:scale-105"
@@ -322,11 +349,10 @@ const BookingDetailModal = ({ booking, onClose }: { booking: itemBooking<string,
                                     className="border-2 border-indigo-300 focus:border-indigo-500 rounded px-4 py-2 transition duration-200 ease-in-out transform focus:scale-105"
                                 />
                                 {localBooking.status !== statusBooking.WaitForConfirm ?
-                                    (<button className="bg-green-600 text-white px-6 py-2 rounded-md hover:bg-green-700 transition duration-200 ease-in-out transform hover:scale-105" 
-                                    onClick={handleUpdateDateBook}>Cập nhật</button>)
+                                    (<button className="bg-green-600 text-white px-6 py-2 rounded-md hover:bg-green-700 transition duration-200 ease-in-out transform hover:scale-105"
+                                        onClick={handleUpdateDateBook}>Cập nhật</button>)
                                     : null}
                             </div>
-
 
                             {/* Action Buttons */}
                             <div className="flex justify-end items-end mt-10">
@@ -366,12 +392,37 @@ const BookingDetailModal = ({ booking, onClose }: { booking: itemBooking<string,
                             </div>
                         </div>
                     </div>
-                    {showBooked?(
-                        <div className="bg-white">
-                        hello
-                    </div>
-                    ):""}
-                    
+                    {showBooked ? (
+                        <div className="bg-white p-2 space-y-9 rounded-lg">
+                            <div>
+                                <p className="text-main font-semibold text-[20px]">Danh sách đã đặt lịch ngày: {format(new Date(newDate), 'dd-MM-yyyy')}</p>
+                            </div>
+                            {chooseBooking?.data?.length > 0
+                                ? (
+                                    <div className="w-full h-[50vh] overflow-auto ">
+                                        <div className="w-full h-[40px] flex items-center border-2 border-gray-400 bg-main text-white">
+                                            <p className="border-r-2 border-gray-400 w-[40%] h-full flex justify-center items-center">Thời gian</p>
+                                            <p className="w-[60%] h-full flex justify-center items-center">Nhân viên sửa chữa</p>
+                                        </div>
+                                            <div className="w-full h-full">
+                                                {chooseBooking?.data?.map((item, index) => (
+                                                    <div key={index} className="flex justify-center items-center border-x-2 border-b-2 border-gray-400 h-[50px] w-full">
+                                                        <p className="w-[40%] h-full border-r-2 border-gray-400 flex justify-center items-center">{format(new Date(item.dateBook), 'HH:mm')}</p>
+                                                        <p className="w-[60%] h-full flex justify-center items-center">{item.staff ? `${item?.staff?.fullName}` : "Chưa có"}</p>
+                                                    </div>
+                                                ))}
+                                            </div>
+
+                                    </div>
+                                )
+                                : (
+                                    <div className="w-full h-full flex justify-center items-center">
+                                        <p className="text-[20px] font-semibold text-main">Chưa có lịch đặt</p>
+                                    </div>
+                                )}
+                        </div>
+                    ) : ""}
+
                 </div>
             )}
         </div>

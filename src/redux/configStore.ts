@@ -5,6 +5,7 @@ import { rootSaga } from './saga/rootSaga';
 import userReducer from './reducer/userReducer';
 import listStaffReducer from './reducer/listStaffReducer';
 import productReducer from './reducer/productReducer';
+import topProductReducer from './reducer/topProductReducer';
 import categoryProductReducer from './reducer/categoryProductReducer';
 import vehicleProductReducer from './reducer/vehicleReducer';
 import orderReducer from './reducer/orderReducer';
@@ -36,6 +37,7 @@ const allReducer = combineReducers({
   listStaffReducer,
   // product
   productReducer,
+  topProductReducer,
   productDetailReducer,
   categoryProductReducer,
   vehicleProductReducer,

@@ -1,8 +1,10 @@
-import { listBooking, updateBooking } from "@/constants/mainConstants";
+import { listBooking, listChooseBooking, updateBooking } from "@/constants/mainConstants";
+import { showResetError } from "@/constants/secondaryConstants";
 import { bookingSaga, repairBooking } from "@/types/listBooking";
 
 const initialState: repairBooking<string, number> = {
     bookingInfo: [],
+    chooseBooking:[],
     showError: null,
 }
 
@@ -18,11 +20,16 @@ const bookingReducer = (
                 ...state,
                 bookingInfo: payload.data,
             };
+            case listChooseBooking.LIST_CHOOSE_BOOKING_SUCCESS:
+
+            return {
+                ...state,
+                chooseBooking: payload.data,
+            };
 
         case listBooking.LIST_BOOKING_FAIL:
             return {
                 ...state,
-                bookingInfo: [],
                 showError: payload.error
             };
 
@@ -40,6 +47,11 @@ const bookingReducer = (
                 ...state,
                 showError: payload.error
             };
+            case showResetError.RESET_ERROR:
+                return{
+                    ...state,
+                    showError: null,
+                }
 
         default:
             return state;

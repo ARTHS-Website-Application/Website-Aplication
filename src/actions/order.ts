@@ -162,11 +162,11 @@ export const updateProductOrderSuccess = (data: inStoreOrderDetails<string, numb
         },
     };
 };
-export const updateProductOrderFailed = (error: string) => {
+export const updateProductOrderFailed = (showError: string) => {
     return {
         type: updateProductOrdered.UPDATE_PRODUCT_ORDER_FAIL,
         payload: {
-            error,
+            showError,
         },
     };
 };

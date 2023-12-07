@@ -6,6 +6,14 @@ const linkRole =[
     name:"Các sản phẩm đang hoạt động"
   },
   {
+    to:'list-top-product',
+    name:"Top sản phẩm bán chạy"
+  },
+  {
+    to:'list-out-of-stock-product',
+    name:"Các sản phẩm hết hàng"
+  },
+  {
     to:'list-not-product',
     name:"Các sản phẩm ngừng kinh doanh"
   },

@@ -1,4 +1,4 @@
-import { CategoryProduct, FilterProduct, ShowProduct } from '@/actions/product';
+import { CategoryProduct, FilterProduct} from '@/actions/product';
 import { showWarningAlert } from '@/constants/chooseToastify';
 import { itemCategoryProduct, selectorCategoryProduct } from '@/types/actions/categoryPr';
 import { addProductOrder, addProductService, item, itemProduct, selectorProduct } from '@/types/actions/product';
@@ -110,7 +110,7 @@ const RepairProduct = ({ isVisible, onClose, dataProduct, idOrder, staffId }: Pr
             paginationNumber: paginationNumber,
             name: addSearch,
             category: addCategory,
-            status: typeActiveProduct.Active,
+            status: typeActiveProduct.InActive,
         }
         if (addCategory || addSearch) {
             setTimeout(() => {
@@ -120,10 +120,12 @@ const RepairProduct = ({ isVisible, onClose, dataProduct, idOrder, staffId }: Pr
 
         } else {
             const data = {
-                number: paginationNumber,
-                status: typeActiveProduct.Active,
+                category: "",
+                name: "",
+                status: typeActiveProduct.InActive,
+                paginationNumber: paginationNumber
             }
-            dispatch(ShowProduct(data));
+            dispatch(FilterProduct(data));
             setIsLoading(true);
         }
     }, [dispatch, addCategory, addSearch, paginationNumber])
@@ -264,7 +266,7 @@ const RepairProduct = ({ isVisible, onClose, dataProduct, idOrder, staffId }: Pr
                                                 <input
                                                     type="text"
                                                     placeholder="Tìm kiếm sản phẩm"
-                                                    className="w-full py-3 pl-3 pr-4 text-gray-500 border rounded-md outline-none bg-gray-50 focus:bg-white focus:border-gray-20"
+                                                    className="w-full py-3 pl-3 pr-4 border rounded-md outline-none bg-gray-50 focus:bg-white focus:border-gray-20"
                                                     onChange={(e) => {
                                                         if (searchTimeout) {
                                                             clearTimeout(searchTimeout);

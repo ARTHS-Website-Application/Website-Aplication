@@ -1,10 +1,10 @@
-import { productInfor, productFilter, detailProduct, productCreate, productUpdate } from "@/constants/mainConstants";
+import { productInfor, productFilter, detailProduct, productCreate, productUpdate, topProduct } from "@/constants/mainConstants";
 import { createVehicles, listVehicles, listWarranty, productCategory, removeVehicles } from "@/constants/secondaryConstants";
 import { itemCategoryProduct } from "@/types/actions/categoryPr";
 import {itemFilter, itemFilterDiscount } from "@/types/actions/filterCreate";
 import { itemVehicleProduct } from "@/types/actions/listVehicle";
 import { itemWarrantyProduct } from "@/types/actions/listWarranty";
-import { callProduct, callSortProduct, item, itemProduct } from "@/types/actions/product";
+import { callProduct, callSortProduct, item, itemProduct, itemTopProduct } from "@/types/actions/product";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const postCreateProduct = (data:any) => {
@@ -37,6 +37,30 @@ export const ShowProduct = (data:callProduct<string,number>) => {
     return {
         type: productInfor.GET_PRODUCT_INFO,
         data
+    };
+};
+
+export const ShowTopProduct = () => {
+    return {
+        type: topProduct.GET_TOP_PRODUCT,
+    };
+};
+
+export const ShowTopProductSuccess = (data:itemTopProduct<string,number>[]) => {
+    return {
+        type: topProduct.GET_PRODUCT_TOP_SUCCESS,
+        payload: {
+            data,
+        },
+    };
+};
+
+export const ShowTopProductFailed = (error:string) => {
+    return {
+        type: topProduct.GET_PRODUCT_TOP_FAIL,
+        payload: {
+            error,
+        },
     };
 };
 

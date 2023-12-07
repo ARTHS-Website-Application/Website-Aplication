@@ -1,3 +1,4 @@
+import { showResetError } from '@/constants/secondaryConstants';
 import { detailOrder, payWithCash, updateProductOrdered, updateUserOrder } from '../../constants/mainConstants';
 import { orderDetailPayloadReducer, storeOrderDetail } from '@/types/actions/detailOrder';
 
@@ -5,6 +6,7 @@ import { orderDetailPayloadReducer, storeOrderDetail } from '@/types/actions/det
 const initialState: storeOrderDetail<string, number> = {
     orderDetail: [],
     showError: null,
+    checkUpdate:false,
 };
 
 
@@ -41,13 +43,19 @@ const orderDetailReducer = (
         case updateProductOrdered.UPDATE_PRODUCT_ORDER_SUCCESS:
             return {
                 ...state,
-                orderDetail: payload.data
+                checkUpdate: true,
+                showError: null,
             }
         case updateProductOrdered.UPDATE_PRODUCT_ORDER_FAIL:
             return {
                 ...state,
-                orderDetail: [],
                 showError: payload.showError
+            }
+        case showResetError.RESET_ERROR:
+            return{
+                ...state,
+                showError: null,
+                checkUpdate: false
             }
         
             case payWithCash.PAY_WITH_CASH_SUCCESS:

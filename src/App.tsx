@@ -65,6 +65,8 @@ import DetailEmployee from './pages/owner/detailEmployee/DetailEmployee';
 import DetailTeller from './pages/owner/detailEmployee/DetailTeller';
 import ShowSetting from './pages/owner/showSetting/ShowSetting';
 import DateMaintenance from './pages/teller/dateMaintenance/DateMaintenance';
+import ListOutOfStockProduct from './pages/owner/listOutOfStockProduct/ListOutOfStockProduct';
+import ListTopProduct from './pages/owner/listTopProduct/ListTopProduct';
 
 
 const ROLES = {
@@ -143,6 +145,8 @@ function App() {
             <Route path="create-product" element={<CreateProduct />} />
             <Route path="manage-products" element={<ManageProduct />}>
               <Route path="list-product" element={<ListProduct />} />
+              <Route path="list-out-of-stock-product" element={<ListOutOfStockProduct />}/>
+              <Route path="list-top-product" element={<ListTopProduct />}/>
               <Route path="list-not-product" element={<ListNotProduct />} />
               <Route path=":productId" element={<ProductDetail />} />
               <Route path="update-product/:productId" element={<UpdateProduct />} />

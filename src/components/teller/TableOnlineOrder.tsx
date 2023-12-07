@@ -23,10 +23,10 @@ const TableOnlineOrder = ({ data }: Props) => {
                     {data && data.map((item, index) => (
                         <tr key={index}>
                             <td className="">{item.id}</td>
-                            <td className="px-6 py-3">{item?.customer.fullName}</td>
+                            <td className="px-6 py-3">{item?.customer?.fullName}</td>
                             <td className="">{item?.customerPhoneNumber}</td>
-                            <td className="">{item.paymentMethod}</td>
-                            <td className="">{item.status}</td>
+                            <td className="">{item?.paymentMethod}</td>
+                            <td className="">{item?.status}</td>
                             <td className="text-blue-700 hover:underline pr-7">
                                 <NavLink to={`/manage-order/online/${item.id}`}>Chi tiết</NavLink>
                             </td>

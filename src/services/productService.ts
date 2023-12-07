@@ -70,6 +70,11 @@ export class Private {
         return await axiosPrivate.get(`/motobike-products?status=${enCodeStatus}&pageNumber=${data.number}`)
     }
 
+    getListTopProduct = async () => {
+        const axiosPrivate = userAxiosPrivate();
+        return await axiosPrivate.get(`/motobike-products/best-sellers`)
+    }
+
     getSortListProduct = async (data: callSortProduct<string,number>) => {
         const axiosPrivate = userAxiosPrivate();
         const enCodeStatus = encodeURIComponent(data.status);
@@ -117,13 +122,15 @@ export class Private {
         if (data.name && data.category) {
             const encodeName = encodeURIComponent(data.name);
             const encodeCategory = encodeURIComponent(data.category);
-            return await axiosPrivate.get(`/motobike-products?status=${enCodeStatus}&name=${encodeName}&category=${encodeCategory}&pageNumber=${data.paginationNumber}`)
+            return await axiosPrivate.get(`/motobike-products?excludeStatus=${enCodeStatus}&name=${encodeName}&category=${encodeCategory}&pageNumber=${data.paginationNumber}`)
         } else if (data.name) {
             const encodeName = encodeURIComponent(data.name);
-            return await axiosPrivate.get(`/motobike-products?status=${enCodeStatus}&name=${encodeName}&pageNumber=${data.paginationNumber}`)
+            return await axiosPrivate.get(`/motobike-products?excludeStatus=${enCodeStatus}&name=${encodeName}&pageNumber=${data.paginationNumber}`)
         } else if (data.category) {
             const encodeCategory = encodeURIComponent(data.category);
-            return await axiosPrivate.get(`/motobike-products?status=${enCodeStatus}&category=${encodeCategory}&pageNumber=${data.paginationNumber}`)
+            return await axiosPrivate.get(`/motobike-products?excludeStatus=${enCodeStatus}&category=${encodeCategory}&pageNumber=${data.paginationNumber}`)
+        }else{
+            return await axiosPrivate.get(`/motobike-products?excludeStatus=${enCodeStatus}&pageNumber=${data.paginationNumber}`)
         }
     }
 

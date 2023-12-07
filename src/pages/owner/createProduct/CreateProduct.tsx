@@ -24,6 +24,7 @@ const CreateProduct = () => {
   const vehicleProduct: itemVehicleProduct<string>[] = useSelector((state: selectorVehicleProduct<string>) => state.vehicleProductReducer.vehicleProduct);
   const createVehicleProduct: itemVehicleProduct<string> = useSelector((state: selectorVehicleProduct<string>) => state.vehicleProductReducer.createVehicleProduct);
   const [nameProduct, setNameProduct] = useState<string>('');
+  const [quantityProduct, setQuantityProduct] = useState<number>(1);
   const [priceProduct, setPriceProduct] = useState<number>(0);
   const [priceInstallationFee, setPriceInstallationFee] = useState<number>(0)
   const [descriptionProduct, setDescriptionProduct] = useState<string>('');
@@ -146,7 +147,7 @@ const CreateProduct = () => {
     const dataCreate = {
       name: nameProduct,
       priceCurrent: priceProduct,
-      quantity: 10000,
+      quantity: quantityProduct,
       description: descriptionProduct,
       installationFee: priceInstallationFee,
       discountId: addDiscount,
@@ -155,7 +156,7 @@ const CreateProduct = () => {
       vehiclesId: [...addVehicle, ...createDataVehicle.map(item => item.id)],
       images: images
     }
-    if (nameProduct && priceProduct && priceInstallationFee && descriptionProduct && addWarranty && addCategory && addVehicle && images) {
+    if (nameProduct && quantityProduct > 0 && priceProduct && priceInstallationFee && descriptionProduct && addWarranty && addCategory && addVehicle && images) {
       dispatch(postCreateProduct(dataCreate))
     } else {
       alert('Hãy nhập đầy đủ các mục có dấu *')
@@ -335,24 +336,16 @@ const CreateProduct = () => {
                     </div>
                   </div>
                   <div className="flex flex-col space-y-3">
-                    <p className="pl-1">Khuyến mãi</p>
-                    <Select
-                      size="lg"
-                      label="Lựa chọn khuyến mãi"
-                      className="text-[20px] w-[250px] h-[50px] bg-gray-50 custom-truncate-class"
-                      onChange={handleAddDiscount}
-                    >
-                      {dataDiscount
-                        ? dataDiscount?.map((item, index) => (
-                          <Option
-                            value={item.id}
-                            key={index}
-                            className="text-[18px]"
-                          >{item.title}</Option>
-                        ))
-                        : ""
-                      }
-                    </Select>
+                    <div className="flex space-x-1">
+                      <p>Số lượng </p>
+                      <p className="text-red-800">*</p>
+                    </div>
+                    <input type="number"
+                      min={1}
+                      placeholder="Nhập số sản phẩm"
+                      className='outline-none p-2 border-2 border-[#E5E7EB] bg-gray-50 rounded-xl'
+                      onChange={(e) => setQuantityProduct(parseInt(e.target.value))}
+                    />
                   </div>
                 </div>
               </div>
@@ -379,6 +372,26 @@ const CreateProduct = () => {
                           key={index}
                           className="text-[18px]"
                         >{item.categoryName}</Option>
+                      ))
+                      : ""
+                    }
+                  </Select>
+                </div>
+                <div className="flex flex-col space-y-3">
+                  <p className="pl-1">Khuyến mãi</p>
+                  <Select
+                    size="lg"
+                    label="Lựa chọn khuyến mãi"
+                    className="text-[20px] h-[50px] bg-gray-50 custom-truncate-class"
+                    onChange={handleAddDiscount}
+                  >
+                    {dataDiscount
+                      ? dataDiscount?.map((item, index) => (
+                        <Option
+                          value={item.id}
+                          key={index}
+                          className="text-[18px]"
+                        >{item.title}</Option>
                       ))
                       : ""
                     }

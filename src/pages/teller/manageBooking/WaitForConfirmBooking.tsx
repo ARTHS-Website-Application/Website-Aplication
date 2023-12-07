@@ -21,24 +21,24 @@ const WaitForConfirmBooking = () => {
   //   const localTime = new Date(date.getTime() - (offset * 60 * 60 * 1000));
   //   return localTime.toISOString().split('T')[0];
   // }
-
+  useEffect(() => {
+    if (bookingInfo.pagination?.totalRow) {
+      setPaginationNumber(0);
+    }
+  }, [bookingInfo.pagination?.totalRow]);
   useEffect(() => {
     const filters = {
-      bookingStatus: statusBooking.WaitForConfirm
+      bookingStatus: statusBooking.WaitForConfirm,
+      phoneNumber: searchQuery
     }
     dispatch(getBooking(paginationNumber, filters));
-  }, [dispatch]);
-
+  }, [dispatch, paginationNumber, searchQuery]);
   useEffect(() => {
-    let searchedBookingInfo: itemBooking<string, number>[] = [];
-    if (bookingInfo && Array.isArray(bookingInfo.data)) {
-      searchedBookingInfo = searchQuery
-        ? bookingInfo.data.filter(item => item.customer.phoneNumber.toString().includes(searchQuery))
-        : bookingInfo.data;
+    if (bookingInfo) {
+      setBookingData(bookingInfo.data)
     }
-    const filterBooking = searchedBookingInfo.filter(item => item.status === statusBooking.WaitForConfirm);
-    setBookingData(filterBooking);
-  }, [bookingInfo, searchQuery]);
+  }, [bookingInfo])
+
 
 
   return (
@@ -68,14 +68,21 @@ const WaitForConfirmBooking = () => {
         </div>
 
       </div>
-      <TableBooking data={bookingData} />
-
-      <Pagination
-        totalPosts={bookingInfo.pagination?.totalRow}
-        postsPerPage={bookingInfo.pagination?.pageSize}
-        setCurrentPage={setPaginationNumber}
-        currentPage={paginationNumber}
-      />
+      {bookingData?.length > 0 ? (
+        <div>
+          <TableBooking data={bookingData} />
+          <Pagination
+            totalPosts={bookingInfo.pagination?.totalRow}
+            postsPerPage={bookingInfo.pagination?.pageSize}
+            setCurrentPage={setPaginationNumber}
+            currentPage={paginationNumber}
+          />
+        </div>
+      ) : (
+        <div className='h-[70vh] flex justify-center items-center'>
+          <p className="text-[25px] font-semibold">Không có đơn đặt lịch</p>
+        </div>
+      )}
     </div>
   )
 }

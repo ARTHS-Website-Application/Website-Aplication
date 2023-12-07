@@ -1,6 +1,7 @@
 export interface selectorBooking<T, N> {
     bookingReducer: {
         bookingInfo: listBooking<T, N>;
+        chooseBooking: listBooking<T, N>;
         showError: T | null;
     }
 }
@@ -8,6 +9,7 @@ export interface selectorBooking<T, N> {
 export interface repairBooking<T, N> {
     showError: T | null,
     bookingInfo: bookingSaga<T, N>[];
+    chooseBooking: bookingSaga<T, N>[];
 
 }
 
@@ -15,6 +17,12 @@ export interface repairBooking<T, N> {
 export interface payloadBooking<N> {
     type: 'list_booking';
     pageNumber: N,
+    filters: unknown,
+}
+
+export interface payloadChooseBooking<N> {
+    type: 'list_choose_booking';
+    pageSize: N,
     filters: unknown,
 }
 

@@ -1,9 +1,10 @@
-import { getBookingFailed, getBookingSuccess, getDetailBookingFailed, getDetailBookingSuccess, putUpdateFailed, putUpdateSuccess } from "@/actions/booking";
+import { getBookingFailed, getBookingSuccess, getChooseBooking, getChooseBookingSuccess, getDetailBookingFailed, getDetailBookingSuccess, putUpdateFailed, putUpdateSuccess } from "@/actions/booking";
 import { showErrorAlert, showSuccessAlert, showWarningAlert } from "@/constants/chooseToastify";
-import { detailBooking, listBooking, updateBooking } from "@/constants/mainConstants";
+import { detailBooking, listBooking, listChooseBooking, updateBooking } from "@/constants/mainConstants";
 import { bookingService } from "@/services/bookingService";
 import { ErrorResponse } from "@/types/errorResponse";
-import { itemBooking, payloadBooking, payloadUpdateBooking, selectorBooking } from "@/types/listBooking";
+import { itemBooking, payloadBooking, payloadChooseBooking, payloadUpdateBooking, selectorBooking } from "@/types/listBooking";
+import { statusBooking } from "@/types/typeBooking";
 import { payloadDetailBooking } from "@/types/typeDetailBooking";
 import { AxiosError, AxiosResponse } from "axios";
 import { call, put, select, takeEvery } from "redux-saga/effects";
@@ -25,6 +26,21 @@ function* getBooking(payload: payloadBooking<number>) {
     }
 }
 
+function* getListChooseBooking(payload: payloadChooseBooking<number>) {
+    try {
+        const { pageSize, filters } = payload;
+        const response: AxiosResponse = yield call(bookingService.getChooseBooking, pageSize, filters);
+        const { status, data } = response;
+        if (data && status === 200) {
+            yield put(getChooseBookingSuccess(data));
+        }
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
+        const msg: string = error.message;
+        yield put(getBookingFailed(msg));
+    }
+}
+
 function* putBooking(payload: payloadUpdateBooking<string>) {
     try {
         const { bookingId, data } = payload;
@@ -36,6 +52,11 @@ function* putBooking(payload: payloadUpdateBooking<string>) {
             const currentBookingInfo: itemBooking<string, number>[] = yield select((state: selectorBooking<string, number>) => state.bookingReducer.bookingInfo.data);
             const updateBookingInfo = currentBookingInfo.map(booking => booking.id === updatedBookingData.id ? updatedBookingData : booking);
             yield put(putUpdateSuccess(updateBookingInfo));
+            const filters = {
+                bookingDate: payload?.data?.dateBook,
+                bookingStatus: statusBooking.Confirmed,
+            }
+            yield put(getChooseBooking(100, filters))
             showSuccessAlert('Cập nhật thành công');
         } else {
             console.log('error', response);
@@ -76,6 +97,7 @@ function* getBookingDetail(payload: payloadDetailBooking<string>) {
 
 export function* lookupBooking() {
     yield takeEvery(listBooking.LIST_BOOKING, getBooking);
+    yield takeEvery(listChooseBooking.LIST_CHOOSE_BOOKING, getListChooseBooking);
     yield takeEvery(updateBooking.UPDATE_BOOKING, putBooking);
     yield takeEvery(detailBooking.DETAIL_BOOKING, getBookingDetail);
 }

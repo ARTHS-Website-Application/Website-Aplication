@@ -1,5 +1,5 @@
 import { call, put, takeEvery, takeLatest } from 'redux-saga/effects';
-import { productInfor, productFilter, detailProduct, productCreate, productUpdate } from '../../../constants/mainConstants';
+import { productInfor, productFilter, detailProduct, productCreate, productUpdate, topProduct } from '../../../constants/mainConstants';
 import { privateService } from '@/services/productService';
 import { AxiosResponse } from 'axios';
 import {
@@ -17,7 +17,9 @@ import {
     WarrantyProductFailed,
     SortProduct,
     createVehicleSuccess,
-    getVehicleProduct
+    getVehicleProduct,
+    ShowTopProductSuccess,
+    ShowTopProductFailed
 } from '@/actions/product';
 import { payloadCreateProduct, payloadSaga, payloadSortProduct, payloadUpdateProduct, payloadUpdateStatusProduct } from '@/types/actions/product';
 import { sagaDetailProduct } from '@/types/actions/detailProduct';
@@ -95,6 +97,22 @@ function* getProduct(payload: payloadSaga<string, number>) {
     } catch (error: any) {
         const msg: string = error.message;
         yield put(ShowProductFailed(msg));
+    }
+}
+
+function* getTopProduct() {
+    try {
+        const resp: AxiosResponse = yield call(privateService.getListTopProduct);
+        const { status, data } = resp;
+        if (data && status === 200) {
+            yield put(ShowTopProductSuccess(data));
+        } else {
+            yield put(ShowTopProductFailed(data));
+        }
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
+        const msg: string = error.message;
+        yield put(ShowTopProductFailed(msg));
     }
 }
 
@@ -258,6 +276,7 @@ export function* lookupProduct() {
     yield takeLatest(productUpdate.PRODUCT_UPDATE_STATUS, updateProductStatus);
     
     yield takeEvery(productInfor.GET_PRODUCT_INFO, getProduct);
+    yield takeEvery(topProduct.GET_TOP_PRODUCT, getTopProduct);
     yield takeEvery(productInfor.GET_SORT_PRODUCT_INFO, getSortProduct);
     yield takeEvery(productCategory.GET_PRODUCT_CATEGORY, getCategoryProduct);
     yield takeEvery(listWarranty.GET_LIST_WARRANTY, getWarrantyProduct);
