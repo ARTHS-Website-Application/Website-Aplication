@@ -110,7 +110,7 @@ const RepairProduct = ({ isVisible, onClose, dataProduct, idOrder, staffId }: Pr
             paginationNumber: paginationNumber,
             name: addSearch,
             category: addCategory,
-            status: typeActiveProduct.InActive,
+            status: typeActiveProduct.Discontinued,
         }
         if (addCategory || addSearch) {
             setTimeout(() => {
@@ -122,7 +122,7 @@ const RepairProduct = ({ isVisible, onClose, dataProduct, idOrder, staffId }: Pr
             const data = {
                 category: "",
                 name: "",
-                status: typeActiveProduct.InActive,
+                status: typeActiveProduct.Discontinued,
                 paginationNumber: paginationNumber
             }
             dispatch(FilterProduct(data));

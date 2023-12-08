@@ -19,20 +19,22 @@ const UpdateDiscount = () => {
   const { discountId } = useParams();
   const [showLoading, setShowLoading] = useState<boolean>(false);
   const detailDiscountInfor: detaiDiscount<string, number> = useSelector((state: selectorDetailDiscount<string, number>) => state.detailDiscountReducer.detailDiscountInfor)
-  const [startDate, setStartDate] = useState<Date>(new Date());
-  const [endDate, setEndDate] = useState<Date|null>();
+  const [startDate, setStartDate] = useState<Date>();
+  const [endDate, setEndDate] = useState<Date | null>();
   const [errorDate, setErrorDate] = useState<string>('');
   const [showProduct, setShowProduct] = useState<boolean>(false);
   const [showService, setShowService] = useState<boolean>(false);
   const [dataProduct, setDataProduct] = useState<motorbikeDiscount<string, number>[]>([]);
   const [dataService, setDataService] = useState<repairDiscount<string, number>[]>([]);
   const formattedStartDate: string | null = startDate
-    ? format(utcToZonedTime(startDate, 'UTC'), "yyyy-MM-dd'T'00:00:00.000'Z'")
+    ? format(utcToZonedTime(startDate, 'Asia/Ho_Chi_Minh'), "yyyy-MM-dd'T'00:00:00.000'Z'")
     : null;
 
   const formattedEndDate: string | null = endDate
-    ? format(utcToZonedTime(endDate, 'Asia/Ho_Chi_Minh'), 'yyyy-MM-dd\'T\'HH:mm:ss.SSS\'Z\'')
+    ? format(utcToZonedTime(endDate, 'Asia/Ho_Chi_Minh'), "yyyy-MM-dd'T'00:00:00.000'Z'")
     : null;
+  console.log("first", formattedStartDate)
+  console.log("second", formattedEndDate)
   const [nameDiscount, setNameDiscount] = useState<string>('');
   const [numberDiscount, setNumberDiscount] = useState<number>(1);
   // const formattedStartDate: string | null = startDate
@@ -49,24 +51,26 @@ const UpdateDiscount = () => {
   // console.log("format", formattedStartDate, formattedEndDate)
   const handleStartDateChange = (date: Date | null) => {
     if (date) {
-      if (date < new Date()) {
-        setStartDate(new Date());
-      } else {
-        setErrorDate('');
-        setStartDate(date);
-        if (endDate && date >= endDate) {
-          setEndDate(null);
-        }
+      // if (date < new Date()) {
+      setStartDate(new Date());
+      // } else {
+      //   setErrorDate('');
+      //   setStartDate(date);
+      if (endDate && date >= endDate) {
+        setEndDate(null);
       }
     }
+    // }
   };
 
   const handleEndDateChange = (date: Date | null) => {
-    if (date && date > startDate) {
+    const newDate = format(utcToZonedTime(new Date(), 'Asia/Ho_Chi_Minh'), "yyyy-MM-dd'T'00:00:00.000'Z'")
+    if (date && startDate && date > startDate && date > new Date(newDate) ) {
       setEndDate(date);
       setErrorDate('');
     } else {
-      setErrorDate('Thời gian kết thúc lớn hơn Thời gian bắt đầu')
+      setEndDate(null);
+      setErrorDate('Thời gian kết thúc lớn hơn thời gian bắt đầu và phải lớn hơn thời gian hiện tại')
     }
   };
 
@@ -197,6 +201,7 @@ const UpdateDiscount = () => {
                 className='py-2 text-center border-2 border-gray-400 rounded-lg'
                 selected={startDate}
                 minDate={new Date()}
+                maxDate={new Date()}
                 onChange={handleStartDateChange}
                 locale={vi}
                 // dateFormat='HH:mm | dd-MM-yyyy'
@@ -244,21 +249,21 @@ const UpdateDiscount = () => {
                     <div className='pt-5'>
                       <div>
                         <div className='flex font-semibold uppercase text-center'>
-                          <p className='w-1/6 '>STT</p>
-                          <p className='w-3/6'>Tên sản phẩm</p>
-                          <p className='w-2/6'>Giá áp dụng sau khuyến mãi (VNĐ)</p>
-                          <p className='w-1/6'></p>
+                          <p className='w-[5%] '>STT</p>
+                          <p className='w-[45%]'>Tên sản phẩm</p>
+                          <p className='w-[45%]'>Giá áp dụng sau khuyến mãi (VNĐ)</p>
+                          <p className='w-[5%]'></p>
                         </div>
                         <div className='overflow-y-auto h-[20vh] space-y-3'>
                           {dataProduct?.map((item, index) => (
                             <div key={index} className="flex text-center items-center">
-                              <p className='w-1/6'>{index + 1}</p>
-                              <div className='w-3/6 flex items-center space-x-3'>
+                              <p className='w-[5%]'>{index + 1}</p>
+                              <div className='w-[45%] flex items-center space-x-3 pl-1'>
                                 <img src={item?.imageUrl} alt="" className='w-[50px] h-[50px] object-cover' />
                                 <p className=''>{item?.name}</p>
                               </div>
-                              <p className='w-2/6'>{formatPrice(item?.priceCurrent * (1 - numberDiscount / 100))}</p>
-                              <p className='w-1/6'>
+                              <p className='w-[45%]'>{formatPrice(item?.priceCurrent * (1 - numberDiscount / 100))} - {formatPrice(item?.priceCurrent)}</p>
+                              <p className='w-[5%]'>
                                 <button
                                   onClick={() => handleClick(item)}
                                 >

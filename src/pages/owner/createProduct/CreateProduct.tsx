@@ -90,11 +90,15 @@ const CreateProduct = () => {
   }
 
   const handleAddWarranty = (inputValue: number) => {
-    const matchingWarranty = warrantyChoose?.find(item => item.duration === inputValue);
-
-    if (!isNaN(inputValue) && matchingWarranty) {
-      setAddWarranty(matchingWarranty.id);
-      setSelectedDuration(inputValue);
+    if (inputValue>0) {
+      const matchingWarranty = warrantyChoose?.find(item => item.duration === inputValue);
+      if (matchingWarranty) {
+        setAddWarranty(matchingWarranty.id);
+        setSelectedDuration(inputValue);
+      }
+    } else {
+      setAddWarranty('');
+      setSelectedDuration(null);
     }
   };
   console.log(addWarranty, selectedDuration, warrantyChoose)
@@ -156,7 +160,7 @@ const CreateProduct = () => {
       vehiclesId: [...addVehicle, ...createDataVehicle.map(item => item.id)],
       images: images
     }
-    if (nameProduct && quantityProduct > 0 && priceProduct && priceInstallationFee && descriptionProduct && addWarranty && addCategory && addVehicle && images) {
+    if (nameProduct && quantityProduct > 0 && priceProduct && priceInstallationFee && descriptionProduct && addCategory && addVehicle?.length>0 && images) {
       dispatch(postCreateProduct(dataCreate))
     } else {
       alert('Hãy nhập đầy đủ các mục có dấu *')
@@ -175,6 +179,7 @@ const CreateProduct = () => {
     setDescriptionProduct('');
     setAddDiscount("");
     setAddWarranty("");
+    setSelectedDuration(null);
     setAddCategory("");
     setAddVehicle([]);
     setImages([]);
@@ -270,13 +275,19 @@ const CreateProduct = () => {
                       <input type="number"
                         min={1}
                         value={priceInstallationFee === 0 ? "" : priceInstallationFee}
-                        placeholder="Nhập số tiền"
+                        placeholder="Số tiền(tối đa 500 nghìn)"
                         className='outline-none p-2 border-2 border-[#E5E7EB] bg-gray-50 rounded-xl'
                         onChange={(e) => {
-                          if (parseInt(e.target.value) > 0) {
+                          if (parseInt(e.target.value) > 0 && parseInt(e.target.value) < 500000) {
                             setPriceInstallationFee(parseInt(e.target.value))
                           } else {
-                            setPriceInstallationFee(1)
+                            if (parseInt(e.target.value) < 0) {
+                              setPriceInstallationFee(1)
+                            }
+                            if (parseInt(e.target.value) > 500000) {
+                              setPriceInstallationFee(500000)
+                            }
+
                           }
                         }}
                       />
@@ -292,13 +303,18 @@ const CreateProduct = () => {
                       <input type="number"
                         min={1}
                         value={priceProduct === 0 ? "" : priceProduct}
-                        placeholder="Nhập số tiền"
+                        placeholder="Số tiền(tối đa 100 triệu)"
                         className='outline-none p-2 border-2 border-[#E5E7EB] bg-gray-50 rounded-xl'
                         onChange={(e) => {
-                          if (parseInt(e.target.value) > 0) {
+                          if (parseInt(e.target.value) > 0 && parseInt(e.target.value) < 100000000) {
                             setPriceProduct(parseInt(e.target.value))
                           } else {
-                            setPriceProduct(1)
+                            if (parseInt(e.target.value) < 0) {
+                              setPriceProduct(1)
+                            }
+                            if (parseInt(e.target.value) > 100000000) {
+                              setPriceProduct(100000000)
+                            }
                           }
                         }}
                       />
@@ -310,26 +326,16 @@ const CreateProduct = () => {
                   <div className="flex flex-col space-y-3">
                     <div className="flex space-x-1">
                       <p>Thời gian bảo hành(tối đa {warrantyChoose?.length} tháng) </p>
-                      <p className="text-red-800">*</p>
                     </div>
                     <div className="w-full flex space-x-3 items-center">
                       <input
                         type="number"
                         placeholder="Nhập thời gian bảo hành"
                         className="text-[18px] w-[250px] h-[50px] bg-gray-50 border-2 border-blue-gray-200 rounded-lg p-2"
-                        value={selectedDuration !== null ? selectedDuration : ''}
-                        max={36} min={1}
+                        value={selectedDuration ??''}
+                        max={36}
                         onChange={(e) => {
-                          if (0 < parseInt(e.target.value) && parseInt(e.target.value) <= 36) {
                             handleAddWarranty(parseInt(e.target.value))
-                          } else {
-                            if (parseInt(e.target.value) < 0) {
-                              handleAddWarranty(1)
-                            }
-                            if (parseInt(e.target.value) > 36) {
-                              handleAddWarranty(36)
-                            }
-                          }
                         }}
                       />
                       <p>THÁNG</p>
@@ -342,9 +348,21 @@ const CreateProduct = () => {
                     </div>
                     <input type="number"
                       min={1}
+                      value={quantityProduct}
                       placeholder="Nhập số sản phẩm"
                       className='outline-none p-2 border-2 border-[#E5E7EB] bg-gray-50 rounded-xl'
-                      onChange={(e) => setQuantityProduct(parseInt(e.target.value))}
+                      onChange={(e) => {
+                        if(parseInt(e.target.value)>0 && parseInt(e.target.value)<1000){
+                          setQuantityProduct(parseInt(e.target.value))
+                        }else{
+                          if (parseInt(e.target.value) < 0) {
+                            setQuantityProduct(1)
+                          }
+                          if (parseInt(e.target.value) > 1000) {
+                            setQuantityProduct(1000)
+                          }
+                        }
+                      }}
                     />
                   </div>
                 </div>
@@ -477,7 +495,7 @@ const CreateProduct = () => {
                             <div className="space-x-3">
                               <input type="text"
                                 value={createAddVehicle || ""}
-                                onChange={(e) => setCreateAddVehicle(e.target.value.trim())} className="w-[60%] outline-none border-b-2 border-gray-300 focus:border-black" />
+                                onChange={(e) => setCreateAddVehicle(e.target.value)} className="w-[60%] outline-none border-b-2 border-gray-300 focus:border-black" />
                               <button className="bg-blue-500 hover:bg-blue-900 p-2 text-white rounded-lg text-[14px] font-semibold"
                                 onClick={() => {
                                   handleCreateVehicle()

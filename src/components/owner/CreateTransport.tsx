@@ -26,7 +26,8 @@ type Props = {
 }
 
 const CreateTransport = ({ isVisible, onClose,isLoading,showCheckError,showError,setShowError,
-    setAddNote,setAddContent,setAddLength,setAddWidth,setAddWeight,setAddHeight,handleCreateTransport
+    setAddNote,setAddContent,setAddLength,setAddWidth,setAddWeight,setAddHeight,handleCreateTransport,
+    addWeight,addHeight,addWidth,addLength,
 
 }: Props) => {
     const dispatch = useDispatch();
@@ -64,48 +65,84 @@ const CreateTransport = ({ isVisible, onClose,isLoading,showCheckError,showError
                         <div className='flex items-center space-x-3 pt-3 font-semibold '>
                             <p className='text-[17px]'>Cân nặng(g):</p>
                             <input type="number"
-                                className='w-[50px] outline-none border-b-2 border-gray-600 text-center text-[15px]'
+                                className='w-[80px] outline-none border-b-2 border-gray-600 text-center text-[15px]'
                                 min={1}
-                                defaultValue={1}
+                                value={addWeight}
                                 onChange={(e) => {
                                     const newValue = parseInt(e.target.value);
-                                    setAddWeight(newValue);
+                                    if(newValue >0 && newValue<=1000000){
+                                        setAddWeight(newValue);
+                                    }else{
+                                        if(newValue<0){
+                                            setAddWeight(1)
+                                        }
+                                        if(newValue>1000000){
+                                            setAddWeight(1000000)
+                                        }
+                                    }
                                 }}
                             />
                         </div>
                         <div className='flex items-center space-x-3 pt-3 font-semibold '>
                             <p className='text-[17px]'>Chiều dài(cm):</p>
                             <input type="number"
-                                className='w-[50px] outline-none border-b-2 border-gray-600 text-center text-[15px]'
+                                className='w-[60px] outline-none border-b-2 border-gray-600 text-center text-[15px]'
                                 min={1}
-                                defaultValue={1}
+                                value={addLength}
                                 onChange={(e) => {
                                     const newValue = parseInt(e.target.value);
-                                    setAddLength(newValue);
+                                    if(newValue >0 && newValue<=1000){
+                                        setAddLength(newValue);
+                                    }else{
+                                        if(newValue<0){
+                                            setAddLength(1)
+                                        }
+                                        if(newValue>1000){
+                                            setAddLength(1000)
+                                        }
+                                    }
                                 }}
                             />
                         </div>
                         <div className='flex items-center space-x-3 pt-3 font-semibold '>
                             <p className='text-[17px]'>Chiều rộng(cm):</p>
                             <input type="number"
-                                className='w-[50px] outline-none border-b-2 border-gray-600 text-center text-[15px]'
+                                className='w-[60px] outline-none border-b-2 border-gray-600 text-center text-[15px]'
                                 min={1}
-                                defaultValue={1}
+                                value={addWidth}
                                 onChange={(e) => {
                                     const newValue = parseInt(e.target.value);
-                                    setAddWidth(newValue);
+                                    if(newValue >0 && newValue<=1000){
+                                        setAddWidth(newValue);
+                                    }else{
+                                        if(newValue<0){
+                                            setAddWidth(1)
+                                        }
+                                        if(newValue>1000){
+                                            setAddWidth(1000)
+                                        }
+                                    }
                                 }}
                             />
                         </div>
                         <div className='flex items-center space-x-3 pt-3 font-semibold '>
                             <p className='text-[17px]'>Chiều cao(cm):</p>
                             <input type="number"
-                                className='w-[50px] outline-none border-b-2 border-gray-600 text-center text-[15px]'
+                                className='w-[60px] outline-none border-b-2 border-gray-600 text-center text-[15px]'
                                 min={1}
-                                defaultValue={1}
+                                value={addHeight}
                                 onChange={(e) => {
                                     const newValue = parseInt(e.target.value);
-                                    setAddHeight(newValue);
+                                    if(newValue >0 && newValue<=1000){
+                                        setAddHeight(newValue);
+                                    }else{
+                                        if(newValue<0){
+                                            setAddHeight(1)
+                                        }
+                                        if(newValue>1000){
+                                            setAddHeight(1000)
+                                        }
+                                    }
                                 }}
                             />
                         </div>

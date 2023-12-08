@@ -5,9 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import Description from "@/components/Description";
 import { postCreateService } from '@/actions/service';
 import { Link } from 'react-router-dom';
-import { itemWarrantyProduct, selectorWarrantyProduct } from '@/types/actions/listWarranty';
 import { dataDiscount, itemDiscount, selectorDiscount } from '@/types/actions/listDiscout';
-import { WarrantyProduct } from '@/actions/product';
 import { getDiscountChoose } from '@/actions/discount';
 import { Select, Option } from '@material-tailwind/react';
 import LoadingPage from '@/components/LoadingPage';
@@ -15,7 +13,6 @@ import '../../../css/showDiscount.css';
 const CreateService = () => {
   const dispatch = useDispatch();
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const warrantyChoose: itemWarrantyProduct<string, number>[] = useSelector((state: selectorWarrantyProduct<string, number>) => state.warrantyReducer.warrantyProduct);
   const discountProduct: dataDiscount<string, number> = useSelector((state: selectorDiscount<string, number>) => state.discountReducer.discountInfor);
   const [dataDiscount, setDataDiscount] = useState<itemDiscount<string, number>[]>([])
   const [nameProduct, setNameProduct] = useState<string>('');
@@ -24,11 +21,10 @@ const CreateService = () => {
   const [duration, setDuration] = useState<number>(0);
   const [reminderInterval, setReminderInterval] = useState<number>(0);
   const [addDiscount, setAddDiscount] = useState<string>("");
-  const [addWarranty, setAddWarranty] = useState<number | null>(null);
+  const [addWarranty, setAddWarranty] = useState<number>(0);
   const [images, setImages] = useState<File[]>([]);
 
   useEffect(() => {
-    dispatch(WarrantyProduct());
     dispatch(getDiscountChoose(50));
     setIsLoading(true)
   }, [dispatch])
@@ -64,10 +60,19 @@ const CreateService = () => {
     setDescriptionProduct(value);
   }
   const handleAddWarranty = (inputValue: number) => {
-    const matchingWarranty = warrantyChoose?.find(item => item.duration === inputValue);
-
-    if (!isNaN(inputValue) && matchingWarranty) {
-      setAddWarranty(matchingWarranty.duration);
+    if(inputValue){
+      if(inputValue>0 && inputValue <24){
+        setAddWarranty(inputValue)
+      }else{
+        if(inputValue<=0){
+          setAddWarranty(0)
+        }
+        if(inputValue>24){
+          setAddWarranty(24)
+        }
+      }
+    }else{
+      setAddWarranty(0)
     }
   };
 
@@ -90,7 +95,7 @@ const CreateService = () => {
       price: priceProduct,
       description: descriptionProduct,
       duration: duration,
-      reminderInterval: reminderInterval,
+      reminderInterval: reminderInterval!==0?reminderInterval:"",
       discountId: addDiscount,
       warrantyDuration: addWarranty,
       images: images
@@ -145,7 +150,18 @@ const CreateService = () => {
                       value={priceProduct === 0 ? "" : priceProduct}
                       placeholder="Nhập số tiền"
                       className='outline-none p-2 border-2 border-[#E5E7EB] bg-gray-50 rounded-xl'
-                      onChange={(e) => setPriceProduct(parseInt(e.target.value))}
+                      onChange={(e) => {
+                        if (parseInt(e.target.value) > 0 && parseInt(e.target.value) < 100000000) {
+                          setPriceProduct(parseInt(e.target.value))
+                        } else {
+                          if (parseInt(e.target.value) < 0) {
+                            setPriceProduct(1)
+                          }
+                          if (parseInt(e.target.value) > 100000000) {
+                            setPriceProduct(100000000)
+                          }
+                        }
+                      }}
                     />
                   </div>
                 </div>
@@ -162,7 +178,18 @@ const CreateService = () => {
                       value={duration <= 0 ? "" : duration}
                       placeholder="Nhập số phút"
                       className='outline-none p-2 border-2 border-[#E5E7EB] bg-gray-50 rounded-xl'
-                      onChange={(e) => setDuration(parseInt(e.target.value))}
+                      onChange={(e) => {
+                        if (parseInt(e.target.value) > 0 && parseInt(e.target.value) < 1800) {
+                          setDuration(parseInt(e.target.value))
+                        } else {
+                          if (parseInt(e.target.value) < 0) {
+                            setDuration(1)
+                          }
+                          if (parseInt(e.target.value) > 1800) {
+                            setDuration(1800)
+                          }
+                        }
+                      }}
                     />
                   </div>
 
@@ -176,12 +203,12 @@ const CreateService = () => {
                     onChange={handleReminderInterval}
                   >
                     {
-                      Array.from({ length: 12 }, (_, index) => index + 1).map((value, index) => (
+                      Array.from({ length: 25 }, (_, index) => index).map((value, index) => (
                         <Option
                           value={value.toString()}
                           key={index}
                           className="text-[18px]"
-                        >{value} tháng</Option>
+                        >{value===0?'không chọn':value} tháng</Option>
                       ))
                     }
                   </Select>
@@ -190,27 +217,17 @@ const CreateService = () => {
               <div className="flex justify-between py-5 text-[#6B7280] text-[19px] px-3">
                 <div className="flex flex-col space-y-3">
                   <div className="flex space-x-1">
-                    <p>Thời gian bảo hành(tối đa {warrantyChoose?.length} tháng) </p>
-                    <p className="text-red-800">*</p>
+                    <p>Thời gian bảo hành(tối đa 24 tháng) </p>
                   </div>
                   <div className="w-full flex space-x-3 items-center">
                     <input
                       type="number"
                       placeholder="Nhập thời gian bảo hành"
                       className="text-[18px] w-[250px] h-[50px] bg-gray-50 border-2 border-blue-gray-200 rounded-lg p-2"
-                      value={addWarranty !== null ? addWarranty : ''}
-                      max={36} min={1}
+                      value={ addWarranty !== 0 ? String(addWarranty) : ''}
+                      max={24}
                       onChange={(e) => {
-                        if (0 < parseInt(e.target.value) && parseInt(e.target.value) <= 36) {
                           handleAddWarranty(parseInt(e.target.value))
-                        } else {
-                          if (parseInt(e.target.value) < 0) {
-                            handleAddWarranty(1)
-                          }
-                          if (parseInt(e.target.value) > 36) {
-                            handleAddWarranty(36)
-                          }
-                        }
                       }}
                     />
                     <p>THÁNG</p>
