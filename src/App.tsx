@@ -42,7 +42,7 @@ import ListOrderConfirm from './pages/teller/manageOnlineOrder/ListOrderConfirm'
 import ListOrderTransport from './pages/teller/manageOnlineOrder/ListOrderTransport';
 import ListOrderFinished from './pages/teller/manageOnlineOrder/ListOrderFinished';
 import ListOrderCanceled from './pages/teller/manageOnlineOrder/ListOrderCanceled';
-import ListAllBoking from './pages/teller/manageBooking/ListAllBooking';
+import ListAllBooking from './pages/teller/manageBooking/ListAllBooking';
 import ListOnlineOrderPaid from './pages/teller/manageOnlineOrder/ListOnlineOrderPaid';
 import CreateDiscount from './pages/owner/createDiscount/CreateDiscount';
 import ListDiscount from './pages/owner/listDiscount/ListDiscount';
@@ -124,7 +124,7 @@ function App() {
               <Route path=":orderId" element={<DetailOrder />} />
             </Route>
             <Route path="manage-booking" element={<ManageBooking />}>
-              <Route path="list" element={<ListAllBoking />}>
+              <Route path="list" element={<ListAllBooking />}>
                 <Route path="wait-for-confirm-booking" element={<WaitForConfirmBooking />} />
                 <Route path="history-booking" element={<HistoryBooking />} />
               </Route>

@@ -29,10 +29,10 @@ const DetailOnlineOrder = () => {
   const [showErrorTransport, setShowErrorTransport] = useState<string>('');
   const [addNote, setAddNote] = useState<string>('');
   const [addContent, setAddContent] = useState<string>('');
-  const [addWeight, setAddWeight] = useState<number>(0);
-  const [addLength, setAddLength] = useState<number>(0);
-  const [addWidth, setAddWidth] = useState<number>(0);
-  const [addHeight, setAddHeight] = useState<number>(0);
+  const [addWeight, setAddWeight] = useState<number>(1);
+  const [addLength, setAddLength] = useState<number>(1);
+  const [addWidth, setAddWidth] = useState<number>(1);
+  const [addHeight, setAddHeight] = useState<number>(1);
 
   console.log('id', orderId);
   useEffect(() => {

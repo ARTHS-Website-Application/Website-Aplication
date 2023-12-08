@@ -36,7 +36,8 @@ const ShowCreateAccount = ({ isVisible, onClose }: Props) => {
     const [genderAccount, setGenderAccount] = useState<genderCreate>(genderCreate.Other)
     const [passwordAccount, setPasswordAccount] = useState<string>("")
     const [rePassAccount, setRePassAccount] = useState<string>("");
-    const [errorPasswordAccount, setErrorPasswordAccount] = useState<string>("")
+    const [errorPasswordAccount, setErrorPasswordAccount] = useState<string>("");
+    const [errorLengthPassword,setErrorLengthPassword] = useState<string>("");
     const [roleAccount, setRoleAccount] = useState<roleCreate>(roleCreate.Other);
 
     const handleAddRole = (e: string | undefined) => {
@@ -90,7 +91,7 @@ const ShowCreateAccount = ({ isVisible, onClose }: Props) => {
     }
     return (
         <div className="fixed inset-0 bg-black bg-opacity-25 backdrop-blur-sm flex justify-center items-center">
-            <div className="w-[50%] flex justify-center">
+            <div className="w-[60%] flex justify-center">
                 <div className="w-full bg-white rounded-lg pb-3">
                     <div className="bg-gray-600 py-2 rounded-t-lg">
                         <div className="w-full flex flex-row justify-between py-[5px] text-white ">
@@ -159,10 +160,10 @@ const ShowCreateAccount = ({ isVisible, onClose }: Props) => {
                                             value={roleCreate.Staff}
                                             className="text-[18px]"
                                         >Nhân viên sửa chữa</Option>
-                                        <Option
+                                        {/* <Option
                                             value={roleCreate.Customer}
                                             className="text-[18px]"
-                                        >Khách hàng</Option>
+                                        >Khách hàng</Option> */}
                                     </Select>
                                 </div>
                             </div>
@@ -192,7 +193,12 @@ const ShowCreateAccount = ({ isVisible, onClose }: Props) => {
                                 className="w-[80%] h-[40px] outline-none rounded-lg border-2 border-[#E5E7EB] bg-[#F9FAFB] text-black focus:bg-white px-2"
                                 placeholder='Nhập mật khẩu ....'
                                 onChange={(e) => {
-                                    setPasswordAccount(e.target.value)
+                                    setPasswordAccount(e.target.value);
+                                    if(e.target.value.length>=8){
+                                        setErrorLengthPassword('')
+                                    }else{
+                                        setErrorLengthPassword('Nhập ít nhất 8 ký tự')
+                                    }
                                     if (e.target.value !== rePassAccount) {
                                         setErrorPasswordAccount('Mật khẩu không trùng nhau, xin kiểm tra lại')
                                     } else {
@@ -200,6 +206,7 @@ const ShowCreateAccount = ({ isVisible, onClose }: Props) => {
                                     }
                                 }}
                             />
+                            {errorLengthPassword ? <p className="text-red-800">{errorLengthPassword}</p> : ""}
                             {errorPasswordAccount ? <p className="text-red-800">{errorPasswordAccount}</p> : ""}
                         </div>
                         <div className="space-y-3">
@@ -229,9 +236,9 @@ const ShowCreateAccount = ({ isVisible, onClose }: Props) => {
                         <button
                             type='button'
                             className={`
-                        ${errorPasswordAccount ? "" : "hover:bg-blue-700"}
+                        ${(errorPasswordAccount || errorLengthPassword ) ? "" : "hover:bg-blue-700"}
                         bg-gray-400 px-5 h-[40px]  rounded-md`}
-                            disabled={errorPasswordAccount ? true : false}
+                            disabled={(errorPasswordAccount || errorLengthPassword) ? true : false}
                             onClick={() => handleCreateAccount()}
                         >
                             Tạo tài khoản

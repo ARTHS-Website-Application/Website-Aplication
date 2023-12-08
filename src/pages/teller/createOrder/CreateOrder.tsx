@@ -82,7 +82,7 @@ const CreateOrder = () => {
                     paginationNumber: paginationNumber,
                     name: addSearch,
                     category: addCategory,
-                    status: typeActiveProduct.InActive,
+                    status: typeActiveProduct.Discontinued,
                 }
                 setTimeout(() => {
                     dispatch(FilterProduct(data))
@@ -92,7 +92,7 @@ const CreateOrder = () => {
                 const data = {
                     category: "",
                     name: "",
-                    status: typeActiveProduct.InActive,
+                    status: typeActiveProduct.Discontinued,
                     paginationNumber: paginationNumber
                 }
                 dispatch(FilterProduct(data));

@@ -326,13 +326,21 @@ const DetailOfflineOrder = () => {
                                     ? (
                                         <div className="w-full bg-white pb-3">
                                             <div className="flex items-center text-xs uppercase tracking-wider bg-mainB font-semibold">
-                                                <div className="w-[40%] py-3 flex justify-center">
+                                                <div className="w-[30%] py-3 flex justify-center">
                                                     <p>Tên sản phẩm</p>
                                                 </div>
-                                                <div className="w-[11%] text-center">
-                                                    <p>Bảo hành đến</p>
-                                                </div>
-                                                <div className="w-[11%] text-center">
+                                                {data?.orderDetails?.some((item) => item?.warrantyEndDate) ? (
+                                                    <div className="w-[10%] text-center">
+                                                        <p>Bảo hành đến</p>
+                                                    </div>
+                                                ) : <p className='w-[10%]'></p>}
+
+                                                {data?.orderDetails?.some((item) => item?.discount) ? (
+                                                    <div className="w-[16%] text-center">
+                                                        <p>Áp dụng khuyến mãi</p>
+                                                    </div>
+                                                ) : <p className='w-[16%]'></p>}
+                                                <div className="w-[6%] text-center">
                                                     <p>Số lượng</p>
                                                 </div>
                                                 <div className="w-[11%] text-center">
@@ -342,25 +350,34 @@ const DetailOfflineOrder = () => {
                                                     <p>Giá thay phụ kiện</p>
                                                 </div>
                                                 <div className="w-[11%] text-center">
-                                                    <p>Tổng tiền(VND)</p>
+                                                    <p>Tổng tiền(VNĐ)</p>
                                                 </div>
                                                 <div className="w-[5%]">
                                                 </div>
                                             </div>
                                             {data?.orderDetails?.filter((item) => item.motobikeProduct).map((item: inStoreOrderDetails<string, number>, index) => (
                                                 <div key={index} className='w-full flex items-center border-t-2 border-mainB'>
-                                                    <div className="w-[40%] py-3 px-3 flex items-center">
+                                                    <div className="w-[30%] py-3 px-3 flex items-center">
                                                         <img src={item?.motobikeProduct?.image} alt="" className="h-11 mr-5" />
                                                         <p className='text-start'>{item?.motobikeProduct?.name}</p>
                                                     </div>
-                                                    <div className="w-[11%] text-center">
-                                                        {item && item.warrantyEndDate && (
-                                                            new Intl.DateTimeFormat('en-GB', {
-                                                                timeZone: 'UTC'
-                                                            }).format(new Date(Date.parse(item.warrantyEndDate.toString()) + 7 * 60 * 60 * 1000))
-                                                        )}
-                                                    </div>
-                                                    <div className="w-[11%] text-center">
+                                                    {data?.orderDetails?.some((item) => item?.warrantyEndDate) ? (
+                                                        <div className="w-[10%] text-center">
+                                                            {item && item.warrantyEndDate ? (
+                                                                new Intl.DateTimeFormat('en-GB', {
+                                                                    timeZone: 'UTC'
+                                                                }).format(new Date(Date.parse(item.warrantyEndDate.toString()) + 7 * 60 * 60 * 1000))
+                                                            ) : 'không có bảo hành'}
+                                                        </div>
+                                                    ) : <p className='w-[10%]'></p>}
+
+                                                    {data?.orderDetails?.some((item) => item?.discount) ? (
+                                                        <div className="w-[16%] text-center">
+                                                            {item?.discount ? `${item?.discount?.title} (${item?.discount?.discountAmount}%)` : "không"}
+                                                        </div>
+                                                    ) : <p className='w-[16%]'></p>}
+
+                                                    <div className="w-[6%] text-center">
                                                         {item?.quantity}
                                                     </div>
                                                     <div className="w-[11%] text-center">
@@ -407,9 +424,14 @@ const DetailOfflineOrder = () => {
                                     <div className='w-full'>
                                         <div className="w-full bg-white">
                                             <div className="flex bg-mainB items-center text-xs uppercase tracking-wider font-semibold">
-                                                <div className=" w-[84%] py-3 flex justify-center">
+                                                <div className=" w-[64%] py-3 flex justify-center">
                                                     <p>Tên dịch vụ</p>
                                                 </div>
+                                                {data?.orderDetails?.some((item) => item?.discount) ? (
+                                                    <div className="w-[20%] text-center">
+                                                        <p>Áp dụng khuyến mãi</p>
+                                                    </div>
+                                                ) : <p className='w-[20%]'></p>}
                                                 <div className='w-[11%] text-center'>
                                                     <p>Tổng tiền(VNĐ)</p>
                                                 </div>
@@ -419,12 +441,17 @@ const DetailOfflineOrder = () => {
                                             {data?.orderDetails?.filter((item) => item.repairService).map((item: inStoreOrderDetails<string, number>, index) => (
                                                 item.repairService ? (
                                                     <div key={index} className='w-full flex items-center border-t-2 border-mainB'>
-                                                        <div className="w-[84%] py-5 px-3 flex justify-start items-center">
+                                                        <div className="w-[64%] py-5 px-3 flex justify-start items-center">
                                                             <img src={item?.repairService?.image} alt="" className=" h-11 mr-5" />
                                                             <p>{item?.repairService?.name}</p>
                                                         </div>
+                                                        {data?.orderDetails?.some((item) => item?.discount) ? (
+                                                            <div className="w-[20%] text-center">
+                                                                {item?.discount ? `${item?.discount?.title} (${item?.discount?.discountAmount}%)` : "không"}
+                                                            </div>
+                                                        ) : <p className='w-[20%]'></p>}
                                                         <div className="w-[11%] text-center">
-                                                            <p>{formatPrice(item?.repairService?.price)}</p>
+                                                            <p>{formatPrice(item?.price)}</p>
                                                         </div>
                                                         {detailOrder?.status === statusOrder.Finished &&
                                                             (item?.warrantyEndDate !== null && item?.warrantyHistories?.length > 0) && (

@@ -1,8 +1,8 @@
 import { Select, Option } from "@material-tailwind/react";
-import { CategoryProduct, WarrantyProduct, getDetailProduct, getVehicleProduct, updateProduct } from '@/actions/product';
+import { CategoryProduct, WarrantyProduct, createVehicle, deleteVehicle, getDetailProduct, getVehicleProduct, updateProduct } from '@/actions/product';
 import { itemCategoryProduct, selectorCategoryProduct } from '@/types/actions/categoryPr';
 import { ChevronDownIcon, ChevronRightIcon, MagnifyingGlassIcon, PhotoIcon } from '@heroicons/react/24/solid'
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import * as React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { itemVehicleProduct, selectorVehicleProduct } from "@/types/actions/listVehicle";
@@ -18,6 +18,7 @@ import LoadingPage from "@/components/LoadingPage";
 import { showSuccessAlert } from "@/constants/chooseToastify";
 import '../../../css/showDiscount.css';
 const UpdateProduct = () => {
+    const errorRef = useRef<HTMLParagraphElement | null>(null);
     const { productId } = useParams();
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [showVehicle, setShowVehicle] = useState<boolean>(false);
@@ -26,17 +27,23 @@ const UpdateProduct = () => {
     const warrantyChoose: itemWarrantyProduct<string, number>[] = useSelector((state: selectorWarrantyProduct<string, number>) => state.warrantyReducer.warrantyProduct);
     const discountProduct: dataDiscount<string, number> = useSelector((state: selectorDiscount<string, number>) => state.discountReducer.discountInfor);
     const vehicleProduct: itemVehicleProduct<string>[] = useSelector((state: selectorVehicleProduct<string>) => state.vehicleProductReducer.vehicleProduct);
-    const detailProduct: item<string, number> = useSelector((state: selectorDetailProduct<string, number>) => state.productDetailReducer.productDetail)
+    const createVehicleProduct: itemVehicleProduct<string> = useSelector((state: selectorVehicleProduct<string>) => state.vehicleProductReducer.createVehicleProduct);
+    const detailProduct: item<string, number> = useSelector((state: selectorDetailProduct<string, number>) => state.productDetailReducer.productDetail);
+    console.log("detaiPro", detailProduct)
 
     const [nameProduct, setNameProduct] = useState<string>(detailProduct?.name);
     const [quantityProduct, setQuantityProduct] = useState<number>(0);
-    const [priceProduct, setPriceProduct] = useState<number>(1);
+    const [priceProduct, setPriceProduct] = useState<number>(0);
     const [priceInstallationFee, setPriceInstallationFee] = useState<number>(0)
     const [descriptionProduct, setDescriptionProduct] = useState<string>('');
     const [addCategory, setAddCategory] = useState<string>("");
     const [addDiscount, setAddDiscount] = useState<string>("");
     const [addWarranty, setAddWarranty] = useState<string>("");
+    console.log("addWarranty", addWarranty)
     const [selectedDuration, setSelectedDuration] = useState<number | null>(null);
+    const [createAddVehicle, setCreateAddVehicle] = useState<string>("");
+    const [errorVehicleProduct, setErrorVehicleProduct] = useState<string>("");
+    const [createDataVehicle, setCreateDataVehicle] = useState<itemVehicleProduct<string>[]>([]);
     const [checkedVehicles, setCheckedVehicles] = useState<itemVehicleProduct<string>[]>([]);
     const [addVehicle, setAddVehicle] = useState<string[]>([]);
     const [images, setImages] = useState<File[]>([]);
@@ -74,7 +81,7 @@ const UpdateProduct = () => {
             if (detailProduct.discount) {
                 setAddDiscount(detailProduct.discount.id);
             }
-            if (detailProduct.warrantyDuration) {
+            if (detailProduct?.warrantyDuration) {
                 setSelectedDuration(detailProduct.warrantyDuration)
                 const idWarranty = warrantyChoose?.find(warranty => warranty.duration === detailProduct.warrantyDuration);
                 if (idWarranty) {
@@ -117,14 +124,18 @@ const UpdateProduct = () => {
     }
 
     const handleAddWarranty = (inputValue: number) => {
-        const matchingWarranty = warrantyChoose?.find(item => item.duration === inputValue);
-
-        if (!isNaN(inputValue) && matchingWarranty) {
-            setAddWarranty(matchingWarranty.id);
-            setSelectedDuration(inputValue);
+        if (inputValue > 0) {
+            const matchingWarranty = warrantyChoose?.find(item => item.duration === inputValue);
+            if (matchingWarranty) {
+                setAddWarranty(matchingWarranty.id);
+                setSelectedDuration(inputValue);
+            }
+        } else {
+            setAddWarranty('');
+            setSelectedDuration(null);
         }
     };
-    console.log(addWarranty, selectedDuration, warrantyChoose)
+    // console.log(addWarranty, selectedDuration, warrantyChoose)
 
     const handleAddDiscount = (e: string | undefined) => {
         if (e) {
@@ -139,7 +150,12 @@ const UpdateProduct = () => {
         }
     };
 
-
+    const handleRemoveStore = (value: string) => {
+        dispatch(deleteVehicle(value));
+        const updatedCreateDataVehicle = createDataVehicle.filter(item => item.id !== value);
+        setCreateDataVehicle(updatedCreateDataVehicle);
+        localStorage.setItem('dataUpdateVehicle', JSON.stringify(updatedCreateDataVehicle));
+    };
 
     const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
         const fileList = event.target.files;
@@ -165,6 +181,12 @@ const UpdateProduct = () => {
         setDescriptionProduct(value);
     }
 
+    useEffect(() => {
+        // Cuộn id="error" khi errorVehicleProduct là true
+        if (errorVehicleProduct && errorRef.current) {
+            errorRef.current.scrollIntoView({ behavior: 'smooth', block: 'end' });
+        }
+    }, [errorVehicleProduct]);
 
     const handleCreateProduct = () => {
         const dataCreate = {
@@ -176,18 +198,105 @@ const UpdateProduct = () => {
             discountId: addDiscount,
             warrantyId: addWarranty,
             categoryId: addCategory,
-            vehiclesId: addVehicle,
+            vehiclesId: [...addVehicle, ...createDataVehicle.map(item => item.id)],
             images: images
         }
-        if (nameProduct && quantityProduct>0 && priceProduct && priceInstallationFee && descriptionProduct && addWarranty && addCategory && addVehicle) {
+        if (nameProduct && quantityProduct > 0 && priceProduct > 0 && priceInstallationFee > 0 && descriptionProduct && addCategory 
+            && (addVehicle?.length > 0 || createDataVehicle.map(item => item.id)?.length>0)) {
             dispatch(updateProduct(detailProduct.id, dataCreate))
             navigate(`/manage-products/${productId}`)
             showSuccessAlert("Cập nhật thành công");
         } else {
             alert('Hãy nhập đầy đủ các mục có dấu *')
         }
-
     }
+    const handleClear = () => {
+        if (detailProduct.id === productId) {
+            setNameProduct(detailProduct.name);
+            setQuantityProduct(detailProduct.quantity);
+            setPriceProduct(detailProduct.priceCurrent);
+            setPriceInstallationFee(detailProduct.installationFee)
+            setDescriptionProduct(detailProduct.description);
+
+            if (detailProduct.category) {
+                setAddCategory(detailProduct.category.id);
+            }
+
+            if (detailProduct.discount) {
+                setAddDiscount(detailProduct.discount.id);
+            }
+            if (detailProduct?.warrantyDuration) {
+                setSelectedDuration(detailProduct.warrantyDuration)
+                const idWarranty = warrantyChoose?.find(warranty => warranty.duration === detailProduct.warrantyDuration);
+                if (idWarranty) {
+                    setAddWarranty(idWarranty.id)
+                }
+            }
+
+            // setWarrantyDuration(detailProduct.warrantyDuration);
+            const vehicleIds = detailProduct?.vehicles?.map(vehicle => vehicle.id);
+            setAddVehicle(vehicleIds);
+            setCheckedVehicles(detailProduct.vehicles);
+            setImagesUrl(detailProduct.images);
+        }
+        setCreateAddVehicle('');
+        if (createDataVehicle) {
+            createDataVehicle.forEach(item => {
+                dispatch(deleteVehicle(item.id));
+            });
+            localStorage.removeItem('dataUpdateVehicle');
+            setCreateDataVehicle([]);
+        }
+    }
+    const handleCreateVehicle = () => {
+        if (createAddVehicle) {
+            if (dataVehicle?.some((item) => item?.vehicleName === createAddVehicle) || checkedVehicles?.some((item) => item?.vehicleName === createAddVehicle)) {
+                setErrorVehicleProduct('Đã tồn tại thương hiệu xe này')
+            } else {
+                dispatch(createVehicle(createAddVehicle));
+                setErrorVehicleProduct("")
+            }
+        } else {
+            setErrorVehicleProduct('Chưa nhập tên thương hiệu xe')
+        }
+    }
+    useEffect(() => {
+        const localStorageItem = localStorage.getItem('dataUpdateVehicle');
+        if (localStorageItem) {
+            const localStorageArray = JSON.parse(localStorageItem) as itemVehicleProduct<string>[];
+
+            // Gọi dispatch cho mỗi id trong localStorage
+            localStorageArray.forEach(item => {
+                dispatch(deleteVehicle(item.id));
+            });
+            // Xóa dữ liệu localStorage sau khi đã dispatch
+            localStorage.removeItem('dataUpdateVehicle');
+        }
+    }, [dispatch]);
+    useEffect(() => {
+        const localStorageItem = localStorage.getItem('dataUpdateVehicle');
+        if (localStorageItem) {
+            const localStorageArray = JSON.parse(localStorageItem) as itemVehicleProduct<string>[];
+            // Cập nhật state checkedVehicles từ localStorage
+            setCreateDataVehicle(localStorageArray);
+        }
+    }, []);
+
+    useEffect(() => {
+        if (createVehicleProduct && createVehicleProduct.vehicleName === createAddVehicle) {
+            const isExist = checkedVehicles.some(item => item.id === createVehicleProduct.id);
+
+            if (!isExist) {
+                // Cập nhật state checkedVehicles và lưu vào localStorage
+                const newCheckedVehicles = [...createDataVehicle, createVehicleProduct];
+                setCreateDataVehicle(newCheckedVehicles);
+                localStorage.setItem('dataUpdateVehicle', JSON.stringify(newCheckedVehicles));
+
+                console.log('newCheckedVehicles:', newCheckedVehicles);
+            }
+        }
+    }, [createVehicleProduct]);
+
     return (
         <div>
             {isLoading
@@ -225,13 +334,19 @@ const UpdateProduct = () => {
                                                 <input type="number"
                                                     min={1}
                                                     value={priceInstallationFee === 0 ? "" : priceInstallationFee}
-                                                    placeholder="Nhập số tiền"
+                                                    placeholder="Số tiền(tối đa 500 nghìn)"
                                                     className='outline-none p-2 border-2 border-[#E5E7EB] bg-gray-50 rounded-xl'
                                                     onChange={(e) => {
-                                                        if (parseInt(e.target.value) > 0) {
+                                                        if (parseInt(e.target.value) > 0 && parseInt(e.target.value) < 500000) {
                                                             setPriceInstallationFee(parseInt(e.target.value))
                                                         } else {
-                                                            setPriceInstallationFee(1)
+                                                            if (parseInt(e.target.value) < 0) {
+                                                                setPriceInstallationFee(1)
+                                                            }
+                                                            if (parseInt(e.target.value) > 500000) {
+                                                                setPriceInstallationFee(500000)
+                                                            }
+
                                                         }
                                                     }}
                                                 />
@@ -239,14 +354,28 @@ const UpdateProduct = () => {
                                             </div>
                                         </div>
                                         <div className="flex items-center space-x-3">
-                                            <p>Giá tiền</p>
+                                            <div className="flex space-x-1">
+                                                <p>Giá tiền </p>
+                                                <p className="text-red-800">*</p>
+                                            </div>
                                             <div className="flex items-center space-x-2">
                                                 <input type="number"
                                                     min={1}
-                                                    value={priceProduct ?? 1}
-                                                    placeholder="Nhập số tiền"
+                                                    value={priceProduct === 0 ? "" : priceProduct}
+                                                    placeholder="Số tiền(tối đa 100 triệu)"
                                                     className='outline-none p-2 border-2 border-[#E5E7EB] bg-gray-50 rounded-xl'
-                                                    onChange={(e) => setPriceProduct(parseInt(e.target.value))}
+                                                    onChange={(e) => {
+                                                        if (parseInt(e.target.value) > 0 && parseInt(e.target.value) < 100000000) {
+                                                            setPriceProduct(parseInt(e.target.value))
+                                                        } else {
+                                                            if (parseInt(e.target.value) < 0) {
+                                                                setPriceProduct(1)
+                                                            }
+                                                            if (parseInt(e.target.value) > 100000000) {
+                                                                setPriceProduct(100000000)
+                                                            }
+                                                        }
+                                                    }}
                                                 />
                                                 <p>VNĐ</p>
                                             </div>
@@ -256,34 +385,24 @@ const UpdateProduct = () => {
                                         <div className="flex flex-col space-y-3">
                                             <div className="flex space-x-1">
                                                 <p>Thời gian bảo hành(tối đa {warrantyChoose?.length} tháng) </p>
-                                                <p className="text-red-800">*</p>
                                             </div>
                                             <div className="w-full flex space-x-3 items-center">
                                                 <input
                                                     type="number"
                                                     placeholder="Nhập thời gian bảo hành"
                                                     className="text-[18px] w-[250px] h-[50px] bg-gray-50 border-2 border-blue-gray-200 rounded-lg p-2"
-                                                    value={selectedDuration !== null ? selectedDuration : ''}
-                                                    max={36} min={1}
+                                                    value={selectedDuration ?? ''}
+                                                    max={36}
                                                     onChange={(e) => {
-                                                        if (0 < parseInt(e.target.value) && parseInt(e.target.value) <= 36) {
-                                                            handleAddWarranty(parseInt(e.target.value))
-                                                        } else {
-                                                            if (parseInt(e.target.value) < 0) {
-                                                                handleAddWarranty(1)
-                                                            }
-                                                            if (parseInt(e.target.value) > 36) {
-                                                                handleAddWarranty(36)
-                                                            }
-                                                        }
+                                                        handleAddWarranty(parseInt(e.target.value))
                                                     }}
                                                 />
                                                 <p>THÁNG</p>
                                             </div>
                                         </div>
                                         <div className="flex flex-col space-y-3">
-                                        <div className="flex space-x-1">
-                                                <p>Số lượng </p>
+                                            <div className="flex space-x-1">
+                                                <p>Số lượng(tối đa 1000) </p>
                                                 <p className="text-red-800">*</p>
                                             </div>
                                             <input type="number"
@@ -291,10 +410,15 @@ const UpdateProduct = () => {
                                                 min={1}
                                                 className='outline-none p-2 border-2 border-[#E5E7EB] bg-gray-50 rounded-xl'
                                                 onChange={(e) => {
-                                                    if(!isNaN(parseInt(e.target.value))){
+                                                    if (parseInt(e.target.value) > 0 && parseInt(e.target.value) < 1000) {
                                                         setQuantityProduct(parseInt(e.target.value))
-                                                    }else{
-                                                        setQuantityProduct(1)
+                                                    } else {
+                                                        if (parseInt(e.target.value) < 0) {
+                                                            setQuantityProduct(1)
+                                                        }
+                                                        if (parseInt(e.target.value) > 1000) {
+                                                            setQuantityProduct(1000)
+                                                        }
                                                     }
                                                 }}
                                             />
@@ -351,12 +475,21 @@ const UpdateProduct = () => {
                                         </Select>
                                     </div>
                                     <div className="space-y-3">
-                                        <p className="pl-1">Thương hiệu xe</p>
-                                        {checkedVehicles?.length > 0
+                                        <div className="flex space-x-1">
+                                            <p>Thương hiệu xe </p>
+                                            <p className="text-red-800">*</p>
+                                        </div>
+                                        {checkedVehicles?.length > 0  || createDataVehicle?.length > 0
                                             ? (
                                                 <div className="flex w-full p-3 border-2 border-[#E5E7EB] bg-gray-50 rounded-xl focus:border-blue-500">
-                                                    <div className={`${checkedVehicles?.length > 3 ? "overflow-y-scroll h-[100px]" : ""}  w-[98%] `}>
+                                                    <div className={`${(checkedVehicles?.length + createDataVehicle?.length) > 3 ? "overflow-y-scroll h-[100px]" : ""}  w-[98%] `}>
                                                         <div className='grid grid-cols-3 gap-2 px-1'>
+                                                            {createDataVehicle?.map((item, index) => (
+                                                                <div key={index} className='flex justify-between text-[14px] items-center px-2  py-2 border-2 border-gray-200 rounded-lg'>
+                                                                    <p className="text-center">{item?.vehicleName}</p>
+                                                                    <button className="font-semibold text-[20px]" onClick={() => handleRemoveStore(item?.id)}>x</button>
+                                                                </div>
+                                                            ))}
                                                             {checkedVehicles?.map((item, index) => (
                                                                 <div key={index} className='flex justify-between text-[14px] items-center px-2  py-2 border-2 border-gray-200 rounded-lg'>
                                                                     <p className="text-center">{item?.vehicleName}</p>
@@ -407,16 +540,34 @@ const UpdateProduct = () => {
 
                                             <div className="overflow-y-scroll h-[30vh] px-3">
                                                 {itemSearch?.length > 0
-                                                    ? itemSearch?.map((item, index) => (
-                                                        <div className='flex space-x-3 items-center' key={index}>
-                                                            <input type="checkbox"
-                                                                className='w-5 h-5'
-                                                                checked={addVehicle.includes(item?.id)}
-                                                                onChange={() => handleVehicleChange(item?.id)}
-                                                            />
-                                                            <label>{item?.vehicleName}</label>
+                                                    ? (<div ref={errorRef}>
+                                                        {itemSearch?.map((item, index) => (
+                                                            <div className='flex space-x-3 items-center' key={index}>
+                                                                <input type="checkbox"
+                                                                    className='w-5 h-5'
+                                                                    checked={addVehicle.includes(item?.id)}
+                                                                    onChange={() => handleVehicleChange(item?.id)}
+                                                                />
+                                                                <label>{item?.vehicleName}</label>
+                                                            </div>
+                                                        ))}
+                                                        <div className="flex items-center pt-3 space-x-3">
+                                                            <p>Thương hiệu khác:</p>
+                                                            <div className="space-x-3">
+                                                                <input type="text"
+                                                                    value={createAddVehicle || ""}
+                                                                    onChange={(e) => setCreateAddVehicle(e.target.value)} className="w-[60%] outline-none border-b-2 border-gray-300 focus:border-black" />
+                                                                <button className="bg-blue-500 hover:bg-blue-900 p-2 text-white rounded-lg text-[14px] font-semibold"
+                                                                    onClick={() => {
+                                                                        handleCreateVehicle()
+
+                                                                    }}
+                                                                >Chọn</button>
+                                                            </div>
                                                         </div>
-                                                    )) : (
+                                                        {errorVehicleProduct ? <p id="error" className="text-red-600 text-start">{errorVehicleProduct}</p> : ""}
+                                                    </div>
+                                                    ) : (
                                                         <div className="flex justify-center items-center">
                                                             <p>Không tìm thấy thương hiệu này</p>
                                                         </div>
@@ -479,6 +630,7 @@ const UpdateProduct = () => {
                                 onClick={handleCreateProduct}
                             >Cập nhật sản phẩm</button>
                             <button className='w-[200px] h-[60px] text-center bg-slate-300 text-[20px] rounded-lg text-white font-semibold bg-gray-300 hover:bg-red-700'
+                                onClick={handleClear}
                             >Hủy</button>
                         </div>
                     </div>

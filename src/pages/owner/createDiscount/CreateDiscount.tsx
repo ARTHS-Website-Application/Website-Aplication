@@ -23,7 +23,7 @@ const CreateDiscount = () => {
   const [dataProduct, setDataProduct] = useState<item<string, number>[]>([]);
   const [dataService, setDataService] = useState<itemService<string, number>[]>([]);
   const formattedStartDate: string | null = startDate
-    ? format(utcToZonedTime(startDate, 'UTC'), "yyyy-MM-dd'T'00:00:00.000'Z'")
+    ? format(utcToZonedTime(startDate, 'Asia/Ho_Chi_Minh'), "yyyy-MM-dd'T'00:00:00.000'Z'")
     : null;
 
   const formattedEndDate: string | null = endDate
@@ -33,30 +33,22 @@ const CreateDiscount = () => {
   console.log("second", formattedEndDate)
   const [nameDiscount, setNameDiscount] = useState<string>('');
   const [numberDiscount, setNumberDiscount] = useState<number>(1);
-  // const formattedStartDate: string | null = startDate
-  //   ? new Date(startDate.setUTCHours(0, 0, 0, 0) + 7 * 60 * 60 * 1000).toISOString()
-  //   : null;
-
-  // const formattedEndDate: string | null = endDate
-  //   ? new Date(endDate.setUTCHours(0, 0, 0, 0) + 7 * 60 * 60 * 1000).toISOString()
-  //   : null;
   const [images, setImages] = useState<File | null>(null);
   const [descriptionProduct, setDescriptionProduct] = useState<string>('');
   // console.log("format",startDate, endDate)
   const handleStartDateChange = (date: Date | null) => {
     // console.log("first1", date);
     if (date) {
-      if (date < new Date()) {
+      // if (date < new Date()) {
         setStartDate(new Date());
-      } else {
-        setErrorDate('');
-        const utcDate = zonedTimeToUtc(date, 'Asia/Ho_Chi_Minh');
-        setStartDate(utcDate);
+      // } else {
+        // setErrorDate('');
+        // const utcDate = zonedTimeToUtc(date, 'Asia/Ho_Chi_Minh');
+        // setStartDate(utcDate);
         if (endDate && date >= endDate) {
           setEndDate(null);
         }
       }
-    }
   };
 
   const handleEndDateChange = (date: Date | null) => {
@@ -67,6 +59,7 @@ const CreateDiscount = () => {
       setErrorDate('');
     } else {
       setErrorDate('Thời gian kết thúc lớn hơn Thời gian bắt đầu');
+      setEndDate(null);
     }
   };
   useEffect(() => {
@@ -185,6 +178,7 @@ const CreateDiscount = () => {
                 className='py-2 text-center border-2 border-gray-400 rounded-lg'
                 selected={startDate}
                 minDate={new Date()}
+                maxDate={new Date()}
                 onChange={handleStartDateChange}
                 locale={vi}
                 // dateFormat='HH:mm | dd-MM-yyyy'
@@ -232,21 +226,21 @@ const CreateDiscount = () => {
                     <div className='pt-5'>
                       <div>
                         <div className='flex font-semibold uppercase text-center'>
-                          <p className='w-1/6 '>STT</p>
-                          <p className='w-3/6'>Tên sản phẩm</p>
-                          <p className='w-2/6'>Giá áp dụng sau khuyến mãi (VNĐ)</p>
-                          <p className='w-1/6'></p>
+                          <p className='w-[5%] '>STT</p>
+                          <p className='w-[45%]'>Tên sản phẩm</p>
+                          <p className='w-[45%]'>Giá áp dụng sau khuyến mãi- giá mặc định (VNĐ)</p>
+                          <p className='w-[5%]'></p>
                         </div>
                         <div className='overflow-y-auto h-[20vh] space-y-3'>
                           {dataProduct?.map((item, index) => (
-                            <div key={index} className="flex text-center items-center">
-                              <p className='w-1/6'>{index + 1}</p>
-                              <div className='w-3/6 flex items-center space-x-3'>
+                            <div key={index} className="flex text-center items-center ">
+                              <p className='w-[5%]'>{index + 1}</p>
+                              <div className='w-[45%] flex items-center space-x-3 pl-1'>
                                 <img src={item?.images[0].imageUrl} alt="" className='w-[50px] h-[50px] object-cover' />
                                 <p className=''>{item?.name}</p>
                               </div>
-                              <p className='w-2/6'>{formatPrice(item?.priceCurrent * (1 - numberDiscount / 100))}</p>
-                              <p className='w-1/6'>
+                              <p className='w-[45%] '>{formatPrice(item?.priceCurrent * (1 - numberDiscount / 100))} - {formatPrice(item?.priceCurrent)} </p>
+                              <p className='w-[5%]'>
                                 <button
                                   onClick={() => handleClick(item)}
                                 >

@@ -12,7 +12,7 @@ const linkRole = [
     }
 
 ]
-const ListAllBoking = () => {
+const ListAllBooking = () => {
     const location = useLocation();
     const navigate = useNavigate();
 
@@ -45,4 +45,4 @@ const ListAllBoking = () => {
     )
 }
 
-export default ListAllBoking;
+export default ListAllBooking;
