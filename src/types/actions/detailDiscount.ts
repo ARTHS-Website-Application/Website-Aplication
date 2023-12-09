@@ -33,6 +33,13 @@ export interface payloadUpdateDiscount {
     discountId:string,
 }
 
+export interface payloadUpdateStatusDiscount {
+    type: 'discount_update_status',
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    data: any,
+    discountId:string,
+}
+
 export interface detaiDiscount<T, N> {
     id: T,
     title: T,

@@ -1,5 +1,6 @@
 import userAxiosPrivate from "@/hooks/useAxiosPrivate"
 import { itemFilter } from "@/types/actions/filterCreate";
+import { axiosImageDelete } from "@/types/actions/listService";
 import { callProduct, callSortProduct } from "@/types/actions/product";
 
 
@@ -62,6 +63,34 @@ export class Private {
                 'Content-type': 'multipart/form-data',
             },
         })
+    }
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    updateProductImage = async (idProduct: string, data: any) => {
+        const formData = new FormData();
+        const axiosPrivate = userAxiosPrivate();
+        for (let i = 0; i < data.images.length; i++) {
+            formData.append('images', data.images[i], data.images[i].name);
+        }
+        return await axiosPrivate.put(`/motobike-products/image/${idProduct}`, formData, {
+            headers: {
+                'Content-type': 'multipart/form-data',
+            },
+        })
+    }
+    deleteProductImage = async (data: axiosImageDelete) => {
+        const axiosPrivate = userAxiosPrivate();
+        const formData = new FormData();
+        if (data?.deleteImage?.length > 0) {
+            for (const id of data.deleteImage) {
+                formData.append('ids', id);
+            }
+            return await axiosPrivate.delete(`/motobike-products/image`, {
+                data: formData,
+                headers: {
+                    'Content-type': 'multipart/form-data',
+                },
+            });
+        }
     }
 
     getListProduct = async (data: callProduct<string,number>) => {

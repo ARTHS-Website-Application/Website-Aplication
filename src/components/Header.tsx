@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { BellIcon, ChevronDownIcon } from '@heroicons/react/24/solid';
 import { ShowProfile } from '@/actions/userInfor';
 import { itemProfile, selectorProfile } from '@/types/actions/profile';
+import { Link } from 'react-router-dom';
 
 type props = {
   handleLogout: () => void;
@@ -51,7 +52,11 @@ const Header = ({ handleLogout, handleNotification }: props) => {
           }
 
           <div className='px-3'>
+            {profile.role === "Teller" || profile.role === "Owner"?(
+              <Link to={profile.role === "Teller"?`information-personal`:`information-owner`} className='text-[20px] hover:text-main'>{profile.fullName}</Link>
+            ):(
             <h2 className='text-[20px]'>{profile.fullName}</h2>
+            )}
             <p className='text-xs text-gray-500'>{roleText === "Admin" ? "Quản trị viên" : `${roleText}`}</p>
           </div>
           <button onClick={handleLogout}>

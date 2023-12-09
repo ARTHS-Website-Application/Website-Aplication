@@ -4,34 +4,35 @@ import * as React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import Description from "@/components/Description";
 import { detailService, updateService } from '@/actions/service';
-import { Link, useNavigate, useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import { itemService } from '@/types/actions/listService';
 import { selectorDetailService } from '@/types/actions/detailService';
 import { images } from '@/types/images';
 import LoadingPage from '@/components/LoadingPage';
-import { showSuccessAlert } from '@/constants/chooseToastify';
 import { Option, Select } from '@material-tailwind/react';
 import { dataDiscount, itemDiscount, selectorDiscount } from '@/types/actions/listDiscout';
 import { getDiscountChoose } from '@/actions/discount';
 import '../../../css/showDiscount.css';
+import LoadingCreateUpdate from '@/components/LoadingCreateUpdate';
 const UpdateService = () => {
   const { serviceId } = useParams();
   const dispatch = useDispatch();
-  const navigate = useNavigate();
   const getDetailService: itemService<string, number> = useSelector((state: selectorDetailService<string, number>) => state.serviceDetailReducer.serviceDetail);
   const discountProduct: dataDiscount<string, number> = useSelector((state: selectorDiscount<string, number>) => state.discountReducer.discountInfor);
   const [dataDiscount, setDataDiscount] = useState<itemDiscount<string, number>[]>([])
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isLoadingCreate, setIsLoadingCreate] = useState<boolean>(false);
   const [nameProduct, setNameProduct] = useState<string>('');
   const [priceProduct, setPriceProduct] = useState<number>(0);
   const [descriptionProduct, setDescriptionProduct] = useState<string>('');
   const [duration, setDuration] = useState<number>(0);
   const [reminderInterval, setReminderInterval] = useState<number>(0);
-  console.log("first",reminderInterval);
   const [addDiscount, setAddDiscount] = useState<string>("");
   const [addWarranty, setAddWarranty] = useState<number>(0);
   const [images, setImages] = useState<File[]>([]);
   const [imagesUrl, setImagesUrl] = useState<images[]>([]);
+  const [imageRemove, setImageRemove] = useState<string[]>([]);
+  console.log("imageRemove", imageRemove);
   useEffect(() => {
     dispatch(getDiscountChoose(50));
     setIsLoading(true)
@@ -78,19 +79,25 @@ const UpdateService = () => {
     if (fileList) {
       const selectedImages = Array.from(fileList) as File[];
 
-      if (selectedImages.length + images.length <= 4) {
+      if (selectedImages.length + images.length + imagesUrl?.length <= 4) {
         setImages([...images, ...selectedImages]);
       } else {
         alert('Bạn chỉ có thể tải lên tối đa 4 ảnh.');
       }
     }
-
   }
-
   const handleRemoveImage = (index: number) => {
     const newImages = [...images];
     newImages.splice(index, 1);
     setImages(newImages);
+  }
+  const handleRemoveImageServer = (index: string) => {
+    const newImages = [...imageRemove];
+    const newImageUrl = imagesUrl?.filter((item) => item.id !== index)
+    if (newImageUrl) {
+      setImagesUrl(newImageUrl)
+      setImageRemove([...newImages, index]);
+    }
   }
 
   const handleDescription = (value: string) => {
@@ -126,23 +133,24 @@ const UpdateService = () => {
   }
 
 
-  const handleCreateService = () => {
+  const handleCreateService = async () => {
+    setIsLoadingCreate(true);
     const dataCreate = {
       name: nameProduct,
       price: priceProduct,
       description: descriptionProduct,
       duration: duration,
-      reminderInterval: (reminderInterval!==null && reminderInterval!==0)?reminderInterval:"",
+      reminderInterval: (reminderInterval !== null && reminderInterval !== 0) ? reminderInterval : "",
       discountId: addDiscount,
       warrantyDuration: addWarranty,
-      images: images
+      images: images,
+      deleteImage: imageRemove,
     }
-    if (nameProduct && priceProduct && descriptionProduct && duration) {
-      dispatch(updateService(getDetailService.id, dataCreate))
-      navigate(`/manage-services/${serviceId}`)
-      showSuccessAlert("Cập nhật thành công");
+    if (nameProduct && priceProduct && descriptionProduct && duration && (images?.length > 0 || imagesUrl?.length > 0)) {
+        dispatch(updateService(getDetailService.id, dataCreate))
     } else {
-      alert('Xin đừng bỏ trống ở những ký tự hiệu *')
+      alert('Xin đừng bỏ trống ở những ký tự hiệu *');
+      setIsLoadingCreate(false);
     }
   }
   const handleClear = () => {
@@ -150,6 +158,8 @@ const UpdateService = () => {
     setPriceProduct(getDetailService.price);
     setDescriptionProduct(getDetailService.description);
     setImagesUrl(getDetailService.images);
+    setImages([]);
+    setImageRemove([]);
     setDuration(getDetailService.duration);
     setReminderInterval(getDetailService.reminderInterval);
     if (getDetailService.discountAmount) {
@@ -258,7 +268,7 @@ const UpdateService = () => {
                             value={value.toString()}
                             key={index}
                             className="text-[18px]"
-                          >{value===0?'không chọn':value} tháng</Option>
+                          >{value === 0 ? 'không chọn' : value} tháng</Option>
                         ))
                       }
                     </Select>
@@ -318,9 +328,15 @@ const UpdateService = () => {
                   <p className="text-red-800">*</p>
                 </div>
                 <div className="bg-[#F9F9FC] border-dashed border-2 border-[#E0E2E7] py-5 flex flex-col justify-center items-center">
-                  {imagesUrl?.length > 0
+                  {imagesUrl?.length > 0 || images?.length > 0
                     ? (
                       <div className="flex justify-center items-center space-x-7 pb-5">
+                        {images.map((image, index) => (
+                          <div key={index} className="relative">
+                            <img src={URL.createObjectURL(image)} alt="Uploaded" className="h-32 object-cover border-2 border-[#E0E2E7]" />
+                            <button onClick={() => handleRemoveImage(index)} className="absolute right-1 top-1 text-gray-400 w-5 h-5 bg-white rounded-full flex justify-center items-center">x</button>
+                          </div>
+                        ))}
                         {imagesUrl.map((image, index) => (
                           <div key={index} className="relative">
                             <img
@@ -328,7 +344,7 @@ const UpdateService = () => {
                               src={image.imageUrl}
                               alt="Uploaded"
                               className="h-32 object-cover border-2 border-[#E0E2E7]" />
-                            <button onClick={() => handleRemoveImage(index)} className="absolute right-1 top-1 text-gray-400 w-5 h-5 bg-white rounded-full flex justify-center items-center">x</button>
+                            <button onClick={() => handleRemoveImageServer(image?.id)} className="absolute right-1 top-1 text-gray-400 w-5 h-5 bg-white rounded-full flex justify-center items-center">x</button>
                           </div>
                         ))}
                       </div>
@@ -371,6 +387,7 @@ const UpdateService = () => {
             </div>
           </div>
         )}
+      {isLoadingCreate ? <LoadingCreateUpdate /> : ""}
     </div>
   )
 }

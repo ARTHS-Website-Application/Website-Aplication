@@ -37,6 +37,12 @@ export interface payloadUpdateServiceStatus {
     data: any
 }
 
+export interface axiosImageDelete{
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    images:any[];
+    deleteImage:string[];
+}
+
 export interface payloadService<T, N> {
     type: "list_services",
     data: callService<T, N>

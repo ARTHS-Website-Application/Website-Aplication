@@ -4,6 +4,14 @@ export const userInfor = {
     GET_USER_INFO_FAIL: "get_user_info_fail",
 }
 
+export const updateUserInfor = {
+    UPDATE_USER_INFO: "update_user_info",
+    UPDATE_IMAGE_USER_INFO: "update_image_user_info",
+    UPDATE_IMAGE_USER_INFO_SUCCESS: "update_image_user_info_success",
+    UPDATE_PASSWORD_USER_INFO: "update_password_user_info",
+    UPDATE_PASSWORD_USER_INFO_SUCCESS: "update_password_user_info_success",
+}
+
 //product
 
 export const productCreate = {

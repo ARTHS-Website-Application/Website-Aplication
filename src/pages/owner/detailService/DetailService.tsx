@@ -66,7 +66,7 @@ const DetailService = () => {
                     {data?.images && data?.images.map((item, index) => (
                       <div key={index} className={`p-2  rounded-lg flex justify-center cursor-pointer  items-center ${index === selectedImage ? 'border-4 border-blue-400' : ''} `}>
                         <img
-                          src={item.imageUrl}
+                          src={item?.imageUrl?item?.imageUrl:'https://mdbcdn.b-cdn.net/img/Photos/Vertical/mountain3.webp'}
                           alt=""
                           className={`h-[170px] object-contain`}
                           onMouseEnter={() => handleChangeImage(index)}

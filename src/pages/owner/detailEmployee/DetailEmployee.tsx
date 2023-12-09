@@ -31,7 +31,7 @@ const DetailEmployee = () => {
             <img src={staffInfor?.avatar
               ? staffInfor?.avatar
               : 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQNL_ZnOTpXSvhf1UaK7beHey2BX42U6solRA&usqp=CAU'}
-              className='absolute top-1/2 left-1/2 transform -translate-y-1/2 -translate-x-1/2 z-10 h-[60%] object-cover rounded-full' />
+              className='absolute top-1/2 left-1/2 transform -translate-y-1/2 -translate-x-1/2 z-10 w-[50%] h-[60%] object-cover rounded-full' />
           </div>
 
           <div className='space-y-3 w-full px-3 pb-3'>
@@ -85,7 +85,7 @@ const DetailEmployee = () => {
           <p className='text-[30px] font-semibold'>Lịch sử nhận xét</p>
           {staffInfor && staffInfor?.feedbackStaffs?.length > 0
             ? (
-              <div className='space-y-3 overflow-auto h-[40vh]'>
+              <div className='space-y-3 overflow-auto h-[60vh]'>
                 {staffInfor?.feedbackStaffs?.map((item, index) => (
                   <div key={index}>
                     <div className='flex items-center'>
@@ -108,6 +108,7 @@ const DetailEmployee = () => {
                     </div>
                   </div>
                 ))}
+                
               </div>
             ) : (
               <div className='flex justify-center items-center h-[40vh]'

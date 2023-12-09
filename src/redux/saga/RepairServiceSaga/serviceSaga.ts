@@ -1,4 +1,5 @@
 import { getServicesSuccess, getServicesFailed, detailServiceSuccess, detailServiceFailed, getSortServices } from '@/actions/service';
+import { showSuccessAlert } from '@/constants/chooseToastify';
 import { detailServices, listServices, serviceCreate, serviceUpdate } from '@/constants/secondaryConstants';
 import { History } from '@/context/NavigateSetter';
 import { ownerService } from '@/services/ownerService';
@@ -33,12 +34,69 @@ function* createService(payload: payloadCreateService) {
 
 function* updateService(payload: payloadUpdateService) {
     try {
-        const resp: AxiosResponse = yield call(privateService.updateService,payload.serviceId, payload.data);
-        const { status, data } = resp;
-        if (data && status === 201) {
-            yield put(detailServiceSuccess(data));
+
+        if (payload?.data?.deleteImage?.length > 0) {
+            const respDelete: AxiosResponse = yield call(privateService.deleteServiceImage, payload.data);
+            console.log("respDelete", respDelete)
+            const { status } = respDelete;
+            if (status === 204) {
+                if (payload?.data?.images?.length > 0) {
+                    const respUpdate: AxiosResponse = yield call(privateService.updateServiceImage, payload.serviceId, payload.data);
+                    const { status, data } = respUpdate;
+                    if (data && status === 201) {
+                        const resp: AxiosResponse = yield call(privateService.updateService, payload.serviceId, payload.data);
+                        const { status, data } = resp;
+                        if (data && status === 201) {
+                            yield put(detailServiceSuccess(data));
+                            if (History.navigate)
+                                History.navigate(`/manage-services/${data.id}`);
+                            showSuccessAlert('Cập nhật dịch vụ thành công')
+                        } else {
+                            yield put(detailServiceFailed(data));
+                        }
+                    }
+                } else {
+                    const resp: AxiosResponse = yield call(privateService.updateService, payload.serviceId, payload.data);
+                    const { status, data } = resp;
+                    if (data && status === 201) {
+                        yield put(detailServiceSuccess(data));
+                        if (History.navigate)
+                            History.navigate(`/manage-services/${data.id}`);
+                        showSuccessAlert('Cập nhật dịch vụ thành công')
+                    } else {
+                        yield put(detailServiceFailed(data));
+                    }
+                }
+
+            }
         } else {
-            yield put(detailServiceFailed(data));
+            if (payload?.data?.images?.length > 0) {
+                const respUpdate: AxiosResponse = yield call(privateService.updateServiceImage, payload.serviceId, payload.data);
+                const { status, data } = respUpdate;
+                if (data && status === 201) {
+                    const resp: AxiosResponse = yield call(privateService.updateService, payload.serviceId, payload.data);
+                    const { status, data } = resp;
+                    if (data && status === 201) {
+                        yield put(detailServiceSuccess(data));
+                        if (History.navigate)
+                            History.navigate(`/manage-services/${data.id}`);
+                        showSuccessAlert('Cập nhật dịch vụ thành công')
+                    } else {
+                        yield put(detailServiceFailed(data));
+                    }
+                }
+            } else {
+                const resp: AxiosResponse = yield call(privateService.updateService, payload.serviceId, payload.data);
+                const { status, data } = resp;
+                if (data && status === 201) {
+                    yield put(detailServiceSuccess(data));
+                    if (History.navigate)
+                        History.navigate(`/manage-services/${data.id}`);
+                    showSuccessAlert('Cập nhật dịch vụ thành công')
+                } else {
+                    yield put(detailServiceFailed(data));
+                }
+            }
         }
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
@@ -49,7 +107,7 @@ function* updateService(payload: payloadUpdateService) {
 
 function* updateServiceStatus(payload: payloadUpdateServiceStatus) {
     try {
-        const resp: AxiosResponse = yield call(privateService.updateServiceStatus,payload.idService, payload.status);
+        const resp: AxiosResponse = yield call(privateService.updateServiceStatus, payload.idService, payload.status);
         const { status, data } = resp;
         if (data && status === 201) {
             yield put(detailServiceSuccess(data));
@@ -64,9 +122,9 @@ function* updateServiceStatus(payload: payloadUpdateServiceStatus) {
     }
 }
 
-function* filterServiceDiscount(payload:getServiceDiscount<string,number>) {
+function* filterServiceDiscount(payload: getServiceDiscount<string, number>) {
     try {
-        const resp: AxiosResponse = yield call(ownerService.getServiceDiscount,payload.data);
+        const resp: AxiosResponse = yield call(ownerService.getServiceDiscount, payload.data);
         const { status, data } = resp;
         if (data && status === 200) {
             yield put(getServicesSuccess(data));
@@ -81,9 +139,9 @@ function* filterServiceDiscount(payload:getServiceDiscount<string,number>) {
 
 }
 
-function* getListService(payload:payloadService<string,number>) {
+function* getListService(payload: payloadService<string, number>) {
     try {
-        const resp: AxiosResponse = yield call(privateService.getListService,payload.data);
+        const resp: AxiosResponse = yield call(privateService.getListService, payload.data);
         const { status, data } = resp;
         if (data && status === 200) {
             yield put(getServicesSuccess(data));
@@ -98,9 +156,9 @@ function* getListService(payload:payloadService<string,number>) {
 
 }
 
-function* getDetailService(payload:payloadDetailService<string>) {
+function* getDetailService(payload: payloadDetailService<string>) {
     try {
-        const resp: AxiosResponse = yield call(privateService.getDetailService,payload.serviceId);
+        const resp: AxiosResponse = yield call(privateService.getDetailService, payload.serviceId);
         const { status, data } = resp;
         if (data && status === 200) {
             yield put(detailServiceSuccess(data));
@@ -115,9 +173,9 @@ function* getDetailService(payload:payloadDetailService<string>) {
 
 }
 
-function* filterService(payload:getFilterService<string,number>) {
+function* filterService(payload: getFilterService<string, number>) {
     try {
-        const resp: AxiosResponse = yield call(privateService.getListFilterService,payload.data);
+        const resp: AxiosResponse = yield call(privateService.getListFilterService, payload.data);
         const { status, data } = resp;
         if (data && status === 200) {
             yield put(getServicesSuccess(data));
@@ -132,9 +190,9 @@ function* filterService(payload:getFilterService<string,number>) {
 
 }
 
-function* sortService(payload:getSortService<string,number>) {
+function* sortService(payload: getSortService<string, number>) {
     try {
-        const resp: AxiosResponse = yield call(privateService.getSortService,payload.data);
+        const resp: AxiosResponse = yield call(privateService.getSortService, payload.data);
         const { status, data } = resp;
         if (data && status === 200) {
             yield put(getServicesSuccess(data));

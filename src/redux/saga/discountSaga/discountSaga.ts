@@ -1,9 +1,9 @@
-import { getDetailDiscountFailed, getDetailDiscountSuccess, getDiscountFailed, getDiscountSuccess, getNotDiscountSuccess } from '@/actions/discount';
+import { getDetailDiscountFailed, getDetailDiscountSuccess, getDiscount, getDiscountFailed, getDiscountSuccess, getNotDiscountSuccess } from '@/actions/discount';
 import { detailDiscount, discountCreate, discountUpdate, listDiscount } from '@/constants/secondaryConstants';
 import { History } from '@/context/NavigateSetter';
 import { discountService } from '@/services/discountService';
 import { ownerService } from '@/services/ownerService';
-import { payloadCreateDiscount, payloadDetailDiscount, payloadUpdateDiscount } from '@/types/actions/detailDiscount';
+import { payloadCreateDiscount, payloadDetailDiscount, payloadUpdateDiscount, payloadUpdateStatusDiscount } from '@/types/actions/detailDiscount';
 import { itemDiscount, payloadDiscount, payloadDiscountChoose } from '@/types/actions/listDiscout';
 import { StatusDiscount } from '@/types/typeDiscount';
 import { AxiosResponse } from 'axios';
@@ -48,6 +48,22 @@ function* updateDiscount(payload: payloadUpdateDiscount) {
     }
 }
 
+function* updateDiscountStatus(payload: payloadUpdateStatusDiscount) {
+    try {
+        const resp: AxiosResponse = yield call(discountService.updateDiscountStatus, payload.discountId);
+        const { status, data } = resp;
+        console.log("update", data)
+        if (data && status === 201) {
+            yield put(getDiscount(payload.data));
+            
+        }
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
+        const msg: string = error.message;
+        yield put(getDetailDiscountFailed(msg));
+    }
+}
+
 function* getChooseDiscount(payload: payloadDiscountChoose<number>) {
     try {
         const resp: AxiosResponse = yield call(ownerService.getDiscountCreate, payload.pageSize);
@@ -65,7 +81,7 @@ function* getChooseDiscount(payload: payloadDiscountChoose<number>) {
 
 }
 
-function* getDiscount(payload: payloadDiscount<string, number>) {
+function* getListDiscount(payload: payloadDiscount<string, number>) {
     try {
         const resp: AxiosResponse = yield call(discountService.getDiscount, payload.data);
         const { status, data } = resp;
@@ -106,7 +122,8 @@ function* getDetailDiscount(payload: payloadDetailDiscount<string>) {
 export function* lookupDiscount() {
     yield takeEvery(discountCreate.DISCOUNT_CREATE, createDiscount);
     yield takeEvery(discountUpdate.DISCOUNT_UPDATE, updateDiscount);
+    yield takeEvery(discountUpdate.DISCOUNT_UPDATE_STATUS, updateDiscountStatus);
     yield takeEvery(listDiscount.GET_LIST_DISCOUNT_CHOOSE, getChooseDiscount);
-    yield takeEvery(listDiscount.GET_LIST_DISCOUNT, getDiscount);
+    yield takeEvery(listDiscount.GET_LIST_DISCOUNT, getListDiscount);
     yield takeEvery(detailDiscount.DETAIL_DISCOUNT, getDetailDiscount);
 }

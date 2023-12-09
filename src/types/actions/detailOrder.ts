@@ -8,6 +8,7 @@ export interface selectorDetailOrder<T, N> {
         orderDetail: itemDetailOrder<T, N>;
         showError: T | null;
         checkUpdate: boolean;
+        checkInfor: boolean;
     }
 }
 
@@ -15,6 +16,7 @@ export interface storeOrderDetail<T, N> {
     showError: T | null,
     orderDetail: itemDetailOrder<T, N>[];
     checkUpdate: boolean;
+    checkInfor: boolean;
 }
 
 export interface orderDetailPayloadReducer<T, N> {

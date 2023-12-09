@@ -67,6 +67,7 @@ import ShowSetting from './pages/owner/showSetting/ShowSetting';
 import DateMaintenance from './pages/teller/dateMaintenance/DateMaintenance';
 import ListOutOfStockProduct from './pages/owner/listOutOfStockProduct/ListOutOfStockProduct';
 import ListTopProduct from './pages/owner/listTopProduct/ListTopProduct';
+import PersonalInfor from './pages/personalInfor/PersonalInfor';
 
 
 const ROLES = {
@@ -102,6 +103,7 @@ function App() {
           {/* Page của Teller */}
           <Route element={<RequireAuth allowedRoles={ROLES.Teller} />}>
             <Route path="teller" element={<HomeTeller />} />
+            <Route path="information-personal" element={<PersonalInfor />} />
             <Route path="/manage-order" element={<ManageOrder />}>
               <Route path="create-order" element={<CreateOrder />} />
               <Route path="create-order/:bookingId" element={<CreateOrder />} />
@@ -135,6 +137,7 @@ function App() {
           {/* Page của Owner */}
           <Route element={<RequireAuth allowedRoles={ROLES.Owner} />}>
             <Route path="owner" index element={<HomeOwner />} />
+            <Route path="information-owner" element={<PersonalInfor />} />
             <Route path="setting" index element={<ShowSetting />} />
             <Route path="manage-employees" element={<ManageEmployee />}>
               <Route path="list-staff" index element={<ListStaff />} />

@@ -1,11 +1,11 @@
 import { createAccounts, listFilterAccounts, showResetError, updateAccount } from './../constants/secondaryConstants';
-import { userInfor } from "@/constants/mainConstants";
+import { updateUserInfor, userInfor } from "@/constants/mainConstants";
 import { listAccounts, listAllAccounts, listNotAccounts, listStaff } from "@/constants/secondaryConstants";
 import { callLCreateAccount } from '@/types/actions/createUpdateAccount';
 import { itemDetailAccount } from '@/types/actions/detailAccount';
 import { callListFilterAccount, dataAccount } from "@/types/actions/listAccount";
 import { itemStaff } from "@/types/actions/listStaff";
-import { profileUser } from "@/types/actions/profile";
+import { callUpdatePasswordProfile, callUpdateProfile, profileUser } from "@/types/actions/profile";
 import { itemPagination } from "@/types/pagination";
 
 export const ShowProfile = () => {
@@ -30,6 +30,47 @@ export const ShowProfileFailed = (error: string) => {
         },
     };
 };
+
+export const UpdateProfile = (idAccount: string,role:string,data:callUpdateProfile) => {
+    return {
+        type: updateUserInfor.UPDATE_USER_INFO,
+        idAccount,
+        role,
+        data
+    };
+};
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const UpdateImageProfile = (role:string,data:any) => {
+    return {
+        type: updateUserInfor.UPDATE_IMAGE_USER_INFO,
+        role,
+        data
+    };
+};
+
+export const UpdateImageProfileSuccess = () => {
+    return {
+        type: updateUserInfor.UPDATE_IMAGE_USER_INFO_SUCCESS,
+    };
+};
+
+export const UpdatePasswordProfile = (idAccount: string,role:string,data:callUpdatePasswordProfile) => {
+    return {
+        type: updateUserInfor.UPDATE_PASSWORD_USER_INFO,
+        idAccount,
+        role,
+        data
+    };
+};
+
+export const UpdatePasswordProfileSuccess = () => {
+    return {
+        type: updateUserInfor.UPDATE_PASSWORD_USER_INFO_SUCCESS,
+    };
+};
+
+
 
 export const selectStaff = () => {
     return {

@@ -28,6 +28,7 @@ import { History } from '@/context/NavigateSetter';
 import { getFilter, getFilterProductDiscount } from '@/types/actions/filterCreate';
 import { ownerService } from '@/services/ownerService';
 import { payloadCreateVehicle, payloadDeleteVehicle } from '@/types/actions/listVehicle';
+import { showSuccessAlert } from '@/constants/chooseToastify';
 
 function* createProduct(payload: payloadCreateProduct) {
     try {
@@ -50,13 +51,67 @@ function* createProduct(payload: payloadCreateProduct) {
 
 function* updateProduct(payload: payloadUpdateProduct) {
     try {
-        const resp: AxiosResponse = yield call(privateService.updateProduct, payload.idProduct, payload.data);
-        const { status, data } = resp;
-        console.log("update", data)
-        if (data && status === 201) {
-            yield put(getDetailProductSuccess(data));
+        if (payload?.data?.deleteImage?.length > 0) {
+            const respDelete: AxiosResponse = yield call(privateService.deleteProductImage, payload.data);
+            console.log("respDelete", respDelete)
+            const { status } = respDelete;
+            if (status === 204) {
+                if (payload?.data?.images?.length > 0) {
+                    const respUpdate: AxiosResponse = yield call(privateService.updateProductImage, payload.idProduct, payload.data);
+                    const { status, data } = respUpdate;
+                    if (data && status === 201) {
+                        const resp: AxiosResponse = yield call(privateService.updateProduct, payload.idProduct, payload.data);
+                        const { status, data } = resp;
+                        if (data && status === 201) {
+                            yield put(getDetailProductSuccess(data));
+                            if (History.navigate)
+                                History.navigate(`/manage-products/${data.id}`);
+                            showSuccessAlert('Cập nhật sản phẩm thành công')
+                        } else {
+                            yield put(getDetailProductFailed(data));
+                        }
+                    }
+                } else {
+                    const resp: AxiosResponse = yield call(privateService.updateProduct, payload.idProduct, payload.data);
+                    const { status, data } = resp;
+                    if (data && status === 201) {
+                        yield put(getDetailProductSuccess(data));
+                        if (History.navigate)
+                            History.navigate(`/manage-products/${data.id}`);
+                        showSuccessAlert('Cập nhật sản phẩm thành công')
+                    } else {
+                        yield put(getDetailProductFailed(data));
+                    }
+                }
+            }
         } else {
-            yield put(getDetailProductFailed(data));
+            if (payload?.data?.images?.length > 0) {
+                const respUpdate: AxiosResponse = yield call(privateService.updateProductImage, payload.idProduct, payload.data);
+                const { status, data } = respUpdate;
+                if (data && status === 201) {
+                    const resp: AxiosResponse = yield call(privateService.updateProduct, payload.idProduct, payload.data);
+                    const { status, data } = resp;
+                    if (data && status === 201) {
+                        yield put(getDetailProductSuccess(data));
+                        if (History.navigate)
+                            History.navigate(`/manage-products/${data.id}`);
+                        showSuccessAlert('Cập nhật sản phẩm thành công')
+                    } else {
+                        yield put(getDetailProductFailed(data));
+                    }
+                }
+            } else {
+                const resp: AxiosResponse = yield call(privateService.updateProduct, payload.idProduct, payload.data);
+                const { status, data } = resp;
+                if (data && status === 201) {
+                    yield put(getDetailProductSuccess(data));
+                    if (History.navigate)
+                        History.navigate(`/manage-products/${data.id}`);
+                    showSuccessAlert('Cập nhật sản phẩm thành công')
+                } else {
+                    yield put(getDetailProductFailed(data));
+                }
+            }
         }
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
@@ -66,7 +121,7 @@ function* updateProduct(payload: payloadUpdateProduct) {
 }
 
 function* updateProductStatus(payload: payloadUpdateStatusProduct) {
-    console.log("data",payload.data)
+    console.log("data", payload.data)
     try {
         const resp: AxiosResponse = yield call(privateService.updateProductStatus, payload.idProduct, payload.status);
         const { status, data } = resp;
@@ -166,9 +221,9 @@ function* getWarrantyProduct() {
 
 }
 
-function* createVehicleProduct(payload:payloadCreateVehicle<string>) {
+function* createVehicleProduct(payload: payloadCreateVehicle<string>) {
     try {
-        const resp: AxiosResponse = yield call(privateService.createVehicle,payload.vehicleName);
+        const resp: AxiosResponse = yield call(privateService.createVehicle, payload.vehicleName);
         const { status, data } = resp;
         if (data && status === 201) {
             yield put(createVehicleSuccess(data));
@@ -183,9 +238,9 @@ function* createVehicleProduct(payload:payloadCreateVehicle<string>) {
 
 }
 
-function* deleteVehicleProduct(payload:payloadDeleteVehicle<string>) {
+function* deleteVehicleProduct(payload: payloadDeleteVehicle<string>) {
     try {
-        const resp: AxiosResponse = yield call(privateService.deleteVehicle,payload.vehicleId);
+        const resp: AxiosResponse = yield call(privateService.deleteVehicle, payload.vehicleId);
         const { status, data } = resp;
         if (data && status === 200) {
             yield put(getVehicleProduct());
@@ -274,7 +329,7 @@ export function* lookupProduct() {
     yield takeEvery(productCreate.PRODUCT_CREATE, createProduct);
     yield takeEvery(productUpdate.PRODUCT_UPDATE, updateProduct);
     yield takeLatest(productUpdate.PRODUCT_UPDATE_STATUS, updateProductStatus);
-    
+
     yield takeEvery(productInfor.GET_PRODUCT_INFO, getProduct);
     yield takeEvery(topProduct.GET_TOP_PRODUCT, getTopProduct);
     yield takeEvery(productInfor.GET_SORT_PRODUCT_INFO, getSortProduct);

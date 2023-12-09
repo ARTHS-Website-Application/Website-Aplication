@@ -1,7 +1,8 @@
 import userAxiosPrivate from "@/hooks/useAxiosPrivate"
 import { serviceFilter, sortService } from "@/types/actions/filterService";
 import { callListFilterEmployee } from "@/types/actions/listEmployee";
-import { callService } from "@/types/actions/listService";
+import { axiosImageDelete, callService } from "@/types/actions/listService";
+import { callUpdatePasswordProfile, callUpdateProfile } from "@/types/actions/profile";
 
 
 export class Private {
@@ -10,6 +11,34 @@ export class Private {
 
         return await axiosPrivate.get(`/auth`)
     }
+
+    updateProfile = async (idAccount: string, role: string, data: callUpdateProfile) => {
+        const axiosPrivate = userAxiosPrivate();
+        const checkRole = role.toLowerCase();
+        return await axiosPrivate.put(`/${checkRole}s/${idAccount}`, data)
+    }
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    updateImageProfile = async (role: string, data: any) => {
+        const formData = new FormData();
+        const axiosPrivate = userAxiosPrivate();
+        const checkRole = role.toLowerCase();
+        if (data.showImage !== null) {
+            formData.append('image', data.image, data.image.name);
+        }
+        return await axiosPrivate.put(`/${checkRole}s/avatar`, formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+            },
+        })
+    }
+
+    updatePasswordProfile = async (idAccount: string, role: string, data: callUpdatePasswordProfile) => {
+        const axiosPrivate = userAxiosPrivate();
+        const checkRole = role.toLowerCase();
+        return await axiosPrivate.put(`/${checkRole}s/${idAccount}`, data)
+    }
+
     getListStaff = async () => {
         const axiosPrivate = userAxiosPrivate();
         const endCodeStatus = encodeURIComponent("Không hoạt động");
@@ -24,7 +53,7 @@ export class Private {
         return await axiosPrivate.get(`/${checkRole}s?fullName=${encodeName}&excludeStatus=${encodeStatus}`)
     }
 
-    getDetailEmployees = async (role: string, employeeId:string) => {
+    getDetailEmployees = async (role: string, employeeId: string) => {
         const checkRole = role.toLowerCase();
         const axiosPrivate = userAxiosPrivate();
         return await axiosPrivate.get(`/${checkRole}s/${employeeId}`)
@@ -81,6 +110,34 @@ export class Private {
                 'Content-type': 'multipart/form-data',
             },
         })
+    }
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    updateServiceImage = async (serviceId: string, data: any) => {
+        const formData = new FormData();
+        const axiosPrivate = userAxiosPrivate();
+        for (let i = 0; i < data.images.length; i++) {
+            formData.append('images', data.images[i], data.images[i].name);
+        }
+        return await axiosPrivate.put(`/repair-services/image/${serviceId}`, formData, {
+            headers: {
+                'Content-type': 'multipart/form-data',
+            },
+        })
+    }
+    deleteServiceImage = async (data: axiosImageDelete) => {
+        const axiosPrivate = userAxiosPrivate();
+        const formData = new FormData();
+        if (data?.deleteImage?.length > 0) {
+            for (const id of data.deleteImage) {
+                formData.append('ids', id);
+            }
+            return await axiosPrivate.delete(`/repair-services/image`, {
+                data: formData,
+                headers: {
+                    'Content-type': 'multipart/form-data',
+                },
+            });
+        }
     }
     getListService = async (data: callService<string, number>) => {
         const axiosPrivate = userAxiosPrivate();

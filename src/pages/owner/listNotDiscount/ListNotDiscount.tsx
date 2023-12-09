@@ -45,8 +45,8 @@ const ListDiscount = () => {
     setIsLoading(true);
 
   }, [addSearch, dispatch, paginationNumber])
-  // const handleRemove = () => {
-  // }
+  const handleRemove = () => {
+  }
   return (
     <div className="w-full">
       <div className="flex justify-between items-center pb-5">
@@ -61,7 +61,7 @@ const ListDiscount = () => {
             <div>
               <div className="min-h-[70vh]">
                 <TableDiscount
-                  // handleRemove={handleRemove}
+                  handleRemove={handleRemove}
                   productData={productData} />
               </div>
               <PaginationParam

@@ -50,15 +50,11 @@ export class Private {
             },
         })
     }
-    updateProductStatus = async (discountId:string,status: string) => {
-        const formData = new FormData();
+    updateDiscountStatus = async (discountId:string) => {
+        // const formData = new FormData();
         const axiosPrivate = userAxiosPrivate();
-        formData.append('status', status);
-        return await axiosPrivate.put(`/discounts/${discountId}`, formData, {
-            headers: {
-                'Content-type': 'multipart/form-data',
-            },
-        })
+        // formData.append('status', status);
+        return await axiosPrivate.put(`/discounts/discontinued/${discountId}`)
     }
     getDiscount = async (data: callListDiscount<string, number>) => {
         const axiosPrivate = userAxiosPrivate();

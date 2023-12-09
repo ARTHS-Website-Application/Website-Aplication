@@ -31,7 +31,7 @@ const DetailTeller = () => {
           <img src={staffInfor?.avatar
             ? staffInfor?.avatar
             : 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQNL_ZnOTpXSvhf1UaK7beHey2BX42U6solRA&usqp=CAU'}
-            className='absolute top-1/2 transform -translate-y-1/2 z-10 w-[50%] object-cover rounded-full' />
+            className='absolute top-1/2 transform -translate-y-1/2 z-10 w-[50%] h-[60%] object-cover rounded-full' />
         </div>
         <div className='w-[60%] bg-white py-3 px-[5%] min-h-[500px] flex flex-col justify-center space-y-5 rounded-lg'>
           <div className='flex justify-between items-center'>
