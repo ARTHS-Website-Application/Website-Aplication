@@ -12,10 +12,12 @@ import Description from "@/components/Description";
 import { itemWarrantyProduct, selectorWarrantyProduct } from "@/types/actions/listWarranty";
 import LoadingPage from "@/components/LoadingPage";
 import '../../../css/showDiscount.css';
+import LoadingCreateUpdate from "@/components/LoadingCreateUpdate";
 const CreateProduct = () => {
   const errorRef = useRef<HTMLParagraphElement | null>(null);
   const [showVehicle, setShowVehicle] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isLoadingCreate, setIsLoadingCreate] = useState<boolean>(false);
   const dispatch = useDispatch();
   const categoryProduct: itemCategoryProduct<string>[] = useSelector((state: selectorCategoryProduct<string>) => state.categoryProductReducer.categoryProduct);
   const warrantyChoose: itemWarrantyProduct<string, number>[] = useSelector((state: selectorWarrantyProduct<string, number>) => state.warrantyReducer.warrantyProduct);
@@ -90,7 +92,7 @@ const CreateProduct = () => {
   }
 
   const handleAddWarranty = (inputValue: number) => {
-    if (inputValue>0) {
+    if (inputValue > 0) {
       const matchingWarranty = warrantyChoose?.find(item => item.duration === inputValue);
       if (matchingWarranty) {
         setAddWarranty(matchingWarranty.id);
@@ -148,6 +150,7 @@ const CreateProduct = () => {
 
 
   const handleCreateProduct = () => {
+    setIsLoadingCreate(true);
     const dataCreate = {
       name: nameProduct,
       priceCurrent: priceProduct,
@@ -160,10 +163,11 @@ const CreateProduct = () => {
       vehiclesId: [...addVehicle, ...createDataVehicle.map(item => item.id)],
       images: images
     }
-    if (nameProduct && quantityProduct > 0 && priceProduct && priceInstallationFee && descriptionProduct && addCategory && addVehicle?.length>0 && images) {
+    if (nameProduct && quantityProduct > 0 && priceProduct && descriptionProduct && addCategory && addVehicle?.length > 0 && images) {
       dispatch(postCreateProduct(dataCreate))
     } else {
-      alert('Hãy nhập đầy đủ các mục có dấu *')
+      alert('Hãy nhập đầy đủ các mục có dấu *');
+      setIsLoadingCreate(false);
     }
   }
   useEffect(() => {
@@ -269,26 +273,29 @@ const CreateProduct = () => {
                   <div className="flex items-center space-x-3">
                     <div className="flex space-x-1">
                       <p>Giá lắp đặt</p>
-                      <p className="text-red-800">*</p>
                     </div>
                     <div className="flex items-center space-x-2">
                       <input type="number"
-                        min={1}
-                        value={priceInstallationFee === 0 ? "" : priceInstallationFee}
+                        value={priceInstallationFee !== 0 ? String(priceInstallationFee) : ''}
                         placeholder="Số tiền(tối đa 500 nghìn)"
                         className='outline-none p-2 border-2 border-[#E5E7EB] bg-gray-50 rounded-xl'
                         onChange={(e) => {
-                          if (parseInt(e.target.value) > 0 && parseInt(e.target.value) < 500000) {
-                            setPriceInstallationFee(parseInt(e.target.value))
-                          } else {
-                            if (parseInt(e.target.value) < 0) {
-                              setPriceInstallationFee(1)
-                            }
-                            if (parseInt(e.target.value) > 500000) {
-                              setPriceInstallationFee(500000)
-                            }
+                          if (e.target.value) {
+                            if (parseInt(e.target.value) > 0 && parseInt(e.target.value) < 500000) {
+                              setPriceInstallationFee(parseInt(e.target.value))
+                            } else {
+                              if (parseInt(e.target.value) <= 0) {
+                                setPriceInstallationFee(0)
+                              }
+                              if (parseInt(e.target.value) > 500000) {
+                                setPriceInstallationFee(500000)
+                              }
 
+                            }
+                          } else {
+                            setPriceInstallationFee(0)
                           }
+
                         }}
                       />
                       <p>VNĐ</p>
@@ -332,10 +339,10 @@ const CreateProduct = () => {
                         type="number"
                         placeholder="Nhập thời gian bảo hành"
                         className="text-[18px] w-[250px] h-[50px] bg-gray-50 border-2 border-blue-gray-200 rounded-lg p-2"
-                        value={selectedDuration ??''}
+                        value={selectedDuration ?? ''}
                         max={36}
                         onChange={(e) => {
-                            handleAddWarranty(parseInt(e.target.value))
+                          handleAddWarranty(parseInt(e.target.value))
                         }}
                       />
                       <p>THÁNG</p>
@@ -352,9 +359,9 @@ const CreateProduct = () => {
                       placeholder="Nhập số sản phẩm"
                       className='outline-none p-2 border-2 border-[#E5E7EB] bg-gray-50 rounded-xl'
                       onChange={(e) => {
-                        if(parseInt(e.target.value)>0 && parseInt(e.target.value)<1000){
+                        if (parseInt(e.target.value) > 0 && parseInt(e.target.value) < 1000) {
                           setQuantityProduct(parseInt(e.target.value))
-                        }else{
+                        } else {
                           if (parseInt(e.target.value) < 0) {
                             setQuantityProduct(1)
                           }
@@ -574,6 +581,7 @@ const CreateProduct = () => {
           </div>
         </div>
       )}
+      {isLoadingCreate ? <LoadingCreateUpdate /> : ""}
     </div>
   )
 }

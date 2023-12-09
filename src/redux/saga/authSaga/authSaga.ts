@@ -1,9 +1,9 @@
 import { payloadUpdateSetting } from './../../../types/actions/typeSetting';
 import { call, put, takeEvery } from 'redux-saga/effects';
-import { userInfor } from '../../../constants/mainConstants';
+import { updateUserInfor, userInfor } from '../../../constants/mainConstants';
 import { privateService } from '@/services/privateService';
 import { AxiosResponse } from 'axios';
-import { ShowProfileFailed, ShowProfileSuccess, createAccountFailed, createAccountSuccess, getAccount, getAccountFailed, getAccountSuccess, getAllAccount, getAllAccountSuccess, getFilterAccount, getFilterAccountSuccess, getFilterNotAccount, getFilterNotAccountSuccess, getNotAccount, getNotAccountSuccess, selectStaffFailed, selectStaffSuccess } from '@/actions/userInfor';
+import { ShowProfile, ShowProfileFailed, ShowProfileSuccess, UpdateImageProfileSuccess, UpdatePasswordProfileSuccess, createAccountFailed, createAccountSuccess, getAccount, getAccountFailed, getAccountSuccess, getAllAccount, getAllAccountSuccess, getFilterAccount, getFilterAccountSuccess, getFilterNotAccount, getFilterNotAccountSuccess, getNotAccount, getNotAccountSuccess, selectStaffFailed, selectStaffSuccess } from '@/actions/userInfor';
 import { createAccounts, detailEmployee, listAccounts, listAllAccounts, listEmployee, listFilterAccounts, listNotAccounts, listStaff, showSetting, updateAccount, updateSetting } from '@/constants/secondaryConstants';
 import { itemAccount, payloadFilterAccount, payloadFilterNotAccount, payloadListAccount, payloadListNotAccount } from '@/types/actions/listAccount';
 import { adminService } from '@/services/adminService';
@@ -14,6 +14,7 @@ import { detailEmployeeFailed, detailEmployeeStaffSuccess, getEmployeeFailed, ge
 import { payloadDetailAccount } from '@/types/actions/detailAccount';
 import { ownerService } from '@/services/ownerService';
 import { getShowSetting, getShowSettingFailed, getShowSettingSuccess } from '@/actions/setting';
+import { payloadUpdateImageProfile, payloadUpdatePasswordProfile, payloadUpdateProfile } from '@/types/actions/profile';
 
 function* userProfile() {
     try {
@@ -30,6 +31,50 @@ function* userProfile() {
         yield put(ShowProfileFailed(msg));
     }
 
+}
+function* updateProfile(payload: payloadUpdateProfile) {
+    try {
+        const resp: AxiosResponse = yield call(privateService.updateProfile, payload.idAccount,payload.role,payload.data);
+        const { status, data } = resp;
+        if (data && status === 201) {
+            yield put(ShowProfile());
+        }
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
+        const msg: string = error.response.data.Message;
+        console.log("msg", msg);
+        yield put(ShowProfileFailed(msg));
+    }
+}
+
+function* updateImageProfile(payload: payloadUpdateImageProfile) {
+    try {
+        const resp: AxiosResponse = yield call(privateService.updateImageProfile,payload.role,payload.data);
+        const { status, data } = resp;
+        if (data && status === 201) {
+            yield put(UpdateImageProfileSuccess());
+            yield put(ShowProfile());
+        }
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
+        const msg: string = error.response.data.Message;
+        console.log("msg", msg);
+        yield put(ShowProfileFailed(msg));
+    }
+}
+function* updatePasswordProfile(payload: payloadUpdatePasswordProfile) {
+    try {
+        const resp: AxiosResponse = yield call(privateService.updatePasswordProfile, payload.idAccount,payload.role,payload.data);
+        const { status, data } = resp;
+        if (data && status === 201) {
+            yield put(UpdatePasswordProfileSuccess());
+        }
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
+        const msg: string = error.response.data.Message;
+        console.log("msg", msg);
+        yield put(ShowProfileFailed(msg));
+    }
 }
 function* getListStaff() {
     try {
@@ -242,6 +287,9 @@ function* updateDataSetting(payload:payloadUpdateSetting) {
 
 export function* lookupUser() {
     yield takeEvery(userInfor.GET_USER_INFO, userProfile);
+    yield takeEvery(updateUserInfor.UPDATE_USER_INFO, updateProfile);
+    yield takeEvery(updateUserInfor.UPDATE_IMAGE_USER_INFO, updateImageProfile);
+    yield takeEvery(updateUserInfor.UPDATE_PASSWORD_USER_INFO, updatePasswordProfile);
     yield takeEvery(listStaff.LIST_STAFF, getListStaff);
     yield takeEvery(createAccounts.CREATE_ACCOUNT, postAccount);
     yield takeEvery(updateAccount.UPDATE_ACCOUNT, putAccount);

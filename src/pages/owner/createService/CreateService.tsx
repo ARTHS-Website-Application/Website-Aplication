@@ -10,9 +10,11 @@ import { getDiscountChoose } from '@/actions/discount';
 import { Select, Option } from '@material-tailwind/react';
 import LoadingPage from '@/components/LoadingPage';
 import '../../../css/showDiscount.css';
+import LoadingCreateUpdate from '@/components/LoadingCreateUpdate';
 const CreateService = () => {
   const dispatch = useDispatch();
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isLoadingCreate, setIsLoadingCreate] = useState<boolean>(false);
   const discountProduct: dataDiscount<string, number> = useSelector((state: selectorDiscount<string, number>) => state.discountReducer.discountInfor);
   const [dataDiscount, setDataDiscount] = useState<itemDiscount<string, number>[]>([])
   const [nameProduct, setNameProduct] = useState<string>('');
@@ -90,6 +92,7 @@ const CreateService = () => {
 
 
   const handleCreateService = () => {
+    setIsLoadingCreate(true);
     const dataCreate = {
       name: nameProduct,
       price: priceProduct,
@@ -103,7 +106,8 @@ const CreateService = () => {
     if (nameProduct && priceProduct && descriptionProduct && images && duration) {
       dispatch(postCreateService(dataCreate))
     } else {
-      alert('Xin đừng bỏ trống ở những ký hiệu *')
+      alert('Xin đừng bỏ trống ở những ký hiệu *');
+      setIsLoadingCreate(false);
     }
   }
   const handleClear = () => {
@@ -169,7 +173,7 @@ const CreateService = () => {
               <div className="flex justify-between py-5 text-[#6B7280] text-[19px] px-3">
                 <div className="flex flex-col space-y-3">
                   <div className="flex space-x-1">
-                    <p>Thời gian làm dịch vụ</p>
+                    <p>Thời gian làm dịch vụ (phút)</p>
                     <p className="text-red-800">*</p>
                   </div>
                   <div className="flex items-center space-x-2">
@@ -313,6 +317,7 @@ const CreateService = () => {
           </div>
         </div>
       )}
+      {isLoadingCreate ? <LoadingCreateUpdate /> : ""}
     </div>
   )
 }

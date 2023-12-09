@@ -10,17 +10,18 @@ import { getDiscountChoose } from "@/actions/discount";
 import { dataDiscount, selectorDiscount } from "@/types/actions/listDiscout";
 import { item } from "@/types/actions/product";
 import { selectorDetailProduct } from "@/types/actions/detailProduct";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import Description from "@/components/Description";
 import { images } from "@/types/images";
 import { itemWarrantyProduct, selectorWarrantyProduct } from "@/types/actions/listWarranty";
 import LoadingPage from "@/components/LoadingPage";
-import { showSuccessAlert } from "@/constants/chooseToastify";
 import '../../../css/showDiscount.css';
+import LoadingCreateUpdate from "@/components/LoadingCreateUpdate";
 const UpdateProduct = () => {
     const errorRef = useRef<HTMLParagraphElement | null>(null);
     const { productId } = useParams();
     const [isLoading, setIsLoading] = useState<boolean>(false);
+    const [isLoadingCreate, setIsLoadingCreate] = useState<boolean>(false);
     const [showVehicle, setShowVehicle] = useState<boolean>(false);
     const dispatch = useDispatch();
     const categoryProduct: itemCategoryProduct<string>[] = useSelector((state: selectorCategoryProduct<string>) => state.categoryProductReducer.categoryProduct);
@@ -48,6 +49,7 @@ const UpdateProduct = () => {
     const [addVehicle, setAddVehicle] = useState<string[]>([]);
     const [images, setImages] = useState<File[]>([]);
     const [imagesUrl, setImagesUrl] = useState<images[]>([]);
+    const [imageRemove, setImageRemove] = useState<string[]>([]);
     const [addSearch, setAddSearch] = useState<string>("")
     const [searchTimeout, setSearchTimeout] = useState<number | null>(null);
     const [dataVehicle, setDataVehicle] = useState<itemVehicleProduct<string>[]>([]);
@@ -59,7 +61,6 @@ const UpdateProduct = () => {
     const itemSearch = dataVehicle?.filter((item) => {
         return item?.vehicleName.toLowerCase().includes(addSearch?.toLowerCase());
     })
-    const navigate = useNavigate()
     useEffect(() => {
         if (productId) {
             dispatch(getDetailProduct(productId));
@@ -162,19 +163,26 @@ const UpdateProduct = () => {
         if (fileList) {
             const selectedImages = Array.from(fileList) as File[];
 
-            if (selectedImages.length + images.length <= 4) {
+            if (selectedImages.length + images.length + imagesUrl?.length <= 4) {
                 setImages([...images, ...selectedImages]);
             } else {
                 alert('Bạn chỉ có thể tải lên tối đa 4 ảnh.');
             }
         }
-
     }
 
     const handleRemoveImage = (index: number) => {
         const newImages = [...images];
         newImages.splice(index, 1);
         setImages(newImages);
+    }
+    const handleRemoveImageServer = (index: string) => {
+        const newImages = [...imageRemove];
+        const newImageUrl = imagesUrl?.filter((item) => item.id !== index)
+        if (newImageUrl) {
+            setImagesUrl(newImageUrl)
+            setImageRemove([...newImages, index]);
+        }
     }
 
     const handleDescription = (value: string) => {
@@ -189,6 +197,7 @@ const UpdateProduct = () => {
     }, [errorVehicleProduct]);
 
     const handleCreateProduct = () => {
+        setIsLoadingCreate(true);
         const dataCreate = {
             name: nameProduct,
             priceCurrent: priceProduct,
@@ -199,15 +208,17 @@ const UpdateProduct = () => {
             warrantyId: addWarranty,
             categoryId: addCategory,
             vehiclesId: [...addVehicle, ...createDataVehicle.map(item => item.id)],
-            images: images
+            images: images,
+            deleteImage: imageRemove,
         }
-        if (nameProduct && quantityProduct > 0 && priceProduct > 0 && priceInstallationFee > 0 && descriptionProduct && addCategory 
-            && (addVehicle?.length > 0 || createDataVehicle.map(item => item.id)?.length>0)) {
+        console.log(dataCreate)
+        if (nameProduct && quantityProduct > 0 && priceProduct > 0 && descriptionProduct && addCategory
+            && (addVehicle?.length > 0 || createDataVehicle.map(item => item.id)?.length > 0)
+            && (images?.length > 0 || imagesUrl?.length > 0)) {
             dispatch(updateProduct(detailProduct.id, dataCreate))
-            navigate(`/manage-products/${productId}`)
-            showSuccessAlert("Cập nhật thành công");
         } else {
-            alert('Hãy nhập đầy đủ các mục có dấu *')
+            alert('Hãy nhập đầy đủ các mục có dấu *');
+            setIsLoadingCreate(false);
         }
     }
     const handleClear = () => {
@@ -238,6 +249,8 @@ const UpdateProduct = () => {
             setAddVehicle(vehicleIds);
             setCheckedVehicles(detailProduct.vehicles);
             setImagesUrl(detailProduct.images);
+            setImages([]);
+            setImageRemove([]);
         }
         setCreateAddVehicle('');
         if (createDataVehicle) {
@@ -328,26 +341,29 @@ const UpdateProduct = () => {
                                         <div className="flex items-center space-x-3">
                                             <div className="flex space-x-1">
                                                 <p>Giá lắp đặt</p>
-                                                <p className="text-red-800">*</p>
                                             </div>
                                             <div className="flex items-center space-x-2">
                                                 <input type="number"
-                                                    min={1}
-                                                    value={priceInstallationFee === 0 ? "" : priceInstallationFee}
+                                                    value={priceInstallationFee !== 0 ? String(priceInstallationFee) : ''}
                                                     placeholder="Số tiền(tối đa 500 nghìn)"
                                                     className='outline-none p-2 border-2 border-[#E5E7EB] bg-gray-50 rounded-xl'
                                                     onChange={(e) => {
-                                                        if (parseInt(e.target.value) > 0 && parseInt(e.target.value) < 500000) {
-                                                            setPriceInstallationFee(parseInt(e.target.value))
-                                                        } else {
-                                                            if (parseInt(e.target.value) < 0) {
-                                                                setPriceInstallationFee(1)
-                                                            }
-                                                            if (parseInt(e.target.value) > 500000) {
-                                                                setPriceInstallationFee(500000)
-                                                            }
+                                                        if (e.target.value) {
+                                                            if (parseInt(e.target.value) > 0 && parseInt(e.target.value) < 500000) {
+                                                                setPriceInstallationFee(parseInt(e.target.value))
+                                                            } else {
+                                                                if (parseInt(e.target.value) <= 0) {
+                                                                    setPriceInstallationFee(0)
+                                                                }
+                                                                if (parseInt(e.target.value) > 500000) {
+                                                                    setPriceInstallationFee(500000)
+                                                                }
 
+                                                            }
+                                                        } else {
+                                                            setPriceInstallationFee(0)
                                                         }
+
                                                     }}
                                                 />
                                                 <p>VNĐ</p>
@@ -479,7 +495,7 @@ const UpdateProduct = () => {
                                             <p>Thương hiệu xe </p>
                                             <p className="text-red-800">*</p>
                                         </div>
-                                        {checkedVehicles?.length > 0  || createDataVehicle?.length > 0
+                                        {checkedVehicles?.length > 0 || createDataVehicle?.length > 0
                                             ? (
                                                 <div className="flex w-full p-3 border-2 border-[#E5E7EB] bg-gray-50 rounded-xl focus:border-blue-500">
                                                     <div className={`${(checkedVehicles?.length + createDataVehicle?.length) > 3 ? "overflow-y-scroll h-[100px]" : ""}  w-[98%] `}>
@@ -581,18 +597,27 @@ const UpdateProduct = () => {
                         {/* Ảnh */}
                         <div className=" flex justify-center pt-7">
                             <div className="bg-white w-[75%] min-h-[300px] rounded-md p-5 space-y-3">
-                                <p className="text-[20px]">Hình ảnh</p>
+                                <div className="flex space-x-1">
+                                    <p className='text-[20px]'>Hình ảnh</p>
+                                    <p className="text-red-800">*</p>
+                                </div>
                                 <div className="bg-[#F9F9FC] border-dashed border-2 border-[#E0E2E7] py-5 flex flex-col justify-center items-center">
-                                    {imagesUrl?.length > 0
+                                    {imagesUrl?.length > 0 || images?.length > 0
                                         ? (
                                             <div className="flex justify-center items-center space-x-7 pb-5">
+                                                {images.map((image, index) => (
+                                                    <div key={index} className="relative">
+                                                        <img src={URL.createObjectURL(image)} alt="Uploaded" className="h-32 object-cover border-2 border-[#E0E2E7]" />
+                                                        <button onClick={() => handleRemoveImage(index)} className="absolute right-1 top-1 text-gray-400 w-5 h-5 bg-white rounded-full flex justify-center items-center">x</button>
+                                                    </div>
+                                                ))}
                                                 {imagesUrl.map((image, index) => (
                                                     <div key={index} className="relative">
                                                         <img
                                                             // src={URL.createObjectURL(image)} 
                                                             src={image.imageUrl}
                                                             alt="Uploaded" className="h-32 object-cover border-2 border-[#E0E2E7]" />
-                                                        <button onClick={() => handleRemoveImage(index)} className="absolute right-1 top-1 text-gray-400 w-5 h-5 bg-white rounded-full flex justify-center items-center">x</button>
+                                                        <button onClick={() => handleRemoveImageServer(image?.id)} className="absolute right-1 top-1 text-gray-400 w-5 h-5 bg-white rounded-full flex justify-center items-center">x</button>
                                                     </div>
                                                 ))}
                                             </div>
@@ -635,6 +660,7 @@ const UpdateProduct = () => {
                         </div>
                     </div>
                 )}
+            {isLoadingCreate ? <LoadingCreateUpdate /> : ""}
         </div>
     )
 }

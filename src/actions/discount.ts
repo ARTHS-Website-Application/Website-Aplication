@@ -20,11 +20,9 @@ export const updateDiscount = (discountId:string,data:any) => {
     };
 };
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const updateStatusDiscount = (discountId:string,status:string,data:any) => {
+export const updateStatusDiscount = (discountId:string,data:callListDiscount<string,number>) => {
     return {
         type: discountUpdate.DISCOUNT_UPDATE_STATUS,
-        status,
         discountId,
         data
     };

@@ -7,6 +7,7 @@ const initialState: storeOrderDetail<string, number> = {
     orderDetail: [],
     showError: null,
     checkUpdate:false,
+    checkInfor:false,
 };
 
 
@@ -32,12 +33,13 @@ const orderDetailReducer = (
         case updateUserOrder.UPDATE_USER_ORDER_SUCCESS:
             return {
                 ...state,
-                orderDetail: payload.data
+                orderDetail: payload.data,
+                checkInfor:true,
+                showError: null,
             }
         case updateUserOrder.UPDATE_USER_ORDER_FAIL:
             return {
                 ...state,
-                orderDetail: [],
                 showError: payload.showError
             }
         case updateProductOrdered.UPDATE_PRODUCT_ORDER_SUCCESS:
@@ -55,7 +57,8 @@ const orderDetailReducer = (
             return{
                 ...state,
                 showError: null,
-                checkUpdate: false
+                checkUpdate: false,
+                checkInfor:false,
             }
         
             case payWithCash.PAY_WITH_CASH_SUCCESS:

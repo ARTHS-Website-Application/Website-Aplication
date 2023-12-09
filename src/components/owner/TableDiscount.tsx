@@ -1,5 +1,5 @@
 import {formatDateTime } from '@/utils/formatDate';
-import { PencilIcon,
+import { PencilIcon, TrashIcon,
     //  TrashIcon 
     } from '@heroicons/react/24/solid';
 import { RxDotsHorizontal } from 'react-icons/rx';
@@ -9,10 +9,10 @@ import { itemDiscount } from '@/types/actions/listDiscout';
 import { StatusDiscount } from '@/types/typeDiscount';
 type Props = {
     productData: itemDiscount<string, number>[];
-    // handleRemove: (item: itemDiscount<string, number>) => void;
+    handleRemove: (item: itemDiscount<string, number>) => void;
 }
 
-const TableDiscount = ({ productData }: Props) => {
+const TableDiscount = ({ productData,handleRemove }: Props) => {
     const [showDivIndex, setShowDivIndex] = useState<number>(-1);
 
     const handleShowDiv = (index: number) => {
@@ -98,17 +98,17 @@ const TableDiscount = ({ productData }: Props) => {
                                         </Link>
                                     )}
 
-                                    {/* {item.status === StatusDiscount.Active ? (
+                                    {item.status === StatusDiscount.Active ? (
                                         <button className='flex items-center space-x-1 hover:text-main hover:fill-main'
                                             onClick={() => {
-                                                // handleRemove(item)
+                                                handleRemove(item)
                                                 handleShowDiv(index)
                                             }}
                                         >
                                             <TrashIcon className="w-5 h-5" />
                                             <p> Xóa</p>
                                         </button>
-                                    ) :""} */}
+                                    ) :""}
                                 </div>
                             )}
 

@@ -1,40 +1,43 @@
 import { updateCustomerOrder } from '@/actions/order';
 import { showSuccessAlert } from '@/constants/chooseToastify';
-import { itemDetailOrder, selectorDetailOrder } from '@/types/actions/detailOrder';
+import { selectorDetailOrder } from '@/types/actions/detailOrder';
 import { formatPhoneNumber } from '@/utils/formatPhone';
 import { useState, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
 import LoadingCreateUpdate from '../LoadingCreateUpdate';
+import { resetError } from '@/actions/userInfor';
 type Props = {
     isVisible: boolean;
     onClose: () => void;
     idOrder: string | null;
-    nameCustomer: string | null;
+    nameCustomer: string;
     phoneCustomer: string;
     licensePlate: string;
 
 }
 
 const RepairCustomer = ({ isVisible, onClose, idOrder, nameCustomer, phoneCustomer, licensePlate, }: Props) => {
-    const detailOrder: itemDetailOrder<string, number> = useSelector((state: selectorDetailOrder<string, number>) => state.orderDetailReducer.orderDetail);
+    const dispatch = useDispatch();
+    const checkInfor: boolean = useSelector((state: selectorDetailOrder<string, number>) => state.orderDetailReducer.checkInfor);
+    const errorItem: string | null = useSelector((state: selectorDetailOrder<string, number>) => state.orderDetailReducer.showError);
     const [isLoading, setIsLoading] = useState<number>(-1);
     useEffect(() => {
-        if (detailOrder?.customerName !== nameCustomer || detailOrder?.customerPhoneNumber !== phoneCustomer || detailOrder?.licensePlate !== licensePlate) {
-            setIsLoading(0)
+        if (checkInfor === true && errorItem === null) {
+            setIsLoading(0);
         }
-    }, [detailOrder, licensePlate, nameCustomer, onClose, phoneCustomer])
-    useEffect(()=>{
+    }, [checkInfor, errorItem])
+    useEffect(() => {
         if (isLoading === 0) {
             onClose();
             showSuccessAlert('Cập nhật thành công');
             setIsLoading(-1);
+            dispatch(resetError());
         }
-    },[isLoading, onClose])
-    const [namUser, setNameUser] = useState<string | null>('');
-    const [phoneUser, setPhoneUser] = useState<string | null>('');
-    const [license, setLicense] = useState<string | null>('');
+    }, [dispatch, isLoading, onClose])
+    const [namUser, setNameUser] = useState<string>('');
+    const [phoneUser, setPhoneUser] = useState<string>('');
+    const [license, setLicense] = useState<string>('');
     const [error, setError] = useState<string | null>('');
-    const dispatch = useDispatch();
 
     useEffect(() => {
         if (nameCustomer && phoneCustomer || licensePlate) {
@@ -53,30 +56,33 @@ const RepairCustomer = ({ isVisible, onClose, idOrder, nameCustomer, phoneCustom
     const handleUpdate = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         const data = {
-            customerName: namUser as string,
-            customerPhone: phoneUser as string,
+            customerName: namUser,
+            customerPhone: phoneUser,
             licensePlate: license,
 
         }
-        if (idOrder && !licensePlate) {
-            if (!namUser || !phoneUser) {
-                setError('Hãy điền đầy đủ các giá trị')
-            } else if (namUser.trim() && phoneCustomer.length === 10) {
-                dispatch(updateCustomerOrder(idOrder, data))
-                setError('');
-                setIsLoading(1)
+        if (idOrder) {
+            if (licensePlate === "") {
+                if (!namUser || phoneUser.length!==10) {
+                    setError('Hãy điền đầy đủ các giá trị');
+                    setIsLoading(-1);
+                } else if (namUser.trim() && phoneUser.length === 10) {
+                    dispatch(updateCustomerOrder(idOrder, data));
+                    setIsLoading(1);
+                    setError('');
+                }
+            } else {
+                if (!namUser || phoneUser.length!==10 || !license) {
+                    setError('Hãy điền đầy đủ các giá trị');
+                    setIsLoading(-1);
+                } else if (namUser.trim() && phoneUser.length === 10 && license.trim()) {
+                    dispatch(updateCustomerOrder(idOrder, data));
+                    setIsLoading(1);
+                    setError('');
+                }
             }
         }
-        if (idOrder && licensePlate) {
-            if (!namUser || !phoneUser || !phoneUser) {
 
-                setError('Hãy điền đầy đủ các giá trị')
-            } else if (namUser.trim() && phoneCustomer.length === 10 && licensePlate.trim()) {
-                dispatch(updateCustomerOrder(idOrder, data))
-                setError('');
-                setIsLoading(1)
-            }
-        }
     }
 
     if (!isVisible) {
@@ -152,7 +158,10 @@ const RepairCustomer = ({ isVisible, onClose, idOrder, nameCustomer, phoneCustom
                                 className=" bg-red-700 w-[100px] h-[40px]  rounded-md  "
                                 onClick={() => {
                                     onClose();
-                                    setError('')
+                                    setError('');
+                                    setNameUser(nameCustomer)
+                                    setPhoneUser(phoneCustomer)
+                                    setLicense(licensePlate)
                                 }}
                             >
                                 Hủy
