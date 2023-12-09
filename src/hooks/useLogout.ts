@@ -9,7 +9,7 @@ const useLogout = () => {
     const navigate = useNavigate();
     const logout = async () => {
         try {
-            navigate('/');
+            navigate('/login');
             const response = await axiosPrivate('/auth/logout', {
                 withCredentials: true
             });
