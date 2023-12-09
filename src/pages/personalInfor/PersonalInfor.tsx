@@ -49,9 +49,12 @@ const PersonalInfor = () => {
               </button>
             </div>
 
-            <div className="flex flex-col items-center text-white px-2 ">
+            <div className="flex flex-col items-center text-white px-2 py-2">
               <p className="font-bold text-[24px] mb-[10px]">
-                {profile?.role}
+                {profile?.role === "Teller"?"Nhân viên thanh toán"
+                :profile?.role === "Owner"?"Chủ cửa hàng"
+                :profile?.role
+                }
               </p>
 
               <p className="flex justify-center items-center bg-blue-800 w-[150px] h-[50px] rounded-xl font-semibold">

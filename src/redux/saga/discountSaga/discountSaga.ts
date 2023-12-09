@@ -1,4 +1,5 @@
 import { getDetailDiscountFailed, getDetailDiscountSuccess, getDiscount, getDiscountFailed, getDiscountSuccess, getNotDiscountSuccess } from '@/actions/discount';
+import { showSuccessAlert } from '@/constants/chooseToastify';
 import { detailDiscount, discountCreate, discountUpdate, listDiscount } from '@/constants/secondaryConstants';
 import { History } from '@/context/NavigateSetter';
 import { discountService } from '@/services/discountService';
@@ -19,6 +20,7 @@ function* createDiscount(payload: payloadCreateDiscount) {
             yield put(getDetailDiscountSuccess(data));
             if (History.navigate)
                 History.navigate(`/manage-discounts/${data.id}`)
+                showSuccessAlert('Tạo khuyến mãi thành công')
         } else {
             yield put(getDetailDiscountFailed(data));
         }
@@ -37,7 +39,8 @@ function* updateDiscount(payload: payloadUpdateDiscount) {
         if (data && status === 201) {
             yield put(getDetailDiscountSuccess(data));
             if (History.navigate)
-                History.navigate(`/manage-discounts/${data.id}`)
+                History.navigate(`/manage-discounts/${data.id}`);
+                showSuccessAlert('Cập nhật khuyến mãi thành công')
         } else {
             yield put(getDetailDiscountFailed(data));
         }

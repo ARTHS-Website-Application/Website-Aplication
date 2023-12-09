@@ -13,8 +13,10 @@ import { postCreateDiscount } from '@/actions/discount';
 import { useDispatch } from 'react-redux';
 import { utcToZonedTime, zonedTimeToUtc } from 'date-fns-tz';
 import { format } from 'date-fns';
+import LoadingCreateUpdate from '@/components/LoadingCreateUpdate';
 const CreateDiscount = () => {
   const dispatch = useDispatch();
+  const [showLoading, setShowLoading] = useState<boolean>(false);
   const [startDate, setStartDate] = useState<Date>();
   const [endDate, setEndDate] = useState<Date | null>();
   const [errorDate, setErrorDate] = useState<string>('');
@@ -91,6 +93,7 @@ const CreateDiscount = () => {
   }
 
   const handleCreateDiscount = () => {
+    setShowLoading(true);
     const data = {
       title: nameDiscount,
       discountAmount: numberDiscount,
@@ -105,7 +108,8 @@ const CreateDiscount = () => {
     if (nameDiscount && numberDiscount > 0 && formattedStartDate && formattedEndDate && (descriptionProduct || (dataProduct?.length > 0 && dataService?.length > 0)) && images) {
       dispatch(postCreateDiscount(data))
     } else {
-      alert('Hãy nhập đầy đủ các mục')
+      alert('Hãy nhập đầy đủ các mục');
+      setShowLoading(false);
     }
 
   }
@@ -355,6 +359,7 @@ const CreateDiscount = () => {
         onClose={() => setShowService(false)}
         setDataProduct={setDataService}
       />
+      {showLoading ? <LoadingCreateUpdate /> : ""}
     </div>
   )
 }
