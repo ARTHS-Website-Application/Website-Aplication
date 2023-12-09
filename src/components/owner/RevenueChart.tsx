@@ -25,7 +25,7 @@ const RevenueChart = () => {
     const [selectedMonth, setSelectedMonth] = useState<number>(new Date().getMonth());
     const [modalContent, setModalContent] = useState<ModalContent>({ month: '', transactions: [] });
     const [selectedYear, setSelectedYear] = useState<number>(new Date().getFullYear());
-    
+
 
     //console.log('product', motorbikeProduct.pagination.totalRow)
 
@@ -80,7 +80,7 @@ const RevenueChart = () => {
             },
         ],
     });
-    
+
     const processRevenueData = (revenueData: itemStatics<string, number>[]) => {
         const revenueByMonth = new Array(12).fill(0);
         revenueData.forEach(item => {
@@ -297,26 +297,28 @@ const RevenueChart = () => {
                         </div>
                     </div>
                 </div>
-
-                <div className="w-full sm:w-full md:w-1/2 lg:w-1/2 xl:w-1/2 px-2 mb-4">
-                    <div className="border border-gray-200 rounded-lg p-2">
-                        <h2 className="text-lg font-medium text-gray-800 mb-3">Phân loại giao dịch tháng {selectedMonth + 1}</h2>
-                        <div className="h-96">
-                            {/* Set a fixed height */}
-                            <Pie data={orderTypePieChartData} options={{ ...pieOptions, maintainAspectRatio: false }} />
+                <div className="space-y-4 w-full border border-gray-200 rounded-lg p-2">
+                    <h2 className="text-lg font-semibold text-gray-800 mb-3">Phân loại giao dịch tháng {selectedMonth + 1}</h2>
+                    <div className='flex w-full'>
+                        <div className="w-full sm:w-full md:w-1/2 lg:w-1/2 xl:w-1/2 px-2 mb-4">
+                            <div className="">
+                                <div className="h-96">
+                                    {/* Set a fixed height */}
+                                    <Pie data={orderTypePieChartData} options={{ ...pieOptions, maintainAspectRatio: false }} />
+                                </div>
+                            </div>
+                        </div>
+                        <div className="w-full sm:w-full md:w-1/2 lg:w-1/2 xl:w-1/2 px-2 mb-4">
+                            <div className="">
+                                <div className="h-96">
+                                    {/* Set a fixed height */}
+                                    <Pie data={isOrderPieChartData} options={{ ...pieOptions, maintainAspectRatio: false }} />
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
 
-                <div className="w-full sm:w-full md:w-1/2 lg:w-1/2 xl:w-1/2 px-2 mb-4">
-                    <div className="border border-gray-200 rounded-lg p-2">
-                        <h2 className="text-lg font-medium text-gray-800 mb-3">Phân loại giao dịch tháng {selectedMonth + 1}</h2>
-                        <div className="h-96">
-                            {/* Set a fixed height */}
-                            <Pie data={isOrderPieChartData} options={{ ...pieOptions, maintainAspectRatio: false }} />
-                        </div>
-                    </div>
-                </div>
             </div>
 
 
