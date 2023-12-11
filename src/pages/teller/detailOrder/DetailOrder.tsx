@@ -121,6 +121,7 @@ const DetailOrder = () => {
   }
 
   const handleZaloPay = async () => {
+    setIsLoadingCreate(true);
     try {
       const response = await axiosPrivate.post('/payments/zalo-pay',
         {
@@ -128,8 +129,9 @@ const DetailOrder = () => {
         }
       )
       if (response.status === 200) {
-        //window.location.href = response.data.order_url;
-        window.open(response.data.order_url, '')
+        setIsLoadingCreate(false);
+        window.location.href = response.data.order_url;
+        // window.open(response.data.order_url, '')
       } else {
         console.log('Lỗi');
       }
@@ -354,13 +356,13 @@ const DetailOrder = () => {
                               new Intl.DateTimeFormat('en-GB', {
                                 timeZone: 'UTC'
                               }).format(new Date(Date.parse(item.warrantyEndDate.toString()) + 7 * 60 * 60 * 1000))
-                            ) : 'không có bảo hành'}
+                            ) : 'không có'}
                           </div>
                           ):<p className='w-[10%]'></p>}
                           
                           {data?.orderDetails?.some((item) => item?.discount) ? (
                             <div className="w-[16%] text-center">
-                              {item?.discount ? `${item?.discount?.title} (${item?.discount?.discountAmount}%)` : "không"}
+                              {item?.discount ? `${item?.discount?.title} (${item?.discount?.discountAmount}%)` : "không có"}
                             </div>
                           ):<p className='w-[16%]'></p>}
 
@@ -377,7 +379,7 @@ const DetailOrder = () => {
                             {formatPrice((item?.quantity * item?.price) + (item?.instUsed === true ? item?.motobikeProduct?.installationFee : 0))}
                           </div>
 
-                          {detailOrder?.status === statusOrder.Finished && item?.motobikeProduct?.installationFee > 0 &&
+                          {detailOrder?.status === statusOrder.Finished &&
                             (item?.warrantyEndDate !== null && (new Date(Date.parse(item.warrantyEndDate.toString()) + 7 * 60 * 60 * 1000)) >= new Date()
                               || item?.warrantyHistories?.length > 0) && (
                               <div className="w-[5%] flex items-center justify-center relative">
@@ -448,7 +450,7 @@ const DetailOrder = () => {
                             </div>
                             {data?.orderDetails?.some((item) => item?.discount) ? (
                             <div className="w-[20%] text-center">
-                              {item?.discount ? `${item?.discount?.title} (${item?.discount?.discountAmount}%)` : "không"}
+                              {item?.discount ? `${item?.discount?.title} (${item?.discount?.discountAmount}%)` : "không có"}
                             </div>
                           ):<p className='w-[20%]'></p>}
                             <div className="w-[11%] text-center">
@@ -567,7 +569,9 @@ const DetailOrder = () => {
               idOrder={data?.id}
               itemOrder={itemOrder}
               isVisible={createWarranty}
+              isStaff = {data?.staff}
               onClose={() => setCreateWarranty(false)}
+              
             />
             <ShowListWarranty
               itemOrder={itemOrder}

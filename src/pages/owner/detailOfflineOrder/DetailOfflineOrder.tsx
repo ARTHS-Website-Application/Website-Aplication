@@ -41,6 +41,7 @@ const DetailOfflineOrder = () => {
             setShowDivIndex(-1);
         } else {
             setShowDivIndex(index);
+            setShowDivService(-1);
         }
     }
     const handleShowService = (index: number) => {
@@ -48,6 +49,7 @@ const DetailOfflineOrder = () => {
             setShowDivService(-1);
         } else {
             setShowDivService(index);
+            setShowDivIndex(-1);
         }
     }
     useEffect(() => {
@@ -367,13 +369,13 @@ const DetailOfflineOrder = () => {
                                                                 new Intl.DateTimeFormat('en-GB', {
                                                                     timeZone: 'UTC'
                                                                 }).format(new Date(Date.parse(item.warrantyEndDate.toString()) + 7 * 60 * 60 * 1000))
-                                                            ) : 'không có bảo hành'}
+                                                            ) : 'không có'}
                                                         </div>
                                                     ) : <p className='w-[10%]'></p>}
 
                                                     {data?.orderDetails?.some((item) => item?.discount) ? (
                                                         <div className="w-[16%] text-center">
-                                                            {item?.discount ? `${item?.discount?.title} (${item?.discount?.discountAmount}%)` : "không"}
+                                                            {item?.discount ? `${item?.discount?.title} (${item?.discount?.discountAmount}%)` : "không có"}
                                                         </div>
                                                     ) : <p className='w-[16%]'></p>}
 
@@ -389,7 +391,7 @@ const DetailOfflineOrder = () => {
                                                     <div className="w-[11%] text-center">
                                                         {formatPrice((item?.quantity * item?.price) + (item?.instUsed === true ? item?.motobikeProduct?.installationFee : 0))}
                                                     </div>
-                                                    {detailOrder?.status === statusOrder.Finished && item?.motobikeProduct?.installationFee > 0 &&
+                                                    {detailOrder?.status === statusOrder.Finished &&
                                                         (item?.warrantyEndDate !== null && item?.warrantyHistories?.length > 0) && (
                                                             <div className="w-[5%] flex items-center justify-center relative">
                                                                 <button
@@ -447,7 +449,7 @@ const DetailOfflineOrder = () => {
                                                         </div>
                                                         {data?.orderDetails?.some((item) => item?.discount) ? (
                                                             <div className="w-[20%] text-center">
-                                                                {item?.discount ? `${item?.discount?.title} (${item?.discount?.discountAmount}%)` : "không"}
+                                                                {item?.discount ? `${item?.discount?.title} (${item?.discount?.discountAmount}%)` : "không có"}
                                                             </div>
                                                         ) : <p className='w-[20%]'></p>}
                                                         <div className="w-[11%] text-center">

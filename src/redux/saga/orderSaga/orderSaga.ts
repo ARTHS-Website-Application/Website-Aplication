@@ -1,3 +1,4 @@
+import { getDetailOnlineOrder } from '@/actions/onlineOrder';
 import { getDetailOrder, getDetailOrderFailed, getDetailOrderSuccess, getOrderFailed, getOrderPaidFailed, getOrderPaidSuccess, getOrderSuccess, updateCustomerOrderFailed, updateCustomerOrderSuccess, updateProductOrderFailed, updateProductOrderSuccess, updateStatusOrderFailed, updateStatusOrderSuccess } from '@/actions/order';
 import {listOrder, detailOrder, updateUserOrder, updateProductOrdered, payWithCash, listOrderPaid } from '@/constants/mainConstants';
 import { createWarranty } from '@/constants/secondaryConstants';
@@ -125,6 +126,7 @@ function*  createWarrantyPaidOrder(payload:sagaCreateWarranty){
         const { status, data } = resp;
         if (data && status === 201) {
             yield put(getDetailOrder(payload.idOrder));
+            yield put(getDetailOnlineOrder(payload.idOrder));
         }else{
             yield put(updateCustomerOrderFailed(data));
         }

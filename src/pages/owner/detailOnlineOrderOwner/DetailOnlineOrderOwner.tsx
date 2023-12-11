@@ -1,6 +1,5 @@
-import { getDetailOnlineOrder, onlineOrderUpdate, postTransport } from "@/actions/onlineOrder";
+import { getDetailOnlineOrder} from "@/actions/onlineOrder";
 import Loading from '@/components/LoadingPage';
-import CreateTransport from "@/components/owner/CreateTransport";
 import { inStoreOrderDetails } from "@/types/actions/detailOrder";
 import { itemOnlineOrder, selectorDetailOnlineOrder, selectorTransport } from "@/types/actions/listOnlineOrder"
 import { statusOrder } from "@/types/typeOrder";
@@ -10,8 +9,8 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux"
 import { Link, useParams } from "react-router-dom";
 import ShowError from "@/components/teller/ShowError";
-import { showSuccessAlert } from "@/constants/chooseToastify";
-import { resetError } from "@/actions/userInfor";
+import { RxDotsHorizontal } from "react-icons/rx";
+import ShowListWarranty from "@/components/teller/ShowListWarranty";
 
 const DetailOnlineOrderOwner = () => {
     const dispatch = useDispatch();
@@ -22,17 +21,10 @@ const DetailOnlineOrderOwner = () => {
     console.log("first", itemError, showItem);
     const [data, setData] = useState<itemOnlineOrder<string, number>>();
     const [isLoading, setIsLoading] = useState<boolean>(false);
-    const [isLoadingCreate, setIsLoadingCreate] = useState<boolean>(false);
-    const [showTransport, setShowTransport] = useState<boolean>(false);
     const [showError, setShowError] = useState<boolean>(false);
-    const [showCheckError, setShowCheckError] = useState<string | null>(null)
-    const [showErrorTransport, setShowErrorTransport] = useState<string>('');
-    const [addNote, setAddNote] = useState<string>('');
-    const [addContent, setAddContent] = useState<string>('');
-    const [addWeight, setAddWeight] = useState<number>(0);
-    const [addLength, setAddLength] = useState<number>(0);
-    const [addWidth, setAddWidth] = useState<number>(0);
-    const [addHeight, setAddHeight] = useState<number>(0);
+    const [showDivIndex, setShowDivIndex] = useState<number>(-1);
+    const [showLisWarranty, setShowLisWarranty] = useState<boolean>(false);
+    const [itemOrder, setItemOrder] = useState<inStoreOrderDetails<string, number>>();
 
     console.log('id', orderId);
     useEffect(() => {
@@ -53,62 +45,20 @@ const DetailOnlineOrderOwner = () => {
     }, [detailOnlineOrder, orderId])
     console.log('getwithId', data);
 
-    //Transport
-    useEffect(() => {
-        if (itemError === null && showItem !== null) {
-            setShowTransport(false)
-            showSuccessAlert('Gửi thông tin đơn hàng thành công');
-            dispatch(resetError());
-            setIsLoadingCreate(false)
-        } else {
-            setShowCheckError(itemError);
-            setIsLoadingCreate(false)
-        }
-    }, [dispatch, itemError, showItem])
-
     //chỉnh format tiền
     const formatPrice = (price: number) => {
         const formattedPrice = (price / 1000).toLocaleString(undefined, { minimumFractionDigits: 3 });
 
         return formattedPrice.replace(",", ".");
     }
-    const handleUpdateStatus = () => {
-        const data = {
-            status: statusOrder.Confirm,
-            cancellationReason: "",
-        }
-        if (detailOnlineOrder) {
-            dispatch(onlineOrderUpdate(detailOnlineOrder.id, data))
-            setIsLoading(true)
+
+    const handleShowDiv = (index: number) => {
+        if (showDivIndex === index) {
+            setShowDivIndex(-1);
+        } else {
+            setShowDivIndex(index);
         }
     }
-
-    const handleCreateTransport = () => {
-        if (data) {
-            setIsLoadingCreate(true);
-            const dataTransport = {
-                orderId: data?.id,
-                note: addNote,
-                content: addContent,
-                weight: addWeight,
-                length: addLength,
-                width: addWidth,
-                height: addHeight
-            }
-            const status = {
-                status: statusOrder.Transport,
-                cancellationReason: "",
-            }
-            if (addNote && addContent && addLength && addWidth && addHeight && addWeight) {
-                dispatch(postTransport(dataTransport, status))
-                setShowErrorTransport('')
-            } else {
-                setShowErrorTransport('Không được bỏ trống')
-            }
-        }
-    }
-
-
     return (
         <div>
             {isLoading ? <Loading />
@@ -168,7 +118,7 @@ const DetailOnlineOrderOwner = () => {
                                         ) : ""}
 
                                     </div>
-                                    <div className='text-[#1A1C21] font-semibold flex flex-col space-y-6 text-end'>
+                                    <div className='text-[#1A1C21] font-semibold flex flex-col space-y-7 text-end'>
                                         <div>
                                             <p>
                                                 {data && data.orderDate && (
@@ -239,56 +189,95 @@ const DetailOnlineOrderOwner = () => {
                             </div>
 
                             <div className='overflow-y-scroll h-[30vh] flex flex-col'>
-                                <table className="w-full bg-white divide-y divide-gray-200 table-fixed text-center">
-                                    <thead>
-                                        <tr className="text-center text-xs uppercase tracking-wider bg-mainB">
-                                            <th scope="col" className="py-3 flex justify-center items-center space-x-2">
-                                                <p>Tên sản phẩm</p>
-                                            </th>
+                                <div className="w-full bg-white pb-3">
+                                    <div className="flex items-center text-xs uppercase tracking-wider bg-mainB font-semibold">
+                                        <div className="w-[37%] py-3 flex justify-center">
+                                            <p>Tên sản phẩm</p>
+                                        </div>
+                                        {data?.orderDetails?.some((item) => item?.warrantyEndDate) ? (
+                                            <div className="w-[10%] text-center">
+                                                <p>Bảo hành đến</p>
+                                            </div>
+                                        ) : <p className='w-[10%]'></p>}
+
+                                        {data?.orderDetails?.some((item) => item?.discount) ? (
+                                            <div className="w-[20%] text-center">
+                                                <p>Áp dụng khuyến mãi</p>
+                                            </div>
+                                        ) : <p className='w-[20%]'></p>}
+                                        <div className="w-[6%] text-center">
+                                            <p>Số lượng</p>
+                                        </div>
+                                        <div className="w-[11%] text-center">
+                                            <p>Đơn giá</p>
+                                        </div>
+                                        <div className="w-[11%] text-center">
+                                            <p>Tổng tiền(VNĐ)</p>
+                                        </div>
+                                        <div className="w-[5%]">
+                                        </div>
+                                    </div>
+                                    {data?.orderDetails?.filter((item) => item.motobikeProduct).map((item: inStoreOrderDetails<string, number>, index) => (
+                                        <div key={index} className='w-full flex items-center border-t-2 border-mainB'>
+                                            <div className="w-[37%] py-3 px-3 flex items-center">
+                                                <img src={item?.motobikeProduct?.image} alt="" className="h-11 mr-5" />
+                                                <p className='text-start'>{item?.motobikeProduct?.name}</p>
+                                            </div>
+                                            {data?.orderDetails?.some((item) => item?.warrantyEndDate) ? (
+                                                <div className="w-[10%] text-center">
+                                                    {item && item.warrantyEndDate ? (
+                                                        new Intl.DateTimeFormat('en-GB', {
+                                                            timeZone: 'UTC'
+                                                        }).format(new Date(Date.parse(item.warrantyEndDate.toString()) + 7 * 60 * 60 * 1000))
+                                                    ) : 'không có'}
+                                                </div>
+                                            ) : <p className='w-[10%]'></p>}
+
                                             {data?.orderDetails?.some((item) => item?.discount) ? (
-                                                <th scope="col" className="text-center">
-                                                    <p>Áp dụng khuyến mãi</p>
-                                                </th>
-                                            ) : ""}
-                                            <th scope="col" className="">
-                                                <p>Số lượng</p>
-                                            </th>
-                                            <th scope="col" className="">
-                                                <p>Đơn giá</p>
-                                            </th>
-                                            <th scope="col" className="">
-                                                <p>Tổng tiền(VND)</p>
-                                            </th>
-                                        </tr>
-                                    </thead>
-                                    <tbody className="divide-y divide-gray-200">
-                                        {data?.orderDetails?.map((item: inStoreOrderDetails<string, number>, index) => (
-                                            <tr key={index}>
-                                                <td className="py-3 px-3 flex items-center">
-                                                    <img src={item?.motobikeProduct.image} alt="" className="h-11 mr-5" />
-                                                    <p>{item?.motobikeProduct.name}</p>
-                                                </td>
-                                                {data?.orderDetails?.some((item) => item?.discount) ? (
-                                                    <td className="w-[16%] text-center">
-                                                        {item?.discount ? `${item?.discount?.title} (${item?.discount?.discountAmount}%)` : "không"}
-                                                    </td>
-                                                ) : ""}
-                                                <td className="">
-                                                    {item?.quantity}
-                                                </td>
-                                                <td className="">
-                                                    {formatPrice(item?.price)}
-                                                </td>
-                                                <td className="">
-                                                    {formatPrice(item.subTotalAmount)}
-                                                </td>
-                                            </tr>
-                                        ))}
+                                                <div className="w-[20%] text-center">
+                                                    {item?.discount ? `${item?.discount?.title} (${item?.discount?.discountAmount}%)` : "không có"}
+                                                </div>
+                                            ) : <p className='w-[20%]'></p>}
 
-                                    </tbody>
-                                </table>
+                                            <div className="w-[6%] text-center">
+                                                {item?.quantity}
+                                            </div>
+                                            <div className="w-[11%] text-center">
+                                                {formatPrice(item?.price)}
+                                            </div>
+                                            <div className="w-[11%] text-center">
+                                                {formatPrice((item?.quantity * item?.price) + (item?.instUsed === true ? item?.motobikeProduct?.installationFee : 0))}
+                                            </div>
 
+                                            {data?.status === statusOrder.Finished &&
+                                                (item?.warrantyEndDate !== null && item?.warrantyHistories?.length > 0) && (
+                                                    <div className="w-[5%] flex items-center justify-center relative">
+                                                        <button
+                                                            onClick={() => handleShowDiv(index)}
+                                                        >
+                                                            <RxDotsHorizontal className='w-5 h-5 hover:text-main' />
+                                                        </button>
+                                                        {showDivIndex === index && (
+                                                            <div className="absolute z-10 flex flex-col items-center bg-white shadow-lg rounded-lg w-[140px] right-1 top-7 space-y-3 py-2 font-semibold text-[#667085]">
+                                                                {item?.warrantyHistories?.length > 0 && (
+                                                                    <button className='flex items-center space-x-1 hover:text-main hover:fill-main'
+                                                                        onClick={() => {
+                                                                            handleShowDiv(index);
+                                                                            setShowLisWarranty(true)
+                                                                            setItemOrder(item)
+                                                                        }}
+                                                                    >
+                                                                        <p> Xem bảo hành </p>
+                                                                    </button>
+                                                                )}
+                                                            </div>
+                                                        )}
+                                                    </div>
+                                                )}
 
+                                        </div>
+                                    ))}
+                                </div>
                             </div>
                             {/*footer */}
                             <div className='flex justify-end pr-[115px] '>
@@ -304,45 +293,16 @@ const DetailOnlineOrderOwner = () => {
                                     </div>
                                 </div>
                             </div>
-                            {data?.status === statusOrder.Processing || data?.status === statusOrder.Paid ? (
-                                <div className='flex justify-end pr-[90px] pt-2'>
-                                    <button className='bg-main hover:bg-red-800 w-[190px] py-5 text-white rounded-md'
-                                        onClick={handleUpdateStatus}
-                                    >Xác nhận đơn hàng</button>
-                                </div>
-                            ) : data?.status === statusOrder.Confirm ? (
-                                <div className='flex justify-end pr-[90px] pt-2'>
-                                    <button className='bg-main hover:bg-red-800 w-[190px] py-5 text-white rounded-md'
-                                        onClick={() => setShowTransport(true)}
-                                    >Nhập thông tin đơn hàng</button>
-                                </div>
-                            ) : ""}
                         </div>
-                        <CreateTransport
-                            isVisible={showTransport}
-                            onClose={() => setShowTransport(false)}
-                            isLoading={isLoadingCreate}
-                            showCheckError={showCheckError}
-                            showError={showErrorTransport}
-                            setShowError={setShowErrorTransport}
-                            addNote={addNote}
-                            setAddNote={setAddNote}
-                            addContent={addContent}
-                            setAddContent={setAddContent}
-                            addWeight={addWeight}
-                            setAddWeight={setAddWeight}
-                            addLength={addLength}
-                            setAddLength={setAddLength}
-                            addWidth={addWidth}
-                            setAddWidth={setAddWidth}
-                            addHeight={addHeight}
-                            setAddHeight={setAddHeight}
-                            handleCreateTransport={handleCreateTransport}
-                        />
                         <ShowError
                             isVisible={showError}
                             data={data}
                             onClose={() => setShowError(false)}
+                        />
+                        <ShowListWarranty
+                            itemOrder={itemOrder}
+                            isVisible={showLisWarranty}
+                            onClose={() => setShowLisWarranty(false)}
                         />
                     </div>
                 )
