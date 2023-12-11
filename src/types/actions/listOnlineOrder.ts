@@ -1,4 +1,4 @@
-import { inStoreOrderDetails } from "./detailOrder";
+import { inStoreOrderDetails, staffOrder } from "./detailOrder";
 import { callFilterOrder } from "./listOrder";
 
 export interface selectorOnlineOrder<T, N> {
@@ -52,6 +52,7 @@ export interface itemOnlineOrder<T, N> {
         address: T,
         avatar: T
     },
+    staff: staffOrder<T>,
     address: T,
     paymentMethod: T,
     status: T,

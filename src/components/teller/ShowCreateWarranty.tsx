@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { selectStaff } from '@/actions/userInfor';
-import { inStoreOrderDetails } from '@/types/actions/detailOrder';
+import { inStoreOrderDetails, staffOrder } from '@/types/actions/detailOrder';
 import { itemStaff, selectorListStaff } from '@/types/actions/listStaff';
 import { useDispatch, useSelector } from 'react-redux';
 import { postWarranty } from '@/actions/order';
@@ -12,9 +12,10 @@ type Props = {
     isVisible: boolean;
     itemOrder: inStoreOrderDetails<string, number> | undefined;
     idOrder: string;
+    isStaff:staffOrder<string>;
 }
 
-const ShowCreateWarranty = ({ isVisible, onClose, itemOrder, idOrder, setIsLoading }: Props) => {
+const ShowCreateWarranty = ({ isVisible, onClose, itemOrder, idOrder, setIsLoading,isStaff }: Props) => {
     const dispatch = useDispatch();
     const listStaff: itemStaff<string>[] = useSelector((state: selectorListStaff<string>) => state.listStaffReducer.listStaff);
     const [showError, setShowError] = useState<string>('');
@@ -25,10 +26,10 @@ const ShowCreateWarranty = ({ isVisible, onClose, itemOrder, idOrder, setIsLoadi
     useEffect(() => {
         dispatch(selectStaff());
     }, [dispatch]);
-    const handleCreateWarranty = () => {
+    const handleCreateWarrantyStaff = () => {
         const data = {
             orderDetailId: itemOrder?.id ??"",
-            handledBy: staffId,
+            handledBy: staffId??"",
             productQuantity: productQuantity,
             repairDetails: repairDetails,
         }
@@ -36,7 +37,19 @@ const ShowCreateWarranty = ({ isVisible, onClose, itemOrder, idOrder, setIsLoadi
         onClose();
         setIsLoading(true);
         showSuccessAlert('Tạo bảo hành thành công');
+    }
 
+    const handleCreateWarrantyNotStaff = () => {
+        const data = {
+            orderDetailId: itemOrder?.id ??"",
+            handledBy:"",
+            productQuantity: productQuantity,
+            repairDetails: repairDetails,
+        }
+        dispatch(postWarranty(data, idOrder));
+        onClose();
+        setIsLoading(true);
+        showSuccessAlert('Tạo bảo hành thành công');
     }
     if (!isVisible) {
         return null;
@@ -79,8 +92,9 @@ const ShowCreateWarranty = ({ isVisible, onClose, itemOrder, idOrder, setIsLoadi
                         </div>
 
                     )}
-
-                    <div className="flex space-x-5 items-center">
+                    {isStaff!==null?(
+                        <div>
+                            <div className="flex space-x-5 items-center">
                         <p className="font-semibold text-[17px]">Chọn nhân viên sửa chữa:</p>
                         <select className='h-10 border-2 border-gray-300 text-[17px] px-2 rounded-lg outline-none '
                             value={staffId}
@@ -98,8 +112,10 @@ const ShowCreateWarranty = ({ isVisible, onClose, itemOrder, idOrder, setIsLoadi
                     {showError ? (
                         <p className='text-red-700 text-center text-[18px] font-semibold py-3'>{showError}</p>
                     ) : ""}
+                        </div>
+                    ):""}
                     <div className='space-y-1'>
-                        <p className='text-[17px] font-semibold'>Chi tiết đã sửa chữa:</p>
+                        <p className='text-[17px] font-semibold'>{isStaff!==null?"Chi tiết đã sửa chữa:":"Chi tiết bảo hành:"} </p>
                         <textarea onChange={(e)=>setRepairDetails(e.target.value)}
                         className='w-full min-h-[100px] border-2 border-gray-300 p-1'
                         placeholder='Nhập thông tin sửa chữa...'></textarea>
@@ -114,12 +130,16 @@ const ShowCreateWarranty = ({ isVisible, onClose, itemOrder, idOrder, setIsLoadi
                         className={`${errorQuantity === '' ? 'hover:bg-blue-800' : ''} bg-gray-400 px-5 h-[40px]  rounded-md`}
                         disabled={errorQuantity === '' ? false : true}
                         onClick={() => {
-                            if (staffId) {
-                                handleCreateWarranty();
-                                setShowError('');
-                                setStaffId('')
+                            if (isStaff!==null) {
+                                if(staffId){
+                                    handleCreateWarrantyStaff();
+                                    setShowError('');
+                                    setStaffId('');
+                                }else{
+                                    setShowError('Chưa chọn nhân viên sửa chữa');
+                                }
                             } else {
-                                setShowError('Chưa chọn nhân viên sửa chữa');
+                                handleCreateWarrantyNotStaff();
                             }
                         }}
                     >

@@ -32,10 +32,12 @@ const ShowListWarranty = ({ onClose, isVisible, itemOrder }: Props) => {
                     <table className="min-w-full bg-white divide-y divide-gray-200 table-fixed text-center ">
                         <thead>
                             <tr className="text-xs font-medium uppercase tracking-wider bg-yellow-400 text-center">
-                                <th scope="col" className="py-3">
+                                {itemOrder?.warrantyHistories?.every((item)=> item.handledByNavigation!==null)?(
+                                    <th scope="col" className="py-3">
                                     Nhân viên thực hiện
                                 </th>
-                                <th scope="col" className=" ">
+                                ):""}
+                                <th scope="col" className="py-3">
                                     Ngày tạo bảo hành
                                 </th>
                                 {itemOrder?.motobikeProduct
@@ -43,7 +45,7 @@ const ShowListWarranty = ({ onClose, isVisible, itemOrder }: Props) => {
                                         Số lượng sản phẩm
                                     </th>) : ""}
                                 <th scope="col" className=" ">
-                                    Chi tiết sửa chữa
+                                    {itemOrder?.warrantyHistories?.every((item)=> item.handledByNavigation!==null)?"Chi tiết sửa chữa":"Chi tiết bảo hành"}
                                 </th>
                                 <th scope="col" className=" ">
                                     Trạng thái bảo hành
@@ -53,16 +55,17 @@ const ShowListWarranty = ({ onClose, isVisible, itemOrder }: Props) => {
                         <tbody className="divide-y divide-gray-200 ">
                             {itemOrder?.warrantyHistories && itemOrder?.warrantyHistories?.map((item, index) => (
                                 <tr key={index}>
-                                    <td className="py-3 text-center">
+                                    {item.handledByNavigation!==null?(
+                                        <td className="py-3 text-center">
                                         <div className="flex items-center justify-center space-x-3">
                                             <img src={item?.handledByNavigation.avatar ??
                                                 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQNL_ZnOTpXSvhf1UaK7beHey2BX42U6solRA&usqp=CAU'}
                                                 alt="" className="rounded-full w-auto h-12" />
                                             <p>{item?.handledByNavigation.fullName}</p>
                                         </div>
-
                                     </td>
-                                    <td className="">
+                                    ):""}
+                                    <td className="py-3">
                                         {formatDateTime(item.repairDate.toString())}
                                     </td>
                                     {itemOrder?.motobikeProduct

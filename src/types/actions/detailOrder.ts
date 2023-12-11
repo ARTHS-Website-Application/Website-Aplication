@@ -27,13 +27,7 @@ export interface orderDetailPayloadReducer<T, N> {
 export interface itemDetailOrder<T, N> {
     id: T,
     tellerId: T,
-    staff: {
-        accountId: T,
-        avatar: T,
-        fullName: T,
-        gender: T,
-        phoneNumber: T,
-    },
+    staff: staffOrder<T>,
     tellerName: T,
     customerName: T,
     customerPhoneNumber: T,
@@ -50,6 +44,14 @@ export interface itemDetailOrder<T, N> {
     cancellationReason: T,
     cancellationDate: Date,
 
+}
+
+export interface staffOrder<T> {
+    accountId: T,
+    avatar: T,
+    fullName: T,
+    gender: T,
+    phoneNumber: T,
 }
 
 export interface inStoreOrderDetails<T, N> {

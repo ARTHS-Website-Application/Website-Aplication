@@ -407,7 +407,7 @@ const CreateProduct = () => {
                   <Select
                     size="lg"
                     label="Lựa chọn khuyến mãi"
-                    className="text-[20px] h-[50px] bg-gray-50 custom-truncate-class"
+                    className="text-[20px] h-[50px] bg-gray-50 custom-truncate-product"
                     onChange={handleAddDiscount}
                   >
                     {dataDiscount
