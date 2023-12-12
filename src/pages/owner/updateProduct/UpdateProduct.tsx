@@ -201,7 +201,7 @@ const UpdateProduct = () => {
             vehiclesId: [...addVehicle, ...createDataVehicle.map(item => item.id)],
             images: images
         }
-        if (nameProduct && quantityProduct > 0 && priceProduct > 0 && priceInstallationFee > 0 && descriptionProduct && addCategory 
+        if (nameProduct && quantityProduct > 0 && priceProduct > 0 && priceInstallationFee >= 0 && descriptionProduct && addCategory 
             && (addVehicle?.length > 0 || createDataVehicle.map(item => item.id)?.length>0)) {
             dispatch(updateProduct(detailProduct.id, dataCreate))
             navigate(`/manage-products/${productId}`)
@@ -332,17 +332,15 @@ const UpdateProduct = () => {
                                             </div>
                                             <div className="flex items-center space-x-2">
                                                 <input type="number"
-                                                    min={1}
-                                                    value={priceInstallationFee === 0 ? "" : priceInstallationFee}
+                                                    min={0}
+                                                    value={priceInstallationFee === 0 ? 0 : priceInstallationFee}
                                                     placeholder="Số tiền(tối đa 500 nghìn)"
                                                     className='outline-none p-2 border-2 border-[#E5E7EB] bg-gray-50 rounded-xl'
                                                     onChange={(e) => {
-                                                        if (parseInt(e.target.value) > 0 && parseInt(e.target.value) < 500000) {
+                                                        if (parseInt(e.target.value) >= 0 && parseInt(e.target.value) < 500000) {
                                                             setPriceInstallationFee(parseInt(e.target.value))
                                                         } else {
-                                                            if (parseInt(e.target.value) < 0) {
-                                                                setPriceInstallationFee(1)
-                                                            }
+                                                            
                                                             if (parseInt(e.target.value) > 500000) {
                                                                 setPriceInstallationFee(500000)
                                                             }
