@@ -32,7 +32,21 @@ const ImageModal = ({ isVisible, onClose, item }: props) => {
   };
   const handleAvatar = (event: React.ChangeEvent<HTMLInputElement>) => {
     const selectedImage = event.target.files?.[0] || null;
-    setShowImage(selectedImage);
+
+    if (selectedImage) {
+      const allowedFormats = [".png", ".jpg", ".jpeg"];
+      const fileExtension = selectedImage.name.slice(((selectedImage.name.lastIndexOf(".") - 1) >>> 0) + 2);
+
+      if (allowedFormats.indexOf(`.${fileExtension.toLowerCase()}`) === -1) {
+        alert("Chỉ chấp nhận các file có định dạng .png, .jpg, hoặc .jpeg");
+        return;
+      }
+
+      // Thực hiện các xử lý khác nếu cần
+      setShowImage(selectedImage);
+
+      // Nếu muốn xem thông tin chi tiết về file, bạn có thể sử dụng console.log(selectedImage)
+    }
   };
   useEffect(() => {
     if (errorItem === null && checkImage === true) {
@@ -73,7 +87,7 @@ const ImageModal = ({ isVisible, onClose, item }: props) => {
               </label>
               <input
                 type="file"
-                accept="image/*"
+                accept=".png, .jpg, .jpeg"
                 className="hidden"
                 id="fileInput"
                 onChange={(e) => {
