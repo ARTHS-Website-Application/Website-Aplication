@@ -24,8 +24,8 @@ const ShowSetting = () => {
                 <div className="h-[80%] bg-[#ca8d62] rounded-lg text-[20px] font-semibold space-y-[10%] flex flex-col justify-center px-5 text-white">
                     <div className='flex items-center space-x-5'>
                         <div className="flex justify-center items-center  border-2 border-white w-1/2 rounded-lg p-3">
-                            <div className="flex space-x-5">
-                                <p>Tổng nhân viên đang hoạt động:</p>
+                            <div className="flex space-x-5 items-center">
+                                <p className='text-[17px]'>Tổng nhân viên sửa chữa đang hoạt động:</p>
                                 <p>{settingInfor?.totalStaff} nhân viên</p>
                             </div>
                         </div>
@@ -59,7 +59,7 @@ const ShowSetting = () => {
                         </div>
                         <div className="flex justify-center items-center  border-2 border-white w-1/2 rounded-lg p-3">
                             <div className="flex space-x-5">
-                                <p>Đơn hàng online nhận tối đa :</p>
+                                <p>Đơn hàng booking tối đa :</p>
                                 <p>{settingInfor?.dailyOnlineBookings} đơn / 1 ngày</p>
                             </div>
                         </div>

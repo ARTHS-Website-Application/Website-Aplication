@@ -58,7 +58,7 @@ const ShowUpdateSetting = ({ isVisible, onClose, data }: Props) => {
                 <div className='py-5 px-3 space-y-3'>
                     <div className='grid grid-cols-2 justify-items-center gap-5 '>
                         <div className='flex items-center space-x-3 pt-3 font-semibold '>
-                            <p className='text-[17px]'>Thời gian sửa chữa(tiếng):</p>
+                            <p className='text-[17px]'>Thời gian sửa chữa (giờ):</p>
                             <input type="number"
                                 className='w-[50px] outline-none border-b-2 border-gray-600 text-center text-[15px]'
                                 min={1}
@@ -75,7 +75,7 @@ const ShowUpdateSetting = ({ isVisible, onClose, data }: Props) => {
                             />
                         </div>
                         <div className='flex items-center space-x-3 pt-3 font-semibold '>
-                            <p className='text-[17px]'>Thời gian làm dịch vụ(tiếng):</p>
+                            <p className='text-[17px]'>Thời gian làm dịch vụ (giờ):</p>
                             <input type="number"
                                 className='w-[50px] outline-none border-b-2 border-gray-600 text-center text-[15px]'
                                 min={1}
@@ -115,7 +115,7 @@ const ShowUpdateSetting = ({ isVisible, onClose, data }: Props) => {
                             />
                         </div>
                         <div className='flex items-center space-x-3 pt-3 font-semibold '>
-                            <p className='text-[17px]'>Tiền shipp(VNĐ):</p>
+                            <p className='text-[17px]'>Tiền giao hàng(VNĐ):</p>
                             <input type="number"
                                 className='w-[100px] outline-none border-b-2 border-gray-600 text-center text-[15px]'
                                 min={1}
