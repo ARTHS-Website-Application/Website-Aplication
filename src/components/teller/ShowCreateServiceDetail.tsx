@@ -79,10 +79,10 @@ const ShowCreateServiceDetail = ({ onClose, isVisible, itemDetail }: Props) => {
                                             {data?.discountAmount !== 0 && <p className='text-main'>{data?.discountAmount && data?.price ? formatPrice(data?.price * (1 - data?.discountAmount / 100)) : 0}VNĐ</p>}
                                         </div>
                                     </div>
-                                    {data?.reminderInterval ? (
+                                    {data?.duration && data?.duration >0 ?(
                                         <div className='flex space-x-3 items-center'>
                                             <p className='font-semibold'>Thời gian hoàn thành:</p>
-                                            <p>{data?.reminderInterval} phút</p>
+                                            <p>{data?.duration} phút</p>
                                         </div>
                                     ):""}
 
