@@ -92,7 +92,7 @@ const ShowUpdateSetting = ({ isVisible, onClose, data }: Props) => {
                             />
                         </div>
                         <div className='flex items-center space-x-3 pt-3 font-semibold '>
-                            <p className='text-[17px]'>Đơn hàng offline/online(%):</p>
+                            <p className='text-[17px]'>Lịch hẹn offline/online(%):</p>
                             <input type="number"
                                 className='w-[50px] outline-none border-b-2 border-gray-600 text-center text-[15px]'
                                 min={1}
