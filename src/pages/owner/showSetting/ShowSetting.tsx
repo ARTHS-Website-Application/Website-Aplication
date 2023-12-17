@@ -53,13 +53,13 @@ const ShowSetting = () => {
                     <div className='flex items-center space-x-5'>
                         <div className="flex justify-center items-center  border-2 border-white w-1/2 rounded-lg p-3">
                             <div className="flex space-x-5">
-                                <p>Phần trăm ưu tiên đơn hàng offline/online:</p>
+                                <p>Phần trăm ưu tiên lịch hẹn offline/online:</p>
                                 <p>{settingInfor?.nonBookingPercentage}%</p>
                             </div>
                         </div>
                         <div className="flex justify-center items-center  border-2 border-white w-1/2 rounded-lg p-3">
                             <div className="flex space-x-5">
-                                <p>Đơn hàng booking tối đa :</p>
+                                <p>Lịch hẹn tối đa trong ngày :</p>
                                 <p>{settingInfor?.dailyOnlineBookings} đơn / 1 ngày</p>
                             </div>
                         </div>
