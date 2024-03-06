@@ -92,7 +92,7 @@ const Login = () => {
                 <img alt="logo" src={logoLogin} className="rounded-lg w-full h-[93vh]" />
             </div>
             <div className="w-[50%] flex flex-col justify-center items-center font-semibold">
-                <h1 className="text-main text-[36px] font-bold ">Đăng nhập</h1>
+                <h1 className="text-main text-[36px] font-bold ">ĐĂNG NHẬP</h1>
                 <div className="pt-[50px] h-full w-full">
                     <form
                         onSubmit={postData}
